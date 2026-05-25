@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { StoreProvider } from './store/StoreProvider';
 import { ServicesProvider } from './services/ServicesProvider';
-import { PhoneFrame, ToastProvider } from './components';
+import { InstallPrompt, PhoneFrame, ToastProvider } from './components';
 import { Welcome } from './routes/Welcome';
 import { SignIn } from './routes/SignIn';
 import { Onboarding } from './routes/Onboarding';
@@ -14,7 +14,7 @@ export default function App() {
   return (
     <StoreProvider>
       <ServicesProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <PhoneFrame>
             <ToastProvider>
               <Routes>
@@ -69,6 +69,7 @@ export default function App() {
                 />
                 <Route path="*" element={<Navigate to="/welcome" replace />} />
               </Routes>
+              <InstallPrompt />
             </ToastProvider>
           </PhoneFrame>
         </BrowserRouter>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Beyond">
+  <!-- No rounded corners — maskable icons get cropped by the platform. -->
+  <rect width="512" height="512" fill="#3A5145"/>
+  <!-- Heart sized to ~60% so it stays inside the safe zone (40% radius from centre). -->
+  <g transform="translate(256 270) scale(10) translate(-12 -12)">
+    <path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"
+          fill="#F4EFE7" stroke="#F4EFE7" stroke-width="0.4" stroke-linejoin="round"/>
+  </g>
+</svg>

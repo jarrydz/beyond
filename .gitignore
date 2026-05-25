@@ -6,3 +6,9 @@ dist-ssr
 .DS_Store
 tsconfig.tsbuildinfo
 
+# Local env files — never commit secrets (e.g. future Supabase keys).
+# Templates like .env.example stay tracked.
+.env
+.env.*
+!.env.example
+
