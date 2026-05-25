@@ -32,6 +32,7 @@ export interface StoreState {
   currentUserId: string;
   // session-only — not modelled in the schema but needed by Phase 2's role switcher
   activeRole: 'member' | 'coach';
+  signedIn: boolean;
 }
 
 export const initialState = (): StoreState => ({
@@ -45,6 +46,7 @@ export const initialState = (): StoreState => ({
   affirmations: [...seedAffirmations],
   currentUserId: seedYou.id,
   activeRole: 'member',
+  signedIn: false,
 });
 
 export type StoreListener = (s: StoreState) => void;

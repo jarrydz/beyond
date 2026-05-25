@@ -31,6 +31,32 @@ export function createDataService(store: MemoryStore) {
     setActiveRole(role: Role): void {
       store.set((s) => ({ ...s, activeRole: role }));
     },
+    isSignedIn(): boolean {
+      return store.get().signedIn;
+    },
+    signIn(role: Role): void {
+      // Phase 1: any PIN works, role picks which seeded profile we sign in as.
+      store.set((s) => {
+        const userId =
+          role === 'coach'
+            ? s.profiles.find((p) => p.role === 'coach')?.id ?? s.currentUserId
+            : s.profiles.find((p) => p.id === 'member-jarryd')?.id ?? s.currentUserId;
+        return { ...s, signedIn: true, activeRole: role, currentUserId: userId };
+      });
+    },
+    signOut(): void {
+      store.set((s) => ({ ...s, signedIn: false }));
+    },
+    switchRole(role: Role): void {
+      // Live demo switcher — flip role + active profile without re-signing in.
+      store.set((s) => {
+        const userId =
+          role === 'coach'
+            ? s.profiles.find((p) => p.role === 'coach')?.id ?? s.currentUserId
+            : s.profiles.find((p) => p.id === 'member-jarryd')?.id ?? s.currentUserId;
+        return { ...s, activeRole: role, currentUserId: userId };
+      });
+    },
     setOnboarded(profileId: string): void {
       store.set((s) => ({
         ...s,
