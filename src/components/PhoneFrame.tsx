@@ -4,11 +4,39 @@ interface PhoneFrameProps {
   children: ReactNode;
 }
 
+/** True when the viewport is phone-sized — then we drop the fake device frame. */
+function useIsCompact(): boolean {
+  const query = '(max-width: 480px)';
+  const [compact, setCompact] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = (e: MediaQueryListEvent) => setCompact(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return compact;
+}
+
 /**
  * The phone shell from the prototype: rounded device, notch, status bar.
+ * On a phone-sized screen the real device is the frame, so we go full-bleed —
+ * no bezel, no notch, fills the viewport. On desktop we keep the framed look.
  * Screens slot in between the status bar and the bottom nav.
  */
 export function PhoneFrame({ children }: PhoneFrameProps) {
+  const compact = useIsCompact();
+
+  if (compact) {
+    return (
+      <div className="relative bg-cream overflow-hidden w-screen h-[100dvh]">
+        <StatusBar />
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center px-4 pt-8 pb-14">
       <div
