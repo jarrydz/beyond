@@ -7,3 +7,6 @@ export { PhoneFrame, ScreenWrap } from './PhoneFrame';
 export { PinPad } from './PinPad';
 export { AppHeader } from './AppHeader';
 export { RoleSwitcherSheet } from './RoleSwitcherSheet';
+export { Avatar, avatarColor } from './Avatar';
+export { Ring } from './Ring';
+export { RoleSwitcherPill } from './RoleSwitcherPill';
