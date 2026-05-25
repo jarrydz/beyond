@@ -125,7 +125,7 @@ function PostCard({
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-sm">
             {isYou ? 'You' : displayName(author)}
-            {isLeader && (
+            {isLeader && !isYou && (
               <span className="text-muted text-[12px] font-medium"> · your leader</span>
             )}
             <span className="text-muted text-[11.5px] font-medium ml-1">
