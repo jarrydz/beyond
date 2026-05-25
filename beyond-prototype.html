@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beyond — clickable prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F4EFE7;
+    --sand:#EAE2D4;
+    --ink:#2A2A26;
+    --muted:#7C766B;
+    --green:#3A5145;
+    --green-soft:#6F8472;
+    --sage:#A7B59C;
+    --terra:#C97B5A;
+    --terra-soft:#E7B79E;
+    --line:#E2D9CB;
+    --white:#FCFAF6;
+    --radius:22px;
+    --shadow:0 18px 50px rgba(42,42,38,.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, #EFE7D8 0%, transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, #E6E9DF 0%, transparent 55%),
+      #EDE6DA;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:34px 16px 60px;
+  }
+
+  /* page intro outside the phone */
+  .pageintro{max-width:430px;text-align:center;margin-bottom:24px}
+  .pageintro h1{font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0 0 6px;letter-spacing:.2px}
+  .pageintro p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+  .pageintro .tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);background:#fff;border:1px solid var(--line);padding:5px 11px;border-radius:999px}
+
+  /* phone */
+  .phone{
+    width:390px;max-width:100%;height:800px;
+    background:var(--cream);
+    border-radius:46px;
+    box-shadow:var(--shadow), 0 0 0 12px #1c1b18, 0 0 0 13px #34322d;
+    position:relative;overflow:hidden;
+  }
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#1c1b18;border-bottom-left-radius:16px;border-bottom-right-radius:16px;z-index:60}
+  .statusbar{position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:12px;font-weight:600;color:var(--ink);z-index:50}
+  .statusbar .right{display:flex;gap:6px;align-items:center}
+
+  .screenwrap{position:absolute;inset:46px 0 76px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+  .screenwrap::-webkit-scrollbar{display:none}
+  .screen{display:none;padding:8px 20px 28px;animation:fade .35s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  h2.screen-title{font-family:'Fraunces',serif;font-weight:600;font-size:25px;margin:6px 0 2px;letter-spacing:.2px}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(42,42,38,.05)}
+  .card.flush{padding:0;overflow:hidden}
+  .eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--green-soft);font-weight:600;margin:0 0 8px}
+
+  .btn{appearance:none;border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;border-radius:14px;padding:13px 18px;width:100%;transition:transform .12s ease, filter .12s ease}
+  .btn:active{transform:scale(.975)}
+  .btn-primary{background:var(--green);color:#F4EFE7}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-ghost{background:transparent;color:var(--green);border:1px solid var(--sage)}
+  .btn-terra{background:var(--terra);color:#fff}
+  .row{display:flex;gap:10px}
+  .row .btn{width:auto;flex:1}
+
+  /* welcome */
+  #welcome{position:absolute;inset:0;z-index:80;display:flex;flex-direction:column;justify-content:space-between;
+    padding:70px 30px 40px;text-align:center;
+    background:
+      radial-gradient(700px 380px at 50% -5%, #6F8472 0%, transparent 60%),
+      linear-gradient(180deg,#3A5145 0%, #2C3B33 100%);
+    color:#F1ECE2}
+  #welcome .brandmark{width:64px;height:64px;margin:0 auto 18px;border-radius:20px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.18)}
+  #welcome h1{font-family:'Fraunces',serif;font-weight:600;font-size:40px;margin:0 0 2px;letter-spacing:.5px}
+  #welcome .kicker{font-size:13px;letter-spacing:.22em;text-transform:uppercase;opacity:.75;margin-bottom:40px}
+  #welcome .hero{font-family:'Fraunces',serif;font-weight:500;font-size:27px;line-height:1.28;margin:0 0 14px}
+  #welcome .lead{font-size:15px;line-height:1.55;opacity:.85;margin:0 auto;max-width:280px}
+  #welcome .foot{font-size:12px;opacity:.6;margin-top:18px}
+
+  /* lists & bits */
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--sand);color:var(--green);font-size:12px;font-weight:600;border-radius:999px;padding:5px 11px}
+  .ring{--p:60;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;
+    background:conic-gradient(var(--green) calc(var(--p)*1%), var(--sand) 0);flex:none}
+  .ring i{width:48px;height:48px;border-radius:50%;background:var(--white);display:grid;place-items:center;font-style:normal;font-weight:600;font-size:14px;color:var(--green)}
+  .media{height:150px;background:linear-gradient(135deg,#A7B59C,#6F8472);position:relative;display:flex;align-items:flex-end;padding:14px}
+  .media.recipe{background:linear-gradient(135deg,#E7B79E,#C97B5A)}
+  .media.move{background:linear-gradient(135deg,#9DB0AE,#5C7470)}
+  .media .play{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.85);display:grid;place-items:center}
+  .media .lab{color:#fff;font-weight:600;font-size:14px;text-shadow:0 1px 8px rgba(0,0,0,.25)}
+
+  .feeditem{display:flex;gap:12px;margin-bottom:8px}
+  .avatar{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;font-family:'Fraunces',serif}
+  .a1{background:#C97B5A}.a2{background:#6F8472}.a3{background:#8C7B9C}.a4{background:#B68A4E}.aL{background:#3A5145}
+  .feeditem .body{flex:1}
+  .feeditem .who{font-weight:600;font-size:14px}
+  .feeditem .when{color:var(--muted);font-size:11.5px;font-weight:500}
+  .feeditem .text{font-size:13.5px;line-height:1.5;margin:4px 0 8px;color:#3a382f}
+  .react{display:flex;gap:18px;align-items:center;color:var(--muted);font-size:12.5px;font-weight:600}
+  .react button{appearance:none;border:0;background:none;cursor:pointer;color:var(--muted);font:inherit;font-weight:600;display:flex;gap:5px;align-items:center;padding:0}
+  .react button.liked{color:var(--terra)}
+
+  .composer{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+  .composer input{flex:1;border:1px solid var(--line);background:var(--white);border-radius:14px;padding:12px 14px;font:inherit;font-size:13.5px;outline:none}
+  .composer input:focus{border-color:var(--sage)}
+  .composer .send{flex:none;width:44px;height:44px;border-radius:13px;background:var(--green);border:0;cursor:pointer;display:grid;place-items:center}
+
+  .slot{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:9px;cursor:pointer;background:var(--white);transition:.15s}
+  .slot:hover{border-color:var(--sage)}
+  .slot.sel{border-color:var(--green);background:#F1F4ED}
+  .slot .t{font-weight:600;font-size:14px}
+  .slot .d{color:var(--muted);font-size:12px}
+  .check{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none}
+  .slot.sel .check{border-color:var(--green);background:var(--green)}
+
+  .stat{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .stat:last-child{border-bottom:0}
+  .stat .num{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--green);min-width:54px}
+  .stat .lab{font-size:13px;color:var(--muted)}
+  .bars{display:flex;align-items:flex-end;gap:7px;height:84px;margin:6px 0 2px}
+  .bars .b{flex:1;background:var(--sage);border-radius:7px 7px 4px 4px;position:relative}
+  .bars .b span{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted);font-weight:600}
+  .bars .b.hi{background:var(--green)}
+
+  /* bottom nav */
+  .nav{position:absolute;bottom:0;left:0;right:0;height:76px;background:rgba(252,250,246,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;z-index:55;padding-bottom:8px}
+  .nav button{flex:1;background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font:inherit;font-size:10.5px;font-weight:600}
+  .nav button svg{width:23px;height:23px;stroke:var(--muted);fill:none;stroke-width:1.7}
+  .nav button.on{color:var(--green)}
+  .nav button.on svg{stroke:var(--green)}
+
+  /* toast + modal */
+  .toast{position:absolute;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#F4EFE7;padding:11px 18px;border-radius:13px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:.3s;z-index:70;white-space:nowrap;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .sheet{position:absolute;inset:0;z-index:75;display:none}
+  .sheet.open{display:block}
+  .sheet .scrim{position:absolute;inset:0;background:rgba(28,27,24,.45)}
+  .sheet .panel{position:absolute;left:0;right:0;bottom:0;background:var(--cream);border-radius:26px 26px 0 0;padding:22px 22px 26px;animation:up .3s ease}
+  @keyframes up{from{transform:translateY(100%)}to{transform:none}}
+  .sheet h3{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:0 0 4px}
+  .sheet .sh-sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .grabber{width:40px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+
+  .hide{display:none!important}
+  .builder-note{max-width:430px;margin:22px auto 0;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+
+  <div class="pageintro">
+    <h1>Beyond — clickable prototype</h1>
+    <p>Tap through it like a real app. Everything is interactive: switch tabs, book a check‑in, like a post, post your own, mark today done.</p>
+    <span class="tag">Working name · placeholder brand</span>
+  </div>
+
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar">
+      <span id="clock">7:24</span>
+      <span class="right">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="22" height="11" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="3" stroke="currentColor"/><rect x="3" y="3" width="14" height="6" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- WELCOME -->
+    <div id="welcome">
+      <div>
+        <div class="brandmark">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#F1ECE2" stroke-width="1.6"><path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"/></svg>
+        </div>
+        <h1>Beyond</h1>
+        <div class="kicker">Your retreat, continued</div>
+      </div>
+      <div>
+        <p class="hero">The work begins when you get home.</p>
+        <p class="lead">Stay connected to your group, your leader, and your goals — long after the gates close.</p>
+      </div>
+      <div>
+        <button class="btn btn-primary" style="background:#F1ECE2;color:#2C3B33" onclick="enter()">Continue your journey</button>
+        <p class="foot">April Cohort · Gwinganna</p>
+      </div>
+    </div>
+
+    <div class="screenwrap" id="scroller">
+
+      <!-- HOME -->
+      <section class="screen active" id="home">
+        <h2 class="screen-title">Morning, Jarryd</h2>
+        <p class="sub">Day 12 since you left the retreat. Keep going.</p>
+
+        <div class="card" style="background:linear-gradient(135deg,#3A5145,#2C3B33);color:#EFE7D8;border:0">
+          <p class="eyebrow" style="color:#A7B59C">Your next check-in</p>
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+            <div class="avatar aL" style="background:rgba(255,255,255,.16)">L</div>
+            <div>
+              <div style="font-weight:600;font-size:15px">15 min with Lucy</div>
+              <div style="font-size:12.5px;opacity:.8">Thursday · 7:30am</div>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn" style="background:#F1ECE2;color:#2C3B33" onclick="toast('Joining your call with Lucy…')">Join</button>
+            <button class="btn btn-ghost" style="border-color:rgba(255,255,255,.4);color:#EFE7D8" onclick="go('leader')">Reschedule</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <p class="eyebrow">This week's goal</p>
+              <div style="font-weight:600;font-size:15px">Asleep before 10pm</div>
+              <div style="color:var(--muted);font-size:12.5px">You set this with Lucy on day 1</div>
+            </div>
+            <div class="ring" style="--p:71"><i>5/7</i></div>
+          </div>
+        </div>
+
+        <p class="eyebrow" style="margin:18px 0 8px">Today</p>
+        <div class="card flush">
+          <div class="media move"><span class="lab">Morning mobility · 8 min</span><div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div style="padding:14px 16px">
+            <div style="font-weight:600;font-size:15px;margin-bottom:2px">Move with Lucy</div>
+            <div style="color:var(--muted);font-size:13px;margin-bottom:12px">A gentle flow to start the day. No equipment.</div>
+            <button class="btn btn-ghost" id="todayBtn" onclick="markDone(this)">Mark as done</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Affirmation</p>
+          <p id="affirm" style="font-family:'Fraunces',serif;font-size:19px;line-height:1.4;margin:2px 0 12px">“I am the kind of person who keeps the promises I make to myself.”</p>
+          <button class="btn btn-ghost" onclick="nextAffirm()">New affirmation</button>
+        </div>
+
+        <p class="eyebrow" style="margin:18px 0 8px">From your group</p>
+        <div class="card" onclick="go('community')" style="cursor:pointer">
+          <div class="feeditem" style="margin:0">
+            <div class="avatar a1">S</div>
+            <div class="body">
+              <div class="who">Sarah M. <span class="when">· 1h</span></div>
+              <div class="text" style="margin-bottom:0">Walked the headland before sunrise instead of scrolling. Small win but it's sticking 🌅</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMUNITY -->
+      <section class="screen" id="community">
+        <h2 class="screen-title">Your group</h2>
+        <p class="sub">Gwinganna · April Cohort · 14 members</p>
+
+        <div class="card" style="background:#F1F4ED;border-color:#DCE4D5">
+          <div style="display:flex;gap:10px;align-items:center">
+            <span class="pill">Next meet-up</span>
+            <div style="font-size:13px;font-weight:600">Bondi coastal walk · Sat 7am</div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px" onclick="toast('You\'re in for Saturday. See you there.')">Count me in</button>
+        </div>
+
+        <div class="composer">
+          <div class="avatar" style="width:42px;height:42px;background:#3A5145">J</div>
+          <input id="postInput" placeholder="Share a win or a struggle…" onkeydown="if(event.key==='Enter')addPost()">
+          <button class="send" onclick="addPost()"><svg width="18" height="18" viewBox="0 0 24 24" fill="#F4EFE7"><path d="M3 11l18-8-8 18-2-7-8-3z"/></svg></button>
+        </div>
+
+        <div id="feed">
+          <div class="card">
+            <div class="feeditem" style="margin:0">
+              <div class="avatar a2">T</div>
+              <div class="body">
+                <div class="who">Tom R. <span class="when">· 25m</span></div>
+                <div class="text">Hardest part is the 3pm slump — that's when old habits call. Tried the breathing thing Lucy showed us and it actually worked today. Anyone else?</div>
+                <div class="react">
+                  <button onclick="like(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"/></svg><span>6</span></button>
+                  <button onclick="toast('Comments coming in the build')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11 7l-5 2 2-5a8 8 0 1 1 14-4Z"/></svg><span>3</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feeditem" style="margin:0">
+              <div class="avatar a1">S</div>
+              <div class="body">
+                <div class="who">Sarah M. <span class="when">· 1h</span></div>
+                <div class="text">Walked the headland before sunrise instead of scrolling. Small win but it's sticking 🌅</div>
+                <div class="react">
+                  <button onclick="like(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"/></svg><span>11</span></button>
+                  <button onclick="toast('Comments coming in the build')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11 7l-5 2 2-5a8 8 0 1 1 14-4Z"/></svg><span>5</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="feeditem" style="margin:0">
+              <div class="avatar aL">L</div>
+              <div class="body">
+                <div class="who">Lucy · your leader <span class="when">· 3h</span></div>
+                <div class="text">Proud of this group. Remember: the goal isn't perfection, it's not quitting. Drop one thing you're grateful for today 🙏</div>
+                <div class="react">
+                  <button onclick="like(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"/></svg><span>13</span></button>
+                  <button onclick="toast('Comments coming in the build')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11 7l-5 2 2-5a8 8 0 1 1 14-4Z"/></svg><span>9</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADER / 1:1 -->
+      <section class="screen" id="leader">
+        <h2 class="screen-title">Your leader</h2>
+        <p class="sub">One-on-one support between retreats</p>
+
+        <div class="card" style="text-align:center">
+          <div class="avatar aL" style="width:74px;height:74px;font-size:28px;margin:4px auto 12px">L</div>
+          <div style="font-family:'Fraunces',serif;font-weight:600;font-size:20px">Lucy Holloway</div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:14px">Wellbeing leader · Gwinganna retreats</div>
+          <div class="row">
+            <button class="btn btn-primary" onclick="openSheet()">Book a check-in</button>
+            <button class="btn btn-ghost" onclick="toast('Opening your chat with Lucy…')">Message</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Upcoming</p>
+          <div style="display:flex;align-items:center;gap:13px">
+            <div class="ring" style="--p:100;width:50px;height:50px"><i style="width:38px;height:38px;font-size:12px">Thu</i></div>
+            <div>
+              <div style="font-weight:600;font-size:14.5px">15-min check-in</div>
+              <div style="color:var(--muted);font-size:12.5px">Thursday · 7:30am</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="eyebrow" style="margin:18px 0 8px">Past check-ins</p>
+        <div class="card">
+          <div class="stat">
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px">Goal-setting call</div>
+              <div style="color:var(--muted);font-size:12px">Day 1 · “Asleep before 10pm”</div>
+            </div>
+            <span class="pill">Goal 4/10</span>
+          </div>
+          <div class="stat">
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px">Progress call</div>
+              <div style="color:var(--muted);font-size:12px">Day 8 · blocker: late screens</div>
+            </div>
+            <span class="pill">Goal 7/10</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEARN -->
+      <section class="screen" id="learn">
+        <h2 class="screen-title">This week</h2>
+        <p class="sub">Recipes, movement and reflections — refreshed every Monday</p>
+
+        <div class="card flush">
+          <div class="media recipe"><span class="lab">Nourish bowl · 20 min</span></div>
+          <div style="padding:14px 16px">
+            <div style="font-weight:600;font-size:15px">5 plant-forward dinners</div>
+            <div style="color:var(--muted);font-size:13px;margin:2px 0 12px">Straight from the Gwinganna kitchen. Shopping list included.</div>
+            <div class="row">
+              <button class="btn btn-ghost" onclick="toast('Recipe cards opening…')">View recipes</button>
+              <button class="btn btn-ghost" onclick="toast('Shopping list sent to your phone')">Shopping list</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card flush">
+          <div class="media move"><span class="lab">Strength & breath · 18 min</span><div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <div style="padding:14px 16px">
+            <div style="font-weight:600;font-size:15px">3 movement sessions</div>
+            <div style="color:var(--muted);font-size:13px">Filmed by Lucy. Do them anywhere, any level.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Live this week</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="avatar a3">C</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14.5px">Group cook-along</div>
+              <div style="color:var(--muted);font-size:12.5px">Wed 6pm · with the Gwinganna chef</div>
+            </div>
+            <button class="btn btn-terra" style="width:auto;padding:9px 14px;font-size:13px" onclick="toast('You\'re registered for Wednesday')">RSVP</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROGRESS -->
+      <section class="screen" id="progress">
+        <h2 class="screen-title">Your progress</h2>
+        <p class="sub">The proof you're becoming who you said you'd be</p>
+
+        <div class="card">
+          <p class="eyebrow">Goal score · last 6 weeks</p>
+          <div class="bars">
+            <div class="b" style="height:38%"><span>W1</span></div>
+            <div class="b" style="height:48%"><span>W2</span></div>
+            <div class="b" style="height:44%"><span>W3</span></div>
+            <div class="b" style="height:62%"><span>W4</span></div>
+            <div class="b hi" style="height:74%"><span>W5</span></div>
+            <div class="b hi" style="height:82%"><span>W6</span></div>
+          </div>
+          <div style="height:18px"></div>
+          <div style="color:var(--muted);font-size:12.5px;text-align:center;margin-top:6px">Trending up. The dip in week 3 was the hardest — you pushed through.</div>
+        </div>
+
+        <div class="card">
+          <div class="stat"><div class="num">11</div><div class="lab">day streak of one healthy promise kept</div></div>
+          <div class="stat"><div class="num">2</div><div class="lab">meet-ups attended with your group</div></div>
+          <div class="stat"><div class="num">94%</div><div class="lab">check-in attendance with Lucy</div></div>
+        </div>
+
+        <div class="card" style="background:linear-gradient(135deg,#C97B5A,#B5663F);color:#fff;border:0;text-align:center">
+          <p style="font-family:'Fraunces',serif;font-size:18px;line-height:1.4;margin:4px 0 4px">You haven't waited for the next retreat to change. You're changing now.</p>
+        </div>
+      </section>
+
+    </div><!-- /scroller -->
+
+    <!-- bottom nav -->
+    <nav class="nav" id="nav">
+      <button class="on" data-t="home" onclick="go('home')">
+        <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
+      <button data-t="community" onclick="go('community')">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.5a4.6 4.6 0 0 1 4.5 4.5"/></svg>Group</button>
+      <button data-t="leader" onclick="go('leader')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>Leader</button>
+      <button data-t="learn" onclick="go('learn')">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 4h6v15H6a2 2 0 0 0-2 1.5Z"/><path d="M20 5.5A2 2 0 0 0 18 4h-6v15h6a2 2 0 0 1 2 1.5Z"/></svg>Learn</button>
+      <button data-t="progress" onclick="go('progress')">
+        <svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><rect x="7" y="11" width="3" height="5"/><rect x="12" y="8" width="3" height="8"/><rect x="17" y="13" width="3" height="3"/></svg>Progress</button>
+    </nav>
+
+    <!-- booking sheet -->
+    <div class="sheet" id="sheet">
+      <div class="scrim" onclick="closeSheet()"></div>
+      <div class="panel">
+        <div class="grabber"></div>
+        <h3>Book your 15-min check-in</h3>
+        <p class="sh-sub">With Lucy. Pick a time that suits you.</p>
+        <div class="slot" onclick="pick(this)"><div><div class="t">Tomorrow · 7:00am</div><div class="d">Before your day starts</div></div><div class="check"></div></div>
+        <div class="slot" onclick="pick(this)"><div><div class="t">Wednesday · 12:30pm</div><div class="d">Lunch reset</div></div><div class="check"></div></div>
+        <div class="slot" onclick="pick(this)"><div><div class="t">Friday · 6:00pm</div><div class="d">Wind down the week</div></div><div class="check"></div></div>
+        <button class="btn btn-primary" style="margin-top:8px" onclick="confirmBooking()">Confirm check-in</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <p class="builder-note">Prototype only — no real accounts, data or payments. Names, brand and content are placeholders to feel the experience. Built to click through and react to.</p>
+
+<script>
+  function enter(){document.getElementById('welcome').classList.add('hide');}
+  function go(t){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on', b.dataset.t===t));
+    document.getElementById('scroller').scrollTop=0;
+  }
+  let tT;
+  function toast(msg){
+    const el=document.getElementById('toast');
+    el.textContent=msg; el.classList.add('show');
+    clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),2200);
+  }
+  function like(btn){
+    const span=btn.querySelector('span');
+    let n=parseInt(span.textContent,10);
+    if(btn.classList.toggle('liked')){span.textContent=n+1;}else{span.textContent=n-1;}
+  }
+  const affirmations=[
+    "“I am the kind of person who keeps the promises I make to myself.”",
+    "“Small and consistent beats big and rare.”",
+    "“The retreat opened the door. I walk through it daily.”",
+    "“I don't have to feel motivated to show up.”",
+    "“Rest is part of the work, not a reward for it.”"
+  ];
+  let ai=0;
+  function nextAffirm(){ai=(ai+1)%affirmations.length;document.getElementById('affirm').textContent=affirmations[ai];}
+  function markDone(btn){btn.textContent='Done today ✓';btn.classList.remove('btn-ghost');btn.classList.add('btn-primary');btn.style.background='#6F8472';toast('Nice. Streak kept.');}
+  function addPost(){
+    const inp=document.getElementById('postInput');
+    const v=inp.value.trim(); if(!v)return;
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="feeditem" style="margin:0"><div class="avatar" style="background:#3A5145">J</div><div class="body"><div class="who">You <span class="when">· just now</span></div><div class="text">${v.replace(/</g,'&lt;')}</div><div class="react"><button onclick="like(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z"/></svg><span>0</span></button></div></div></div>`;
+    const feed=document.getElementById('feed');feed.insertBefore(card,feed.firstChild);
+    inp.value='';toast('Shared with your group');
+  }
+  function openSheet(){document.getElementById('sheet').classList.add('open');}
+  function closeSheet(){document.getElementById('sheet').classList.remove('open');}
+  function pick(el){document.querySelectorAll('#sheet .slot').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');}
+  function confirmBooking(){
+    const sel=document.querySelector('#sheet .slot.sel');
+    if(!sel){toast('Pick a time first');return;}
+    closeSheet();toast('Check-in booked with Lucy ✓');
+  }
+  // live clock
+  function tick(){const d=new Date();let h=d.getHours()%12||12;let m=String(d.getMinutes()).padStart(2,'0');document.getElementById('clock').textContent=h+':'+m;}
+  tick();setInterval(tick,15000);
+</script>
+</body>
+</html>
