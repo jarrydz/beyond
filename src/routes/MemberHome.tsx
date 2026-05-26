@@ -2,50 +2,65 @@ import { useState } from 'react';
 import {
   BottomNav,
   DailyCheckInRecorder,
+  FloatingHeader,
   NavIcons,
-  RoleSwitcherPill,
   ScreenWrap,
   useToast,
   type NavItem,
 } from '@/components';
 import { useData } from '@/services';
+import { useStoreState } from '@/store/StoreProvider';
 import { HomeScreen } from './member/HomeScreen';
 import { GroupScreen } from './member/GroupScreen';
 import { CoachScreen } from './member/CoachScreen';
-import { LearnScreen } from './member/LearnScreen';
-import { ProgressScreen } from './member/ProgressScreen';
+import { GrowScreen } from './member/GrowScreen';
+import { ProfileScreen } from './member/ProfileScreen';
 
 const navItems: NavItem[] = [
   { key: 'home', label: 'Home', icon: NavIcons.home },
   { key: 'group', label: 'Group', icon: NavIcons.group },
   { key: 'coach', label: 'Coach', icon: NavIcons.coach },
-  { key: 'learn', label: 'Learn', icon: NavIcons.learn },
-  { key: 'progress', label: 'Progress', icon: NavIcons.progress },
+  { key: 'grow', label: 'Grow', icon: NavIcons.grow },
 ];
 
-type Tab = (typeof navItems)[number]['key'];
+const tabLabels: Record<string, string> = {
+  home: 'Home',
+  group: 'Group',
+  coach: 'Coach',
+  grow: 'Grow',
+  profile: 'Profile',
+};
+
+type Tab = 'home' | 'group' | 'coach' | 'grow' | 'profile';
 
 export function MemberHome() {
   const data = useData();
   const toast = useToast();
+  const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const [active, setActive] = useState<Tab>('home');
   const [recorderOpen, setRecorderOpen] = useState(false);
 
   function goTab(next: string) {
-    if (navItems.some((n) => n.key === next)) setActive(next);
+    if (navItems.some((n) => n.key === next) || next === 'profile') {
+      setActive(next as Tab);
+    }
   }
 
   return (
     <>
-      <RoleSwitcherPill />
-      <ScreenWrap key={active} withBottomNav={!recorderOpen}>
+      <FloatingHeader
+        title={tabLabels[active] ?? 'Home'}
+        profile={me}
+        onProfileTap={() => setActive('profile')}
+      />
+      <ScreenWrap key={active} withBottomNav={!recorderOpen} withHeader>
         {active === 'home' && (
           <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
         )}
         {active === 'group' && <GroupScreen />}
         {active === 'coach' && <CoachScreen />}
-        {active === 'learn' && <LearnScreen />}
-        {active === 'progress' && <ProgressScreen />}
+        {active === 'grow' && <GrowScreen />}
+        {active === 'profile' && <ProfileScreen />}
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}
       <DailyCheckInRecorder

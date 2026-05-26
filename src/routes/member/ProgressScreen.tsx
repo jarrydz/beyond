@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Card, Eyebrow } from '@/components';
 import { useStoreState } from '@/store/StoreProvider';
 import { daysSince, shortDate } from '@/utils/format';
+import type { Subscription } from '@/types';
 
 export function ProgressScreen() {
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
@@ -16,6 +17,10 @@ export function ProgressScreen() {
         .filter((c) => c.memberId === me.id && c.status === 'completed' && typeof c.goalScore === 'number')
         .sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt)),
     [checkIns, me.id],
+  );
+
+  const subscription = useStoreState((s) =>
+    s.subscriptions.find((sub) => sub.profileId === s.currentUserId),
   );
 
   const activeGoal = goals.find((g) => g.profileId === me.id && g.active);
@@ -73,6 +78,11 @@ export function ProgressScreen() {
           You haven't waited for the next retreat to change. You're changing now.
         </p>
       </Card>
+
+      <Eyebrow className="mt-5 mb-2">Settings</Eyebrow>
+      <Card>
+        <SubscriptionRow subscription={subscription} />
+      </Card>
     </section>
   );
 }
@@ -112,6 +122,30 @@ function Stat({ num, label, last }: { num: number; label: string; last?: boolean
     >
       <div className="font-serif text-[26px] font-semibold text-green min-w-[54px]">{num}</div>
       <div className="text-muted text-[13px]">{label}</div>
+    </div>
+  );
+}
+
+function SubscriptionRow({ subscription }: { subscription?: Subscription }) {
+  const planLabel = subscription ? 'Beyond · Monthly' : 'No active plan';
+  const statusLabel = subscription
+    ? subscription.status === 'mock' ? 'Active' : subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)
+    : '—';
+  const since = subscription?.startedAt
+    ? new Date(subscription.startedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    : null;
+
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <div className="font-semibold text-[14.5px]">Subscription</div>
+        <div className="text-muted text-[12.5px] mt-0.5">
+          {planLabel}{since ? ` · since ${since}` : ''}
+        </div>
+      </div>
+      <span className="text-[11px] tracking-[0.13em] uppercase text-green font-semibold">
+        {statusLabel}
+      </span>
     </div>
   );
 }

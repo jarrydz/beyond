@@ -14,28 +14,30 @@ interface BottomNavProps {
 
 export function BottomNav({ items, active, onChange }: BottomNavProps) {
   return (
-    <nav className="absolute bottom-0 inset-x-0 h-[76px] bg-white/90 backdrop-blur border-t border-line flex pb-2 z-[55]">
-      {items.map((item) => {
-        const on = item.key === active;
-        return (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => onChange(item.key)}
-            className={[
-              'flex-1 flex flex-col items-center justify-center gap-1 text-[10.5px] font-semibold transition-colors',
-              on ? 'text-green' : 'text-muted',
-            ].join(' ')}
-          >
-            <span
-              className={['[&_svg]:w-[23px] [&_svg]:h-[23px] [&_svg]:fill-none [&_svg]:stroke-[1.7]', on ? '[&_svg]:stroke-green' : '[&_svg]:stroke-muted'].join(' ')}
+    <nav className="absolute bottom-0 inset-x-0 z-[55] px-3 pb-3 pointer-events-none">
+      <div className="pointer-events-auto flex h-[58px] bg-white/85 backdrop-blur-lg rounded-[22px] shadow-[0_2px_16px_rgba(42,42,38,0.10)]">
+        {items.map((item) => {
+          const on = item.key === active;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onChange(item.key)}
+              className={[
+                'flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold transition-colors',
+                on ? 'text-green' : 'text-muted',
+              ].join(' ')}
             >
-              {item.icon}
-            </span>
-            {item.label}
-          </button>
-        );
-      })}
+              <span
+                className={['[&_svg]:w-[21px] [&_svg]:h-[21px] [&_svg]:fill-none [&_svg]:stroke-[1.7]', on ? '[&_svg]:stroke-green' : '[&_svg]:stroke-muted'].join(' ')}
+              >
+                {item.icon}
+              </span>
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
     </nav>
   );
 }
@@ -93,6 +95,13 @@ export const NavIcons = {
     <svg viewBox="0 0 24 24">
       <rect x="4" y="4" width="16" height="16" rx="2" />
       <path d="M8 9h8M8 13h8M8 17h5" />
+    </svg>
+  ),
+  grow: (
+    <svg viewBox="0 0 24 24">
+      <path d="M12 22V10" />
+      <path d="M12 10c0-3.5 4-6 7-6-1 3.5-3.5 6-7 6Z" />
+      <path d="M12 14c0-2.5-3-4.5-5.5-4.5C7.2 12 9 14 12 14Z" />
     </svg>
   ),
 };

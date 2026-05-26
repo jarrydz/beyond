@@ -25,7 +25,7 @@ export function Onboarding() {
     }
     data.setActiveGoal(me.id, title, goalTarget.trim() || undefined);
     data.setOnboarded(me.id);
-    navigate('/paywall', { replace: true });
+    navigate('/m', { replace: true });
   }
 
   return (

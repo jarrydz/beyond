@@ -49,7 +49,6 @@ export function Welcome() {
         >
           Continue your journey
         </button>
-        <p className="text-[12px] opacity-60 mt-4">{brand.cohortLabel}</p>
       </div>
     </div>
   );

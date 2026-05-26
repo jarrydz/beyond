@@ -42,7 +42,16 @@ export function createDataService(store: MemoryStore) {
           role === 'coach'
             ? s.profiles.find((p) => p.role === 'coach')?.id ?? s.currentUserId
             : s.profiles.find((p) => p.id === 'member-jarryd')?.id ?? s.currentUserId;
-        return { ...s, signedIn: true, activeRole: role, currentUserId: userId };
+        const alreadySubbed = s.subscriptions.some((x) => x.profileId === userId);
+        return {
+          ...s,
+          signedIn: true,
+          activeRole: role,
+          currentUserId: userId,
+          subscriptions: alreadySubbed
+            ? s.subscriptions
+            : [...s.subscriptions, { profileId: userId, plan: 'monthly', status: 'mock' as const, startedAt: new Date().toISOString() }],
+        };
       });
     },
     signOut(): void {

@@ -97,17 +97,21 @@ interface ScreenWrapProps {
   children: ReactNode;
   /** Reserve space at the bottom for the nav; off on screens without it. */
   withBottomNav?: boolean;
+  /** Reserve space at the top for the floating header bar. */
+  withHeader?: boolean;
 }
 
-export function ScreenWrap({ children, withBottomNav = true }: ScreenWrapProps) {
+export function ScreenWrap({ children, withBottomNav = true, withHeader = false }: ScreenWrapProps) {
   const compact = useIsCompact();
+  const statusBar = compact ? 0 : 46;
+  const top = withHeader ? statusBar + 52 : statusBar;
   return (
     <div
       className={[
         'absolute inset-x-0 overflow-y-auto overflow-x-hidden no-scrollbar',
-        compact ? 'top-0' : 'top-[46px]',
-        withBottomNav ? 'bottom-[76px]' : 'bottom-0',
+        withBottomNav ? 'bottom-[74px]' : 'bottom-0',
       ].join(' ')}
+      style={{ top }}
     >
       {children}
     </div>
