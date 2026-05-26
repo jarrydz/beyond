@@ -32,6 +32,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
     return (
       <div className="relative bg-cream overflow-hidden w-screen h-[100dvh]">
         {children}
+        <div id="sheet-portal" />
       </div>
     );
   }
@@ -49,6 +50,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150px] h-[26px] bg-[#1c1b18] rounded-b-2xl z-[60]" />
         <StatusBar />
         {children}
+        <div id="sheet-portal" />
       </div>
     </div>
   );
@@ -97,21 +99,15 @@ interface ScreenWrapProps {
   children: ReactNode;
   /** Reserve space at the bottom for the nav; off on screens without it. */
   withBottomNav?: boolean;
-  /** Reserve space at the top for the floating header bar. */
-  withHeader?: boolean;
 }
 
-export function ScreenWrap({ children, withBottomNav = true, withHeader = false }: ScreenWrapProps) {
+export function ScreenWrap({ children, withBottomNav = true }: ScreenWrapProps) {
   const compact = useIsCompact();
-  const statusBar = compact ? 0 : 46;
-  const top = withHeader ? statusBar + 52 : statusBar;
+  const top = compact ? 0 : 46;
   return (
     <div
-      className={[
-        'absolute inset-x-0 overflow-y-auto overflow-x-hidden no-scrollbar',
-        withBottomNav ? 'bottom-[74px]' : 'bottom-0',
-      ].join(' ')}
-      style={{ top }}
+      className="absolute inset-x-0 bottom-0 overflow-y-auto overflow-x-hidden no-scrollbar"
+      style={{ top, paddingBottom: withBottomNav ? 84 : 0 }}
     >
       {children}
     </div>

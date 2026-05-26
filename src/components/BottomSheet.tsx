@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 interface BottomSheetProps {
   open: boolean;
@@ -9,6 +10,15 @@ interface BottomSheetProps {
   footer?: ReactNode;
 }
 
+function usePortalTarget() {
+  const ref = useRef<HTMLElement | null>(null);
+  if (!ref.current) {
+    const el = document.getElementById('sheet-portal');
+    ref.current = el ?? document.body;
+  }
+  return ref.current;
+}
+
 export function BottomSheet({
   open,
   onClose,
@@ -17,9 +27,10 @@ export function BottomSheet({
   children,
   footer,
 }: BottomSheetProps) {
+  const target = usePortalTarget();
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="absolute inset-0 z-[75]">
       <button
         type="button"
@@ -41,7 +52,8 @@ export function BottomSheet({
         {children}
         {footer && <div className="mt-2">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    target,
   );
 }
 

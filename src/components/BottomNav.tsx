@@ -15,28 +15,35 @@ interface BottomNavProps {
 export function BottomNav({ items, active, onChange }: BottomNavProps) {
   return (
     <nav className="absolute bottom-0 inset-x-0 z-[55] px-3 pb-3 pointer-events-none">
-      <div className="pointer-events-auto flex h-[58px] bg-white/85 backdrop-blur-lg rounded-[22px] shadow-[0_2px_16px_rgba(42,42,38,0.10)]">
-        {items.map((item) => {
-          const on = item.key === active;
-          return (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => onChange(item.key)}
-              className={[
-                'flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold transition-colors',
-                on ? 'text-green' : 'text-muted',
-              ].join(' ')}
+      <div
+        className="pointer-events-auto flex h-[54px] rounded-full"
+        style={{
+          background: 'rgba(255, 255, 255, 0.55)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        }}
+      >
+      {items.map((item) => {
+        const on = item.key === active;
+        return (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => onChange(item.key)}
+            className={[
+              'flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold transition-colors focus:outline-none',
+              on ? 'text-green' : 'text-muted',
+            ].join(' ')}
+          >
+            <span
+              className={['[&_svg]:w-[21px] [&_svg]:h-[21px] [&_svg]:fill-none [&_svg]:stroke-[1.7]', on ? '[&_svg]:stroke-green' : '[&_svg]:stroke-muted'].join(' ')}
             >
-              <span
-                className={['[&_svg]:w-[21px] [&_svg]:h-[21px] [&_svg]:fill-none [&_svg]:stroke-[1.7]', on ? '[&_svg]:stroke-green' : '[&_svg]:stroke-muted'].join(' ')}
-              >
-                {item.icon}
-              </span>
-              {item.label}
-            </button>
-          );
-        })}
+              {item.icon}
+            </span>
+            {item.label}
+          </button>
+        );
+      })}
       </div>
     </nav>
   );

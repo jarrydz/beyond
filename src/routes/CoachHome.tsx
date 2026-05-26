@@ -21,23 +21,17 @@ const navItems: NavItem[] = [
   { key: 'content', label: 'Content', icon: NavIcons.content },
 ];
 
-const tabLabels: Record<string, string> = {
-  today: 'Today',
-  members: 'Members',
-  group: 'Group',
-  content: 'Content',
-  profile: 'Profile',
-};
-
 type Tab = 'today' | 'members' | 'group' | 'content' | 'profile';
 
 export function CoachHome() {
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const [active, setActive] = useState<Tab>('today');
+  const [prevTab, setPrevTab] = useState<Tab>('today');
   const [openMemberId, setOpenMemberId] = useState<string | null>(null);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
+      if (active !== 'profile') setPrevTab(active);
       setActive(next as Tab);
       setOpenMemberId(null);
     }
@@ -51,11 +45,14 @@ export function CoachHome() {
   return (
     <>
       <FloatingHeader
-        title={tabLabels[active] ?? 'Today'}
         profile={me}
-        onProfileTap={() => setActive('profile')}
+        showBack={active === 'profile'}
+        onProfileTap={() => {
+          if (active === 'profile') setActive(prevTab);
+          else { setPrevTab(active); setActive('profile'); }
+        }}
       />
-      <ScreenWrap key={`${active}:${openMemberId ?? 'list'}`} withHeader>
+      <ScreenWrap key={`${active}:${openMemberId ?? 'list'}`}>
         {active === 'today' && <TodayScreen onOpenMember={openMember} />}
         {active === 'members' &&
           (openMemberId ? (

@@ -23,14 +23,6 @@ const navItems: NavItem[] = [
   { key: 'grow', label: 'Grow', icon: NavIcons.grow },
 ];
 
-const tabLabels: Record<string, string> = {
-  home: 'Home',
-  group: 'Group',
-  coach: 'Coach',
-  grow: 'Grow',
-  profile: 'Profile',
-};
-
 type Tab = 'home' | 'group' | 'coach' | 'grow' | 'profile';
 
 export function MemberHome() {
@@ -38,10 +30,12 @@ export function MemberHome() {
   const toast = useToast();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const [active, setActive] = useState<Tab>('home');
+  const [prevTab, setPrevTab] = useState<Tab>('home');
   const [recorderOpen, setRecorderOpen] = useState(false);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
+      if (active !== 'profile') setPrevTab(active);
       setActive(next as Tab);
     }
   }
@@ -49,11 +43,14 @@ export function MemberHome() {
   return (
     <>
       <FloatingHeader
-        title={tabLabels[active] ?? 'Home'}
         profile={me}
-        onProfileTap={() => setActive('profile')}
+        showBack={active === 'profile'}
+        onProfileTap={() => {
+          if (active === 'profile') setActive(prevTab);
+          else { setPrevTab(active); setActive('profile'); }
+        }}
       />
-      <ScreenWrap key={active} withBottomNav={!recorderOpen} withHeader>
+      <ScreenWrap key={active} withBottomNav={!recorderOpen}>
         {active === 'home' && (
           <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
         )}

@@ -127,19 +127,18 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
 
   return (
     <div className="absolute inset-0 z-[100] bg-black flex flex-col">
-      {/* top bar */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2 z-10">
-        <button type="button" onClick={handleClose} className="text-white text-sm font-semibold">
-          Cancel
-        </button>
-        <div className="text-white/70 text-xs font-semibold tracking-wide uppercase">
-          Daily Check In
-        </div>
-        <div className="w-12" />
-      </div>
-
       {/* camera / review */}
-      <div className="flex-1 relative overflow-hidden rounded-2xl mx-3">
+      <div className="flex-1 relative overflow-hidden rounded-2xl mx-3 mt-3">
+        {/* close button */}
+        <button
+          type="button"
+          onClick={handleClose}
+          className="absolute top-3 left-3 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur grid place-items-center transition active:scale-90"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
         {cameraError ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white/70 text-sm text-center px-6 gap-3">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
