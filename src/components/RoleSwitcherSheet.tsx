@@ -47,7 +47,7 @@ export function RoleSwitcherSheet({ open, onClose }: Props) {
       <Tile
         active={activeRole === 'coach'}
         title="Coach"
-        subtitle="What Lucy sees"
+        subtitle="What Steph sees"
         onClick={() => switchTo('coach')}
       />
       <button

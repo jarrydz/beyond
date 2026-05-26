@@ -20,8 +20,8 @@ export const cohort: Cohort = {
 
 export const coach: Profile = {
   id: 'coach-lucy',
-  fullName: 'Lucy Holloway',
-  avatarInitial: 'L',
+  fullName: 'Steph',
+  avatarInitial: 'S',
   role: 'coach',
   cohortId: cohort.id,
   onboarded: true,
@@ -29,8 +29,8 @@ export const coach: Profile = {
 
 export const you: Profile = {
   id: 'member-jarryd',
-  fullName: 'Jarryd',
-  avatarInitial: 'J',
+  fullName: 'Andrew Simons',
+  avatarInitial: 'A',
   role: 'member',
   cohortId: cohort.id,
   onboarded: false,
@@ -40,16 +40,16 @@ export const members: Profile[] = [
   you,
   {
     id: 'member-sarah',
-    fullName: 'Sarah Mitchell',
-    avatarInitial: 'S',
+    fullName: 'Rebecca',
+    avatarInitial: 'R',
     role: 'member',
     cohortId: cohort.id,
     onboarded: true,
   },
   {
     id: 'member-tom',
-    fullName: 'Tom Reilly',
-    avatarInitial: 'T',
+    fullName: 'Craig Thomas',
+    avatarInitial: 'C',
     role: 'member',
     cohortId: cohort.id,
     onboarded: true,
@@ -109,7 +109,7 @@ export const checkIns: CheckIn[] = [
     goalScore: 4,
     topBlocker: 'late screens',
     commitment: 'Phone out of the bedroom this week',
-    notes: 'Goal-setting call. Set the sleep goal with Lucy.',
+    notes: 'Goal-setting call. Set the sleep goal with Steph.',
   },
   {
     id: 'ci-jarryd-2',
@@ -200,7 +200,7 @@ export const posts: Post[] = [
     id: 'post-tom',
     authorId: 'member-tom',
     cohortId: cohort.id,
-    body: "Hardest part is the 3pm slump — that's when old habits call. Tried the breathing thing Lucy showed us and it actually worked today. Anyone else?",
+    body: "Hardest part is the 3pm slump — that's when old habits call. Tried the breathing thing Steph showed us and it actually worked today. Anyone else?",
     createdAt: hours(-0.5),
     likedBy: ['member-sarah', 'member-priya', you.id, 'coach-lucy', 'member-tom', 'member-jarryd'].slice(0, 6),
   },
