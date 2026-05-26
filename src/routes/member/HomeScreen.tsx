@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, DailyCheckInRecorder, Eyebrow, Ring, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, Eyebrow, Ring, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/format';
 
 interface Props {
   onGoTab: (tab: string) => void;
+  onOpenDailyCheckIn: () => void;
 }
 
-export function HomeScreen({ onGoTab }: Props) {
+export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
   const data = useData();
   const toast = useToast();
 
@@ -63,7 +64,6 @@ export function HomeScreen({ onGoTab }: Props) {
       (d) => d.memberId === me.id && d.recordedAt.slice(0, 10) === todayStr,
     );
   }, [dailyCheckIns, me.id]);
-  const [recorderOpen, setRecorderOpen] = useState(false);
 
   const [affirmIdx, setAffirmIdx] = useState(0);
   const affirmation = affirmations[affirmIdx] ?? '';
@@ -89,19 +89,9 @@ export function HomeScreen({ onGoTab }: Props) {
             Done today ✓
           </Button>
         ) : (
-          <Button onClick={() => setRecorderOpen(true)}>Do mine today</Button>
+          <Button onClick={onOpenDailyCheckIn}>Do mine today</Button>
         )}
       </Card>
-
-      <DailyCheckInRecorder
-        open={recorderOpen}
-        onClose={() => setRecorderOpen(false)}
-        onSave={(videoUrl) => {
-          data.addDailyCheckIn(videoUrl);
-          setRecorderOpen(false);
-          toast('Sent to your coach. Nice work.');
-        }}
-      />
 
       {nextCheckIn && (
         <Card tone="dark">
