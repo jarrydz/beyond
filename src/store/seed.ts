@@ -20,7 +20,7 @@ export const cohort: Cohort = {
 
 export const coach: Profile = {
   id: 'coach-lucy',
-  fullName: 'Lucy',
+  fullName: 'Lucy Holloway',
   avatarInitial: 'L',
   role: 'coach',
   cohortId: cohort.id,
