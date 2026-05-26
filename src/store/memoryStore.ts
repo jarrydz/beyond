@@ -3,6 +3,7 @@ import type {
   CheckIn,
   Cohort,
   ContentItem,
+  DailyCheckInEntry,
   Goal,
   Post,
   Profile,
@@ -28,6 +29,7 @@ export interface StoreState {
   posts: Post[];
   content: ContentItem[];
   subscriptions: Subscription[];
+  dailyCheckIns: DailyCheckInEntry[];
   affirmations: string[];
   currentUserId: string;
   // session-only — not modelled in the schema but needed by Phase 2's role switcher
@@ -43,6 +45,7 @@ export const initialState = (): StoreState => ({
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),
   content: seedContent.map((c) => ({ ...c, doneBy: [...c.doneBy] })),
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
+  dailyCheckIns: [],
   affirmations: [...seedAffirmations],
   currentUserId: seedYou.id,
   activeRole: 'member',

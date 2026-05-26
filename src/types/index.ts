@@ -82,3 +82,11 @@ export interface RecordCheckInInput {
   commitment?: string;
   notes?: string;
 }
+
+export interface DailyCheckInEntry {
+  id: string;
+  memberId: string;
+  recordedAt: string;
+  /** Object URL to the recorded video blob (ephemeral, demo only). */
+  videoUrl?: string;
+}

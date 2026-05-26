@@ -11,3 +11,4 @@ export { Avatar, avatarColor } from './Avatar';
 export { Ring } from './Ring';
 export { RoleSwitcherPill } from './RoleSwitcherPill';
 export { InstallPrompt } from './InstallPrompt';
+export { DailyCheckInRecorder } from './DailyCheckInRecorder';

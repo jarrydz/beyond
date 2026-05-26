@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, Eyebrow, Ring, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, DailyCheckInRecorder, Eyebrow, Ring, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/format';
@@ -56,6 +56,15 @@ export function HomeScreen({ onGoTab }: Props) {
   const daySinceRetreat = activeGoal ? daysSince(activeGoal.createdAt) : 0;
   const goalScore = lastCompleted?.goalScore ?? 0;
 
+  const dailyCheckIns = useStoreState((s) => s.dailyCheckIns);
+  const doneToday = useMemo(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    return dailyCheckIns.some(
+      (d) => d.memberId === me.id && d.recordedAt.slice(0, 10) === todayStr,
+    );
+  }, [dailyCheckIns, me.id]);
+  const [recorderOpen, setRecorderOpen] = useState(false);
+
   const [affirmIdx, setAffirmIdx] = useState(0);
   const affirmation = affirmations[affirmIdx] ?? '';
 
@@ -67,6 +76,32 @@ export function HomeScreen({ onGoTab }: Props) {
       <p className="text-muted text-[13.5px] mb-4">
         Day {daySinceRetreat} since you left the retreat. Keep going.
       </p>
+
+      <Card>
+        <Eyebrow>Daily check-in</Eyebrow>
+        <p className="text-[14px] leading-relaxed mb-3">
+          {doneToday
+            ? 'Nice one — today\'s check-in has been sent to your coach.'
+            : 'Record a quick 30-second selfie video. A snapshot of where you\'re at today.'}
+        </p>
+        {doneToday ? (
+          <Button className="!bg-green-soft" onClick={() => toast('Already sent today.')}>
+            Done today ✓
+          </Button>
+        ) : (
+          <Button onClick={() => setRecorderOpen(true)}>Do mine today</Button>
+        )}
+      </Card>
+
+      <DailyCheckInRecorder
+        open={recorderOpen}
+        onClose={() => setRecorderOpen(false)}
+        onSave={(videoUrl) => {
+          data.addDailyCheckIn(videoUrl);
+          setRecorderOpen(false);
+          toast('Sent to your coach. Nice work.');
+        }}
+      />
 
       {nextCheckIn && (
         <Card tone="dark">

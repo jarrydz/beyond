@@ -4,6 +4,7 @@
 import type {
   CheckIn,
   ContentItem,
+  DailyCheckInEntry,
   Goal,
   Post,
   Profile,
@@ -225,6 +226,26 @@ export function createDataService(store: MemoryStore) {
         ],
       }));
       return sub;
+    },
+
+    // daily check-ins (selfie video)
+    getDailyCheckIns(): DailyCheckInEntry[] {
+      const s = store.get();
+      return s.dailyCheckIns.filter((d) => d.memberId === s.currentUserId);
+    },
+    addDailyCheckIn(videoUrl?: string): DailyCheckInEntry {
+      const s = store.get();
+      const entry: DailyCheckInEntry = {
+        id: uid(),
+        memberId: s.currentUserId,
+        recordedAt: new Date().toISOString(),
+        videoUrl,
+      };
+      store.set((s) => ({
+        ...s,
+        dailyCheckIns: [...s.dailyCheckIns, entry],
+      }));
+      return entry;
     },
 
     // affirmations (small thing, but it's seeded data)

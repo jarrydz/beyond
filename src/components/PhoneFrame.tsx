@@ -5,7 +5,7 @@ interface PhoneFrameProps {
 }
 
 /** True when the viewport is phone-sized — then we drop the fake device frame. */
-function useIsCompact(): boolean {
+export function useIsCompact(): boolean {
   const query = '(max-width: 480px)';
   const [compact, setCompact] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(query).matches,
@@ -31,7 +31,6 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
   if (compact) {
     return (
       <div className="relative bg-cream overflow-hidden w-screen h-[100dvh]">
-        <StatusBar />
         {children}
       </div>
     );
@@ -101,10 +100,12 @@ interface ScreenWrapProps {
 }
 
 export function ScreenWrap({ children, withBottomNav = true }: ScreenWrapProps) {
+  const compact = useIsCompact();
   return (
     <div
       className={[
-        'absolute inset-x-0 top-[46px] overflow-y-auto overflow-x-hidden no-scrollbar',
+        'absolute inset-x-0 overflow-y-auto overflow-x-hidden no-scrollbar',
+        compact ? 'top-0' : 'top-[46px]',
         withBottomNav ? 'bottom-[76px]' : 'bottom-0',
       ].join(' ')}
     >
