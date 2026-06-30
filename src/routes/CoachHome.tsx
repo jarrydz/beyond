@@ -11,7 +11,7 @@ import { TodayScreen } from './coach/TodayScreen';
 import { MembersScreen } from './coach/MembersScreen';
 import { MemberDetail } from './coach/MemberDetail';
 import { ContentScreen } from './coach/ContentScreen';
-import { GroupScreen } from './member/GroupScreen';
+import { CommunityScreen } from './member/CommunityScreen';
 import { CoachProfileScreen } from './coach/ProfileScreen';
 
 const navItems: NavItem[] = [
@@ -60,7 +60,7 @@ export function CoachHome() {
           ) : (
             <MembersScreen onOpenMember={(id) => setOpenMemberId(id)} />
           ))}
-        {active === 'group' && <GroupScreen />}
+        {active === 'group' && <CommunityScreen />}
         {active === 'content' && <ContentScreen />}
         {active === 'profile' && <CoachProfileScreen />}
       </ScreenWrap>

@@ -11,7 +11,7 @@ import {
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { HomeScreen } from './member/HomeScreen';
-import { GroupScreen } from './member/GroupScreen';
+import { CommunityScreen } from './member/CommunityScreen';
 import { CoachScreen } from './member/CoachScreen';
 import { PillarsScreen } from './member/PillarsScreen';
 import { PillarDetailScreen } from './member/PillarDetailScreen';
@@ -21,18 +21,19 @@ import type { PillarId } from '@/types';
 const navItems: NavItem[] = [
   { key: 'home', label: 'Home', icon: NavIcons.home },
   { key: 'pillars', label: 'Pillars', icon: NavIcons.pillars },
-  { key: 'group', label: 'Group', icon: NavIcons.group },
+  { key: 'community', label: 'Community', icon: NavIcons.group },
   { key: 'coach', label: 'Coach', icon: NavIcons.coach },
 ];
 
-type Tab = 'home' | 'pillars' | 'group' | 'coach' | 'profile';
+type Tab = 'home' | 'pillars' | 'community' | 'coach' | 'profile';
 
 export function MemberHome() {
   const data = useData();
   const toast = useToast();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
-  const [active, setActive] = useState<Tab>('home');
-  const [prevTab, setPrevTab] = useState<Tab>('home');
+  // Land on Pillars so the five pillars are the first thing a member or partner sees.
+  const [active, setActive] = useState<Tab>('pillars');
+  const [prevTab, setPrevTab] = useState<Tab>('pillars');
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
 
@@ -64,7 +65,7 @@ export function MemberHome() {
           ) : (
             <PillarsScreen onOpenPillar={(id) => setOpenPillarId(id)} />
           ))}
-        {active === 'group' && <GroupScreen />}
+        {active === 'community' && <CommunityScreen />}
         {active === 'coach' && <CoachScreen />}
         {active === 'profile' && <ProfileScreen />}
       </ScreenWrap>

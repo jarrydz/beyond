@@ -5,7 +5,7 @@ import { useStoreState } from '@/store/StoreProvider';
 import { relativeTime } from '@/utils/format';
 import type { Post, Profile } from '@/types';
 
-export function GroupScreen() {
+export function CommunityScreen() {
   const data = useData();
   const toast = useToast();
 
