@@ -1,47 +1,46 @@
 import { useNavigate } from 'react-router-dom';
-import { brand } from '@/config/brand';
+
+// Calm still-water ripple from the refreshed founders deck. Lives in public/, so
+// resolve against BASE_URL to stay correct under the GitHub Pages base path.
+const bgUrl = `${import.meta.env.BASE_URL}beyond-bg.jpg`;
 
 export function Welcome() {
   const navigate = useNavigate();
 
   return (
     <div
-      className="absolute inset-0 z-[80] flex flex-col justify-between text-center text-cream"
+      className="absolute inset-0 z-[80] text-center text-cream"
       style={{
-        padding: '70px 30px 40px',
-        background:
-          'radial-gradient(700px 380px at 50% -5%, #6F8472 0%, transparent 60%), linear-gradient(180deg, #3A5145 0%, #2C3B33 100%)',
+        // Image full-bleed, with a soft scrim — light up top to keep the calm
+        // misty feel, darker toward the base so the lead copy and button stay legible.
+        backgroundColor: '#27302f',
+        backgroundImage: `linear-gradient(180deg, rgba(16,26,28,0.22) 0%, rgba(16,26,28,0.05) 30%, rgba(11,19,21,0.12) 58%, rgba(9,15,17,0.62) 100%), url(${bgUrl})`,
+        // Gradient fills the frame; the photo is sized to 150% so it reads ~50%
+        // more zoomed-in than a plain cover crop, centred on the ripple.
+        backgroundSize: '100% 100%, auto 150%',
+        backgroundPosition: 'center, center',
       }}
     >
-      <div>
-        <div className="w-16 h-16 mx-auto mb-[18px] rounded-[20px] bg-white/10 border border-white/20 flex items-center justify-center">
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#F1ECE2"
-            strokeWidth="1.6"
-          >
-            <path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z" />
-          </svg>
-        </div>
-        <h1 className="font-serif font-semibold text-[40px] tracking-wide leading-none">
-          {brand.name}
+      {/* Wordmark sits ~65% up from the base (centre on the 35%-from-top line). */}
+      <div
+        className="absolute inset-x-0 px-[30px]"
+        style={{ top: '35%', transform: 'translateY(-50%)' }}
+      >
+        <h1
+          className="text-[54px] leading-none"
+          style={{
+            fontFamily: "'Work Sans', system-ui, -apple-system, sans-serif",
+            fontWeight: 500,
+            letterSpacing: '0.015em',
+            textShadow: '0 1px 24px rgba(8,14,16,0.35)',
+          }}
+        >
+          b-yond
         </h1>
-        <div className="text-[13px] tracking-[0.22em] uppercase opacity-75 mt-1">
-          {brand.tagline}
-        </div>
       </div>
 
-      <div>
-        <p className="font-serif font-medium text-[27px] leading-snug mb-3.5">{brand.hero}</p>
-        <p className="text-[15px] leading-relaxed opacity-85 mx-auto max-w-[280px]">
-          {brand.lead}
-        </p>
-      </div>
-
-      <div>
+      {/* Action sits ~14% up from the base. */}
+      <div className="absolute inset-x-0 px-[30px]" style={{ bottom: '14%' }}>
         <button
           type="button"
           onClick={() => navigate('/signin')}

@@ -15,11 +15,13 @@ export function SignIn() {
   return (
     <ScreenWrap withBottomNav={false}>
       <section className="px-6 pt-3 pb-8">
-        <h2 className="font-serif font-semibold text-[24px] mt-2 mb-1 text-center">
+        <h2 className="font-serif font-semibold text-[24px] mt-2 mb-2 text-center">
           Welcome back
         </h2>
-        <p className="text-muted text-[13.5px] text-center mb-8">
-          Pick a view to jump straight in.
+        <p className="text-muted text-[13.5px] leading-relaxed text-center mb-8 mx-auto max-w-[300px]">
+          Beyond keeps your retreat going long after you're home — your group, your
+          coach and your goals, all in one place. Pick a side below to explore it
+          for yourself.
         </p>
 
         <div className="space-y-3">
