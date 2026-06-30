@@ -11,7 +11,3 @@ tsconfig.tsbuildinfo
 .env
 .env.*
 !.env.example
-
-
-# Local full-res source for the home background (optimised copy lives in public/)
-beyond-bg.original.jpg
