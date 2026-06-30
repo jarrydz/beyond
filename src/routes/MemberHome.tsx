@@ -13,7 +13,6 @@ import { useStoreState } from '@/store/StoreProvider';
 import { HomeScreen } from './member/HomeScreen';
 import { GroupScreen } from './member/GroupScreen';
 import { CoachScreen } from './member/CoachScreen';
-import { GrowScreen } from './member/GrowScreen';
 import { PillarsScreen } from './member/PillarsScreen';
 import { PillarDetailScreen } from './member/PillarDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
@@ -24,10 +23,9 @@ const navItems: NavItem[] = [
   { key: 'pillars', label: 'Pillars', icon: NavIcons.pillars },
   { key: 'group', label: 'Group', icon: NavIcons.group },
   { key: 'coach', label: 'Coach', icon: NavIcons.coach },
-  { key: 'grow', label: 'Grow', icon: NavIcons.grow },
 ];
 
-type Tab = 'home' | 'pillars' | 'group' | 'coach' | 'grow' | 'profile';
+type Tab = 'home' | 'pillars' | 'group' | 'coach' | 'profile';
 
 export function MemberHome() {
   const data = useData();
@@ -68,7 +66,6 @@ export function MemberHome() {
           ))}
         {active === 'group' && <GroupScreen />}
         {active === 'coach' && <CoachScreen />}
-        {active === 'grow' && <GrowScreen />}
         {active === 'profile' && <ProfileScreen />}
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}
