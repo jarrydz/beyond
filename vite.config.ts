@@ -33,6 +33,10 @@ export default defineConfig({
       workbox: {
         // Don't precache the dev-only files; keep the runtime bundle slim.
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        // The SPA navigation fallback otherwise serves index.html (the app shell)
+        // for any navigation — including direct links to real files like the deck
+        // PDF. Deny-list those so they pass through to the network.
+        navigateFallbackDenylist: [/\.pdf$/i],
       },
     }),
   ],
