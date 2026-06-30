@@ -1,8 +1,12 @@
-import { useMemo } from 'react';
-import { Card, Eyebrow } from '@/components';
+import { useMemo, type ReactNode } from 'react';
+import { Card } from '@/components';
 import { useStoreState } from '@/store/StoreProvider';
+import { getPillar } from '@/config/pillars';
+import { pillarIcons } from '@/config/pillarIcons';
+import { contentByPillar } from '@/utils/pillars';
+import type { ContentItem, ContentType } from '@/types';
 
-const ICONS = {
+const TYPE_ICONS: Partial<Record<ContentType, ReactNode>> = {
   recipe: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
       <path d="M5 4h14l-1.5 16H6.5L5 4Z" />
@@ -15,6 +19,23 @@ const ICONS = {
       <path d="m10 9 6 3-6 3V9Z" fill="currentColor" stroke="none" />
     </svg>
   ),
+  breathwork: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M4 12h6a3 3 0 1 0-3-3" />
+      <path d="M4 16h10a3 3 0 1 1-3 3" />
+    </svg>
+  ),
+  sleep: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M20 14.5A8 8 0 1 1 9.5 4 7 7 0 0 0 20 14.5Z" />
+    </svg>
+  ),
+  nature: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M5 19c-1-8 5-15 14-15 1 9-5 16-14 15Z" />
+      <path d="M5 19c2.5-4 6-6.5 10-8" />
+    </svg>
+  ),
   event: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
       <rect x="3.5" y="5.5" width="17" height="15" rx="2" />
@@ -22,12 +43,14 @@ const ICONS = {
       <path d="M8 3.5v4M16 3.5v4" />
     </svg>
   ),
-  affirmation: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-      <path d="M21 12c0 4-3.5 7-9 9-5.5-2-9-5-9-9V6l9-3 9 3v6Z" />
-    </svg>
-  ),
 };
+
+const fallbackIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+    <rect x="4" y="4" width="16" height="16" rx="2" />
+    <path d="M8 9h8M8 13h8M8 17h5" />
+  </svg>
+);
 
 export function ContentScreen() {
   const content = useStoreState((s) => s.content);
@@ -35,68 +58,66 @@ export function ContentScreen() {
     (s) => s.profiles.filter((p) => p.role === 'member' && p.cohortId === s.cohort.id).length,
   );
 
-  const byType = useMemo(() => {
-    return {
-      recipes: content.filter((c) => c.type === 'recipe'),
-      movement: content.filter((c) => c.type === 'movement'),
-      events: content.filter((c) => c.type === 'event'),
-    };
-  }, [content]);
+  const groups = useMemo(() => contentByPillar(content), [content]);
 
   return (
     <section className="px-5 pt-3 pb-7">
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">This week</h2>
       <p className="text-muted text-[13.5px] mb-4">
-        What your {memberCount} members receive in Learn.
+        What your {memberCount} members receive across the Five Pillars.
       </p>
 
-      <Section title="Recipes" items={byType.recipes} memberCount={memberCount} />
-      <Section title="Movement" items={byType.movement} memberCount={memberCount} />
-      <Section title="Live events" items={byType.events} memberCount={memberCount} />
+      {groups.map((g) => {
+        const pillar = getPillar(g.pillarId);
+        return (
+          <div key={g.pillarId}>
+            <div className="flex items-center gap-2 mb-2 mt-1">
+              <span
+                className="w-5 h-5 rounded-full grid place-items-center flex-none [&_svg]:w-3 [&_svg]:h-3 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.9]"
+                style={{ background: `${pillar.accent}1f`, color: pillar.accent }}
+              >
+                {pillarIcons[pillar.id]}
+              </span>
+              <span
+                className="text-[12.5px] font-semibold tracking-wide"
+                style={{ color: pillar.accent }}
+              >
+                {pillar.label}
+              </span>
+            </div>
+            <div className="space-y-2.5 mb-4">
+              {g.items.map((it) => (
+                <Row key={it.id} item={it} memberCount={memberCount} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </section>
   );
 }
 
-function Section({
-  title,
-  items,
-  memberCount,
-}: {
-  title: string;
-  items: { id: string; type: keyof typeof ICONS; title: string; description?: string; doneBy: string[] }[];
-  memberCount: number;
-}) {
-  if (items.length === 0) return null;
+function Row({ item, memberCount }: { item: ContentItem; memberCount: number }) {
   return (
-    <>
-      <Eyebrow className="mb-2">{title}</Eyebrow>
-      <div className="space-y-2.5 mb-2">
-        {items.map((it) => (
-          <Card key={it.id} className="!mb-0">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-[12px] bg-sand text-green grid place-items-center flex-none">
-                <span className="w-[18px] h-[18px] block [&_svg]:w-[18px] [&_svg]:h-[18px]">
-                  {ICONS[it.type]}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[14.5px] truncate">{it.title}</div>
-                {it.description && (
-                  <div className="text-muted text-[12.5px] mt-0.5 leading-snug">
-                    {it.description}
-                  </div>
-                )}
-                {it.type !== 'event' && memberCount > 0 && (
-                  <div className="text-[11.5px] text-green-soft font-semibold mt-1.5">
-                    {it.doneBy.length}/{memberCount} marked done
-                  </div>
-                )}
-              </div>
+    <Card className="!mb-0">
+      <div className="flex items-start gap-3">
+        <div className="w-9 h-9 rounded-[12px] bg-sand text-green grid place-items-center flex-none">
+          <span className="w-[18px] h-[18px] block [&_svg]:w-[18px] [&_svg]:h-[18px]">
+            {TYPE_ICONS[item.type] ?? fallbackIcon}
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-[14.5px] truncate">{item.title}</div>
+          {item.description && (
+            <div className="text-muted text-[12.5px] mt-0.5 leading-snug">{item.description}</div>
+          )}
+          {item.type !== 'event' && memberCount > 0 && (
+            <div className="text-[11.5px] text-green-soft font-semibold mt-1.5">
+              {item.doneBy.length}/{memberCount} marked done
             </div>
-          </Card>
-        ))}
+          )}
+        </div>
       </div>
-      <div className="h-3" />
-    </>
+    </Card>
   );
 }

@@ -6,6 +6,7 @@ import type {
   ContentItem,
   DailyCheckInEntry,
   Goal,
+  PillarId,
   Post,
   Profile,
   RecordCheckInInput,
@@ -159,10 +160,16 @@ export function createDataService(store: MemoryStore) {
     getGoals(memberId: string): Goal[] {
       return store.get().goals.filter((g) => g.profileId === memberId);
     },
-    setActiveGoal(profileId: string, title: string, target?: string): Goal {
+    setActiveGoal(
+      profileId: string,
+      pillarId: PillarId,
+      title: string,
+      target?: string,
+    ): Goal {
       const goal: Goal = {
         id: uid(),
         profileId,
+        pillarId,
         title,
         target,
         active: true,

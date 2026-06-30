@@ -14,16 +14,20 @@ import { HomeScreen } from './member/HomeScreen';
 import { GroupScreen } from './member/GroupScreen';
 import { CoachScreen } from './member/CoachScreen';
 import { GrowScreen } from './member/GrowScreen';
+import { PillarsScreen } from './member/PillarsScreen';
+import { PillarDetailScreen } from './member/PillarDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
+import type { PillarId } from '@/types';
 
 const navItems: NavItem[] = [
   { key: 'home', label: 'Home', icon: NavIcons.home },
+  { key: 'pillars', label: 'Pillars', icon: NavIcons.pillars },
   { key: 'group', label: 'Group', icon: NavIcons.group },
   { key: 'coach', label: 'Coach', icon: NavIcons.coach },
   { key: 'grow', label: 'Grow', icon: NavIcons.grow },
 ];
 
-type Tab = 'home' | 'group' | 'coach' | 'grow' | 'profile';
+type Tab = 'home' | 'pillars' | 'group' | 'coach' | 'grow' | 'profile';
 
 export function MemberHome() {
   const data = useData();
@@ -32,11 +36,13 @@ export function MemberHome() {
   const [active, setActive] = useState<Tab>('home');
   const [prevTab, setPrevTab] = useState<Tab>('home');
   const [recorderOpen, setRecorderOpen] = useState(false);
+  const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
       if (active !== 'profile') setPrevTab(active);
       setActive(next as Tab);
+      setOpenPillarId(null);
     }
   }
 
@@ -50,10 +56,16 @@ export function MemberHome() {
           else { setPrevTab(active); setActive('profile'); }
         }}
       />
-      <ScreenWrap key={active} withBottomNav={!recorderOpen}>
+      <ScreenWrap key={`${active}:${openPillarId ?? ''}`} withBottomNav={!recorderOpen}>
         {active === 'home' && (
           <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
         )}
+        {active === 'pillars' &&
+          (openPillarId ? (
+            <PillarDetailScreen pillarId={openPillarId} onBack={() => setOpenPillarId(null)} />
+          ) : (
+            <PillarsScreen onOpenPillar={(id) => setOpenPillarId(id)} />
+          ))}
         {active === 'group' && <GroupScreen />}
         {active === 'coach' && <CoachScreen />}
         {active === 'grow' && <GrowScreen />}

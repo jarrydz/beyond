@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, Eyebrow, Ring, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
+import { pillars } from '@/config/pillars';
+import { pillarIcons } from '@/config/pillarIcons';
 import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/format';
 
 interface Props {
@@ -93,6 +95,33 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
         )}
       </Card>
 
+      <Card onClick={() => onGoTab('pillars')} className="cursor-pointer">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <Eyebrow>Your Five Pillars</Eyebrow>
+            <div className="font-semibold text-[15px]">The work you took home</div>
+            <div className="text-muted text-[12.5px]">Where your goals and content live</div>
+          </div>
+          <svg className="w-4 h-4 flex-none text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </div>
+        <div className="flex gap-2 mt-3.5">
+          {pillars.map((p) => (
+            <div
+              key={p.id}
+              className="flex-1 aspect-square rounded-[13px] grid place-items-center"
+              style={{ background: `${p.accent}1f`, color: p.accent }}
+              title={p.label}
+            >
+              <span className="w-[22px] h-[22px] block [&_svg]:w-[22px] [&_svg]:h-[22px] [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.7]">
+                {pillarIcons[p.id]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {nextCheckIn && (
         <Card tone="dark">
           <Eyebrow className="!text-sage">Your next check-in</Eyebrow>
@@ -155,6 +184,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
               </div>
             </div>
             <div className="p-3.5 px-4">
+              <PillarBadge pillarId={todayMovement.pillarId} className="mb-2" />
               <div className="font-semibold text-[15px] mb-0.5">Move with {coach.fullName.split(' ')[0]}</div>
               {todayMovement.description && (
                 <div className="text-muted text-[13px] mb-3">{todayMovement.description}</div>

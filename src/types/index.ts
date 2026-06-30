@@ -1,5 +1,26 @@
 export type Role = 'member' | 'coach';
 
+/**
+ * The Five Pillars — the WHAT members work on, delivered by the Three Enablers
+ * (Coach, Community, Platform). Key off this stable id, never the display label.
+ * Source of truth for copy/accent/order: src/config/pillars.ts.
+ */
+export type PillarId =
+  | 'nourishment'
+  | 'movement'
+  | 'emotional'
+  | 'sleep'
+  | 'toxic_load';
+
+export interface Pillar {
+  id: PillarId;
+  order: number;
+  label: string; // e.g. 'Emotional Wellbeing'
+  tagline: string; // one-liner
+  detail: string[]; // member-facing bullets
+  accent: string; // brand accent (hex) used for icon tint / progress fill
+}
+
 export interface Profile {
   id: string;
   fullName: string;
@@ -18,6 +39,7 @@ export interface Cohort {
 export interface Goal {
   id: string;
   profileId: string;
+  pillarId: PillarId;
   title: string;
   target?: string;
   active: boolean;
@@ -32,6 +54,8 @@ export interface CheckIn {
   leaderId: string;
   scheduledAt: string;
   status: CheckInStatus;
+  /** Optional — a check-in may span pillars; set when it's clearly about one. */
+  pillarId?: PillarId;
   goalScore?: number;
   topBlocker?: string;
   commitment?: string;
@@ -47,11 +71,21 @@ export interface Post {
   likedBy: string[];
 }
 
-export type ContentType = 'recipe' | 'movement' | 'affirmation' | 'event';
+export type ContentType =
+  | 'recipe'
+  | 'movement'
+  | 'affirmation'
+  | 'event'
+  | 'sleep'
+  | 'breathwork'
+  | 'nature'
+  | 'mindset';
 
 export interface ContentItem {
   id: string;
   type: ContentType;
+  /** Every content item resolves to exactly one pillar (source of truth, not `type`). */
+  pillarId: PillarId;
   title: string;
   description?: string;
   payload?: any;
