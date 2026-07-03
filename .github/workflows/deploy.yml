@@ -53,20 +53,59 @@ jobs:
     environment:
       name: github-pages
       # Whichever attempt succeeds provides the URL.
-      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url }}
+      url: ${{ steps.deploy-1.outputs.page_url || steps.deploy-2.outputs.page_url || steps.deploy-3.outputs.page_url || steps.deploy-4.outputs.page_url || steps.deploy-5.outputs.page_url }}
     steps:
-      - name: Deploy
-        id: deployment
+      # GitHub Pages intermittently returns a transient "Deployment failed, try
+      # again later", and the flake has outlasted a single 30s retry — a manual
+      # re-run minutes later always succeeded. So: five attempts with
+      # exponential backoff (10s → 20s → 40s → 80s ≈ 2.5 min of cover).
+      #
+      # Each attempt is gated on the PREVIOUS attempt having failed; once one
+      # succeeds the rest are skipped (skipped ≠ failure), so a green run
+      # deploys exactly once. Every attempt re-publishes the same built
+      # artifact and Pages deployments swap atomically — no half-deployed
+      # state. The final attempt has no continue-on-error, so a genuinely
+      # broken deploy still fails the job loudly.
+      - name: Deploy (attempt 1 of 5)
+        id: deploy-1
         uses: actions/deploy-pages@v4
-        # GitHub Pages occasionally returns a transient "Deployment failed, try
-        # again later." Don't fail the run on the first attempt — retry below.
         continue-on-error: true
 
-      - name: Wait before retrying
-        if: steps.deployment.outcome == 'failure'
-        run: sleep 30
+      - name: Backoff 10s
+        if: steps.deploy-1.outcome == 'failure'
+        run: echo "::warning::Deploy attempt 1 failed (likely transient) — retrying in 10s" && sleep 10
 
-      - name: Deploy (retry)
-        id: deployment-retry
-        if: steps.deployment.outcome == 'failure'
+      - name: Deploy (attempt 2 of 5)
+        id: deploy-2
+        if: steps.deploy-1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Backoff 20s
+        if: steps.deploy-2.outcome == 'failure'
+        run: echo "::warning::Deploy attempt 2 failed — retrying in 20s" && sleep 20
+
+      - name: Deploy (attempt 3 of 5)
+        id: deploy-3
+        if: steps.deploy-2.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Backoff 40s
+        if: steps.deploy-3.outcome == 'failure'
+        run: echo "::warning::Deploy attempt 3 failed — retrying in 40s" && sleep 40
+
+      - name: Deploy (attempt 4 of 5)
+        id: deploy-4
+        if: steps.deploy-3.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Backoff 80s
+        if: steps.deploy-4.outcome == 'failure'
+        run: echo "::warning::Deploy attempt 4 failed — retrying in 80s" && sleep 80
+
+      - name: Deploy (attempt 5 of 5 — final)
+        id: deploy-5
+        if: steps.deploy-4.outcome == 'failure'
         uses: actions/deploy-pages@v4
