@@ -93,6 +93,29 @@ export interface ContentItem {
   doneBy: string[];
 }
 
+/** The four kitchen slots the meal library is grouped by — matches how members plan a day. */
+export type MealTime = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+/**
+ * A recipe from the retreat kitchen. Meals live beside ContentItem rather than
+ * inside it — they're a permanent library, not weekly programming.
+ */
+export interface Meal {
+  id: string;
+  title: string;
+  mealTime: MealTime;
+  intro: string;
+  /** Hero tint (hex) — stands in for food photography while the prototype ships no remote assets. */
+  tint: string;
+  prepMins: number;
+  cookMins: number;
+  servings: number;
+  ingredients: string[];
+  steps: string[];
+  pillarId: 'nourishment';
+  saved: boolean;
+}
+
 export interface Subscription {
   profileId: string;
   plan: string;

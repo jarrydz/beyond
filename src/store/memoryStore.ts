@@ -5,6 +5,7 @@ import type {
   ContentItem,
   DailyCheckInEntry,
   Goal,
+  Meal,
   Post,
   Profile,
   Subscription,
@@ -15,6 +16,7 @@ import {
   cohort as seedCohort,
   content as seedContent,
   goals as seedGoals,
+  meals as seedMeals,
   posts as seedPosts,
   profiles as seedProfiles,
   subscriptions as seedSubscriptions,
@@ -28,6 +30,7 @@ export interface StoreState {
   checkIns: CheckIn[];
   posts: Post[];
   content: ContentItem[];
+  meals: Meal[];
   subscriptions: Subscription[];
   dailyCheckIns: DailyCheckInEntry[];
   affirmations: string[];
@@ -44,6 +47,7 @@ export const initialState = (): StoreState => ({
   checkIns: seedCheckIns.map((c) => ({ ...c })),
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),
   content: seedContent.map((c) => ({ ...c, doneBy: [...c.doneBy] })),
+  meals: seedMeals.map((m) => ({ ...m, ingredients: [...m.ingredients], steps: [...m.steps] })),
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
   dailyCheckIns: [],
   affirmations: [...seedAffirmations],
