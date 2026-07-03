@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Eyebrow, useToast } from '@/components';
+import { Avatar, Card, Eyebrow, SparkIcon, useToast } from '@/components';
+import { relativeTime } from '@/utils/format';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 
@@ -11,6 +12,10 @@ export function ProfileScreen() {
   const activeRole = useStoreState((s) => s.activeRole);
   const subscription = useStoreState((s) =>
     s.subscriptions.find((sub) => sub.profileId === s.currentUserId),
+  );
+  const pointsBalance = useStoreState((s) => s.pointsBalance);
+  const lastEarn = useStoreState(
+    (s) => [...s.pointsLedger].sort((a, b) => b.at.localeCompare(a.at))[0],
   );
 
   const planLabel = subscription ? 'Beyond · Monthly' : 'No active plan';
@@ -40,7 +45,27 @@ export function ProfileScreen() {
         <p className="text-muted text-[13px] mt-0.5">Member</p>
       </div>
 
-      <Eyebrow>Subscription</Eyebrow>
+      <Eyebrow>Points</Eyebrow>
+      <Card>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-serif font-semibold text-[24px] leading-none">
+                {pointsBalance}
+              </span>
+              <span className="text-muted text-[12.5px]">points</span>
+            </div>
+            {lastEarn && (
+              <div className="text-muted text-[12.5px] mt-1">
+                Last: {lastEarn.label} · {relativeTime(lastEarn.at)}
+              </div>
+            )}
+          </div>
+          <SparkIcon className="w-5 h-5 text-green" />
+        </div>
+      </Card>
+
+      <Eyebrow className="mt-4">Subscription</Eyebrow>
       <Card>
         <div className="flex items-center justify-between">
           <div>
