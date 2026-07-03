@@ -97,7 +97,8 @@ export function MemberHome() {
         onSave={(videoUrl) => {
           data.addDailyCheckIn(videoUrl);
           setRecorderOpen(false);
-          toast('Sent to your coach. Nice work.');
+          const award = data.awardPoints('daily_check_in');
+          toast(award ? `+${award.points} · ${award.label}` : 'Sent to your coach. Nice work.');
         }}
       />
     </>

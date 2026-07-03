@@ -13,8 +13,11 @@ interface Props {
   item: ContentItem;
   /** Current member id — controls the done state. */
   meId: string;
-  /** Provide to show a "Mark as done" action (omit on read-only surfaces like Learn). */
-  onMarkDone?: (id: string) => void;
+  /**
+   * Provide to show a "Mark as done" action (omit on read-only surfaces like
+   * Learn). May return a string to use as the toast (e.g. a points award).
+   */
+  onMarkDone?: (id: string) => string | void;
   /** Show a pillar pill on the media header (for multi-pillar lists). */
   showPillar?: boolean;
   /** Recipe cards: jump to the retreat-kitchen library instead of the placeholder toast. */
@@ -99,8 +102,8 @@ export function ContentCard({ item, meId, onMarkDone, showPillar = false, onView
             <Button
               variant="ghost"
               onClick={() => {
-                onMarkDone(item.id);
-                toast('Nice. Streak kept.');
+                const msg = onMarkDone(item.id);
+                toast(typeof msg === 'string' ? msg : 'Nice. Streak kept.');
               }}
             >
               Mark as done

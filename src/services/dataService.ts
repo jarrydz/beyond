@@ -16,6 +16,7 @@ import type {
   Subscription,
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
+import { ACTION_LABELS, AWARDS, type EarnAction } from '@/config/points';
 
 const uid = () =>
   globalThis.crypto?.randomUUID?.() ?? `id-${Math.random().toString(36).slice(2, 10)}`;
@@ -223,6 +224,41 @@ export function createDataService(store: MemoryStore) {
     },
 
     // points wallet
+    /**
+     * Award points for a real wellbeing action. Values come from
+     * config/points.ts only. Guarded so awards reinforce behaviour rather
+     * than being farmable: one check-in award per calendar day, and
+     * refId-carrying actions (save a specific recipe, complete a specific
+     * session) pay once per thing. Returns what was earned for the toast,
+     * or null when a guard swallowed it.
+     */
+    awardPoints(action: EarnAction, refId?: string): { points: number; label: string } | null {
+      const s = store.get();
+      if (action === 'daily_check_in') {
+        const today = new Date().toDateString();
+        const already = s.pointsLedger.some(
+          (e) => e.action === 'daily_check_in' && new Date(e.at).toDateString() === today,
+        );
+        if (already) return null;
+      }
+      if (refId && s.pointsLedger.some((e) => e.action === action && e.refId === refId)) {
+        return null;
+      }
+      const entry = {
+        id: uid(),
+        action,
+        points: AWARDS[action],
+        at: new Date().toISOString(),
+        label: ACTION_LABELS[action],
+        refId,
+      };
+      store.set((s) => ({
+        ...s,
+        pointsBalance: s.pointsBalance + entry.points,
+        pointsLedger: [...s.pointsLedger, entry],
+      }));
+      return { points: entry.points, label: entry.label };
+    },
     getPointsBalance(): number {
       return store.get().pointsBalance;
     },

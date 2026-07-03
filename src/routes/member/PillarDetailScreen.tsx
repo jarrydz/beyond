@@ -40,7 +40,12 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   function toggleSaveMeal(id: string) {
     const wasSaved = meals.find((m) => m.id === id)?.saved;
     data.toggleSaveMeal(id);
-    toast(wasSaved ? 'Removed from your saved recipes.' : 'Saved to your recipes.');
+    if (wasSaved) {
+      toast('Removed from your saved recipes.');
+      return;
+    }
+    const award = data.awardPoints('save_recipe', id);
+    toast(award ? `+${award.points} · ${award.label}` : 'Saved to your recipes.');
   }
   const items = useMemo(() => contentForPillar(content, pillarId), [content, pillarId]);
   const goal = useMemo(
@@ -172,7 +177,11 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
             key={it.id}
             item={it}
             meId={me.id}
-            onMarkDone={(id) => data.markContentDone(id)}
+            onMarkDone={(id) => {
+              data.markContentDone(id);
+              const award = data.awardPoints('content_complete', id);
+              return award ? `+${award.points} · ${award.label}` : undefined;
+            }}
             onViewRecipes={
               pillarId === 'nourishment'
                 ? () => {

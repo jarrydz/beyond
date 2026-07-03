@@ -27,7 +27,12 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
   function toggleSave() {
     if (!meal) return;
     data.toggleSaveMeal(meal.id);
-    toast(meal.saved ? 'Removed from your saved recipes.' : 'Saved to your recipes.');
+    if (meal.saved) {
+      toast('Removed from your saved recipes.');
+      return;
+    }
+    const award = data.awardPoints('save_recipe', meal.id);
+    toast(award ? `+${award.points} · ${award.label}` : 'Saved to your recipes.');
   }
 
   return (

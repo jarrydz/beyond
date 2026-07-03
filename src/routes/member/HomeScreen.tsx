@@ -201,7 +201,8 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
                   variant="ghost"
                   onClick={() => {
                     data.markContentDone(todayMovement.id);
-                    toast('Nice. Streak kept.');
+                    const award = data.awardPoints('content_complete', todayMovement.id);
+                    toast(award ? `+${award.points} · ${award.label}` : 'Nice. Streak kept.');
                   }}
                 >
                   Mark as done
