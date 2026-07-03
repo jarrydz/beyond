@@ -1,19 +1,22 @@
 import { useMemo } from 'react';
-import { Card, ContentCard, Eyebrow } from '@/components';
+import { Card, ContentCard, Eyebrow, MealCard } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
 import { pillarIcons } from '@/config/pillarIcons';
 import { contentForPillar, darken } from '@/utils/pillars';
+import { mealsByTime } from '@/utils/meals';
 import { shortDate } from '@/utils/format';
 import type { PillarId } from '@/types';
 
 interface Props {
   pillarId: PillarId;
   onBack: () => void;
+  /** Wired on the pillars tab so a meal card can push the recipe screen. */
+  onOpenMeal?: (id: string) => void;
 }
 
-export function PillarDetailScreen({ pillarId, onBack }: Props) {
+export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   const data = useData();
   const pillar = getPillar(pillarId);
 
@@ -21,7 +24,12 @@ export function PillarDetailScreen({ pillarId, onBack }: Props) {
   const content = useStoreState((s) => s.content);
   const goals = useStoreState((s) => s.goals);
   const checkIns = useStoreState((s) => s.checkIns);
+  const meals = useStoreState((s) => s.meals);
 
+  const mealGroups = useMemo(
+    () => (pillarId === 'nourishment' ? mealsByTime(meals) : []),
+    [meals, pillarId],
+  );
   const items = useMemo(() => contentForPillar(content, pillarId), [content, pillarId]);
   const goal = useMemo(
     () => goals.find((g) => g.profileId === me.id && g.pillarId === pillarId && g.active),
@@ -90,6 +98,23 @@ export function PillarDetailScreen({ pillarId, onBack }: Props) {
             <div className="text-muted text-[12.5px] mt-0.5">{goal.target} window</div>
           )}
         </Card>
+      )}
+
+      {mealGroups.length > 0 && (
+        <div className="mt-6">
+          <h3 className="font-serif font-semibold text-[19px]">From the retreat kitchen</h3>
+          <p className="text-muted text-[13px] mt-0.5 mb-3">
+            Recipes to take home — grouped by when you’d eat them.
+          </p>
+          {mealGroups.map((g) => (
+            <div key={g.id}>
+              <Eyebrow className="mt-4 mb-2">{g.label}</Eyebrow>
+              {g.items.map((m) => (
+                <MealCard key={m.id} meal={m} onOpen={(id) => onOpenMeal?.(id)} />
+              ))}
+            </div>
+          ))}
+        </div>
       )}
 
       <Eyebrow className="mt-5 mb-2">This week</Eyebrow>

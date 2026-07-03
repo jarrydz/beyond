@@ -1,6 +1,7 @@
 export { Card, Eyebrow } from './Card';
 export { Button, ButtonRow } from './Button';
 export { ContentCard } from './ContentCard';
+export { MealCard, BookmarkIcon } from './MealCard';
 export { PillarBadge } from './PillarBadge';
 export { BottomNav, NavIcons, type NavItem } from './BottomNav';
 export { BottomSheet, SheetSlot } from './BottomSheet';

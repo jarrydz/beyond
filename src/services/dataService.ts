@@ -6,6 +6,7 @@ import type {
   ContentItem,
   DailyCheckInEntry,
   Goal,
+  Meal,
   PillarId,
   Post,
   Profile,
@@ -204,6 +205,14 @@ export function createDataService(store: MemoryStore) {
           ),
         };
       });
+    },
+
+    // meals (retreat kitchen library)
+    getMeals(): Meal[] {
+      return store.get().meals;
+    },
+    getMeal(id: string): Meal | undefined {
+      return store.get().meals.find((m) => m.id === id);
     },
 
     // members (coach side)
