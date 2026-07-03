@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useIsCompact } from '@/components/PhoneFrame';
 
 // Calm still-water ripple from the refreshed founders deck. Lives in public/, so
 // resolve against BASE_URL to stay correct under the GitHub Pages base path.
@@ -6,21 +7,32 @@ const bgUrl = `${import.meta.env.BASE_URL}beyond-bg.jpg`;
 
 export function Welcome() {
   const navigate = useNavigate();
+  const compact = useIsCompact();
 
   return (
-    <div
-      className="absolute inset-0 z-[80] text-center text-cream"
-      style={{
-        // Image full-bleed, with a soft scrim — light up top to keep the calm
-        // misty feel, darker toward the base so the lead copy and button stay legible.
-        backgroundColor: '#27302f',
-        backgroundImage: `linear-gradient(180deg, rgba(16,26,28,0.22) 0%, rgba(16,26,28,0.05) 30%, rgba(11,19,21,0.12) 58%, rgba(9,15,17,0.62) 100%), url(${bgUrl})`,
-        // Gradient fills the frame; the photo is sized to 150% so it reads ~50%
-        // more zoomed-in than a plain cover crop, centred on the ripple.
-        backgroundSize: '100% 100%, auto 150%',
-        backgroundPosition: 'center, center',
-      }}
-    >
+    <div className="absolute inset-0 z-[80] text-center text-cream">
+      {/*
+        Full-bleed backdrop. On a phone we pin it to the viewport (position:
+        fixed) so the image and its scrim run edge-to-edge behind iOS Safari's
+        status bar and toolbar — Safari samples this fixed layer's colour to tint
+        those bars, so they blend into the photo instead of showing a seam. On
+        desktop it stays absolute so it fills the framed device, not the window.
+        The interactive copy below keeps its own position in the visible area.
+      */}
+      <div
+        className={compact ? 'fixed inset-0 -z-10' : 'absolute inset-0 -z-10'}
+        style={{
+          // Image full-bleed, with a soft scrim — light up top to keep the calm
+          // misty feel, darker toward the base so the lead copy and button stay legible.
+          backgroundColor: '#27302f',
+          backgroundImage: `linear-gradient(180deg, rgba(16,26,28,0.22) 0%, rgba(16,26,28,0.05) 30%, rgba(11,19,21,0.12) 58%, rgba(9,15,17,0.62) 100%), url(${bgUrl})`,
+          // Gradient fills the frame; the photo is sized to 150% so it reads ~50%
+          // more zoomed-in than a plain cover crop, centred on the ripple.
+          backgroundSize: '100% 100%, auto 150%',
+          backgroundPosition: 'center, center',
+        }}
+      />
+
       {/* Wordmark sits ~65% up from the base (centre on the 35%-from-top line). */}
       <div
         className="absolute inset-x-0 px-[30px]"
