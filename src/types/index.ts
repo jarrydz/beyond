@@ -170,4 +170,8 @@ export interface DailyCheckInEntry {
   recordedAt: string;
   /** Object URL to the recorded video blob (ephemeral, demo only). */
   videoUrl?: string;
+  /** 1 (rough) – 5 (great) — set by the no-camera text/mood path. */
+  mood?: number;
+  /** Optional short note from the no-camera path. */
+  note?: string;
 }

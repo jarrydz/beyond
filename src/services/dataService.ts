@@ -369,13 +369,17 @@ export function createDataService(store: MemoryStore) {
       const s = store.get();
       return s.dailyCheckIns.filter((d) => d.memberId === s.currentUserId);
     },
-    addDailyCheckIn(videoUrl?: string): DailyCheckInEntry {
+    addDailyCheckIn(
+      input: { videoUrl?: string; mood?: number; note?: string } = {},
+    ): DailyCheckInEntry {
       const s = store.get();
       const entry: DailyCheckInEntry = {
         id: uid(),
         memberId: s.currentUserId,
         recordedAt: new Date().toISOString(),
-        videoUrl,
+        videoUrl: input.videoUrl,
+        mood: input.mood,
+        note: input.note,
       };
       store.set((s) => ({
         ...s,

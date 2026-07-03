@@ -1,10 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from './Button';
+
+/** What a completed check-in hands back — video path sets videoUrl, the no-camera path sets mood/note. */
+export interface CheckInResult {
+  videoUrl?: string;
+  mood?: number;
+  note?: string;
+}
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSave: (videoUrl?: string) => void;
+  onSave: (result: CheckInResult) => void;
 }
+
+/** The no-camera mood scale — calm words, not a smiley barrage. */
+const MOODS = [
+  { value: 1, label: 'Rough' },
+  { value: 2, label: 'Low' },
+  { value: 3, label: 'Okay' },
+  { value: 4, label: 'Good' },
+  { value: 5, label: 'Great' },
+] as const;
 
 const MAX_SECONDS = 30;
 /**
@@ -30,6 +47,10 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   const [camState, setCamState] = useState<CamState>('requesting');
   const [elapsed, setElapsed] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  /** 'video' records a selfie; 'text' is the first-class no-camera path. */
+  const [mode, setMode] = useState<'video' | 'text'>('video');
+  const [mood, setMood] = useState<number | null>(null);
+  const [note, setNote] = useState('');
   const timerRef = useRef<ReturnType<typeof setInterval>>();
 
   const cleanup = useCallback(() => {
@@ -45,6 +66,9 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
     setElapsed(0);
     setPhase('preview');
     setCamState('requesting');
+    setMode('video');
+    setMood(null);
+    setNote('');
   }, [resultUrl]);
 
   const acquireCamera = useCallback(async () => {
@@ -129,7 +153,20 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   }
 
   function handleSend() {
-    onSave(resultUrl ?? undefined);
+    onSave({ videoUrl: resultUrl ?? undefined });
+  }
+
+  /** Switch to the no-camera path — release the camera, it isn't needed. */
+  function goTextMode() {
+    attemptRef.current++;
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    setMode('text');
+  }
+
+  function handleSendText() {
+    if (mood == null) return;
+    onSave({ mood, note: note.trim() || undefined });
   }
 
   function handleRetake() {
@@ -146,6 +183,73 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   }
 
   if (!open) return null;
+
+  if (mode === 'text') {
+    return (
+      <div className="absolute inset-0 z-[100] bg-cream flex flex-col">
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Close"
+          className="absolute top-[56px] left-4 z-20 w-9 h-9 rounded-full bg-sand grid place-items-center transition active:scale-90"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <section className="flex-1 overflow-y-auto px-6 pt-[110px] pb-8">
+          <h2 className="font-serif font-semibold text-[23px] leading-tight">Daily check-in</h2>
+          <p className="text-muted text-[13.5px] mt-1 mb-6">
+            No camera today — that still counts. How are you?
+          </p>
+
+          <div className="flex justify-between gap-2 mb-6">
+            {MOODS.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                aria-pressed={mood === m.value}
+                onClick={() => setMood(m.value)}
+                className="flex-1 flex flex-col items-center gap-1.5 transition active:scale-95"
+              >
+                <span
+                  className={[
+                    'w-11 h-11 rounded-full border grid place-items-center font-serif font-semibold text-[15px] transition-colors',
+                    mood === m.value
+                      ? 'bg-green border-green text-cream'
+                      : 'bg-white border-line text-muted',
+                  ].join(' ')}
+                >
+                  {m.value}
+                </span>
+                <span
+                  className={[
+                    'text-[11px] font-semibold',
+                    mood === m.value ? 'text-green' : 'text-muted',
+                  ].join(' ')}
+                >
+                  {m.label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={4}
+            maxLength={280}
+            placeholder="Anything you want your coach to know? (optional)"
+            className="w-full bg-white border border-line rounded-[14px] px-4 py-3 text-[14px] leading-relaxed resize-none outline-none focus:border-sage placeholder:text-muted/70 mb-5"
+          />
+
+          <Button onClick={handleSendText} disabled={mood == null}>
+            Send to coach
+          </Button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 z-[100] bg-black flex flex-col">
@@ -235,7 +339,7 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
       </div>
 
       {/* bottom controls */}
-      <div className="px-4 pt-4 pb-6 flex items-center justify-center gap-6">
+      <div className="px-4 pt-4 pb-6 flex flex-col items-center justify-center gap-4">
         {phase === 'preview' && camState !== 'denied' && camState !== 'timeout' && (
           <button
             type="button"
@@ -245,6 +349,15 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             className="w-[72px] h-[72px] rounded-full border-[4px] border-white flex items-center justify-center transition active:scale-95 disabled:opacity-40"
           >
             <span className="w-[56px] h-[56px] rounded-full bg-red-500" />
+          </button>
+        )}
+        {phase === 'preview' && (
+          <button
+            type="button"
+            onClick={goTextMode}
+            className="text-white/75 text-[13px] font-semibold underline underline-offset-4 transition active:scale-95"
+          >
+            Check in without camera
           </button>
         )}
 
@@ -259,7 +372,7 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
         )}
 
         {phase === 'review' && (
-          <>
+          <div className="flex items-center justify-center gap-6">
             <button
               type="button"
               onClick={handleRetake}
@@ -274,7 +387,7 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             >
               Send to coach
             </button>
-          </>
+          </div>
         )}
       </div>
     </div>

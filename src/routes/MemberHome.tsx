@@ -94,8 +94,8 @@ export function MemberHome() {
       <DailyCheckInRecorder
         open={recorderOpen}
         onClose={() => setRecorderOpen(false)}
-        onSave={(videoUrl) => {
-          data.addDailyCheckIn(videoUrl);
+        onSave={(result) => {
+          data.addDailyCheckIn(result);
           setRecorderOpen(false);
           const award = data.awardPoints('daily_check_in');
           toast(award ? `+${award.points} · ${award.label}` : 'Sent to your coach. Nice work.');
