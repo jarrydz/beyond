@@ -358,7 +358,7 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             <span className="w-[56px] h-[56px] rounded-full bg-red-500" />
           </button>
         )}
-        {phase === 'preview' && (
+        {phase === 'preview' && camState !== 'denied' && camState !== 'timeout' && (
           <button
             type="button"
             onClick={goTextMode}
