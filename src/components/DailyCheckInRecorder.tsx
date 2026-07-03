@@ -7,20 +7,33 @@ interface Props {
 }
 
 const MAX_SECONDS = 30;
+/**
+ * How long we wait for the camera before giving up. Covers the failure mode
+ * where the permission prompt is never answered — without this the
+ * getUserMedia promise pends forever: black preview, dead record button,
+ * no explanation.
+ */
+const CAMERA_TIMEOUT_MS = 8000;
+
+/** Why the camera isn't available — each renders a message and a way forward. */
+type CamState = 'requesting' | 'ready' | 'denied' | 'timeout';
 
 export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  /** Bumped on every acquire/cleanup so a stale getUserMedia can't win. */
+  const attemptRef = useRef(0);
 
   const [phase, setPhase] = useState<'preview' | 'recording' | 'review'>('preview');
+  const [camState, setCamState] = useState<CamState>('requesting');
   const [elapsed, setElapsed] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
-  const [cameraError, setCameraError] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
 
   const cleanup = useCallback(() => {
+    attemptRef.current++;
     if (timerRef.current) clearInterval(timerRef.current);
     recorderRef.current?.state === 'recording' && recorderRef.current.stop();
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -31,30 +44,54 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
     setResultUrl(null);
     setElapsed(0);
     setPhase('preview');
-    setCameraError(false);
+    setCamState('requesting');
   }, [resultUrl]);
+
+  const acquireCamera = useCallback(async () => {
+    const attempt = ++attemptRef.current;
+    setCamState('requesting');
+    const gum = navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } },
+      audio: true,
+    });
+    // If the request outlives the race (timeout fired, or the recorder was
+    // closed) and then resolves, stop the tracks so the camera light goes off.
+    let raceDone = false;
+    let kept = false;
+    gum.then((s) => {
+      if (raceDone && !kept) s.getTracks().forEach((t) => t.stop());
+    }).catch(() => {});
+    try {
+      const stream = await Promise.race([
+        gum,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('camera-timeout')), CAMERA_TIMEOUT_MS),
+        ),
+      ]);
+      raceDone = true;
+      if (attempt !== attemptRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      kept = true;
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(() => {});
+      }
+      setCamState('ready');
+    } catch (err) {
+      raceDone = true;
+      if (attempt !== attemptRef.current) return;
+      setCamState(err instanceof Error && err.message === 'camera-timeout' ? 'timeout' : 'denied');
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } },
-          audio: true,
-        });
-        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.muted = true;
-          videoRef.current.play().catch(() => {});
-        }
-      } catch {
-        if (!cancelled) setCameraError(true);
-      }
-    })();
-    return () => { cancelled = true; cleanup(); };
+    acquireCamera();
+    return () => cleanup();
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function startRecording() {
@@ -100,22 +137,7 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
     setResultUrl(null);
     setElapsed(0);
     setPhase('preview');
-    (async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } },
-          audio: true,
-        });
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.muted = true;
-          videoRef.current.play().catch(() => {});
-        }
-      } catch {
-        setCameraError(true);
-      }
-    })();
+    acquireCamera();
   }
 
   function handleClose() {
@@ -139,15 +161,23 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             <path d="M18 6 6 18M6 6l12 12" />
           </svg>
         </button>
-        {cameraError ? (
+        {camState === 'denied' || camState === 'timeout' ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white/70 text-sm text-center px-6 gap-3">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <p>Camera access is needed to record your check-in.</p>
-            <button type="button" onClick={handleClose} className="mt-2 text-white font-semibold text-sm border border-white/30 rounded-full px-5 py-2">
-              Go back
+            <p>
+              {camState === 'denied'
+                ? 'Camera access was declined — your check-in doesn’t need it.'
+                : 'The camera isn’t responding — no need to wait on it.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => acquireCamera()}
+              className="mt-2 text-white font-semibold text-sm border border-white/30 rounded-full px-5 py-2 transition active:scale-95"
+            >
+              Try the camera again
             </button>
           </div>
         ) : phase === 'review' && resultUrl ? (
@@ -159,13 +189,20 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             playsInline
           />
         ) : (
-          <video
-            ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover -scale-x-100"
-            autoPlay
-            playsInline
-            muted
-          />
+          <>
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover -scale-x-100"
+              autoPlay
+              playsInline
+              muted
+            />
+            {camState === 'requesting' && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-white/60 text-sm animate-pulse">Connecting to your camera…</span>
+              </div>
+            )}
+          </>
         )}
 
         {/* recording timer overlay */}
@@ -199,11 +236,13 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
 
       {/* bottom controls */}
       <div className="px-4 pt-4 pb-6 flex items-center justify-center gap-6">
-        {phase === 'preview' && (
+        {phase === 'preview' && camState !== 'denied' && camState !== 'timeout' && (
           <button
             type="button"
             onClick={startRecording}
-            className="w-[72px] h-[72px] rounded-full border-[4px] border-white flex items-center justify-center transition active:scale-95"
+            disabled={camState !== 'ready'}
+            aria-label="Record"
+            className="w-[72px] h-[72px] rounded-full border-[4px] border-white flex items-center justify-center transition active:scale-95 disabled:opacity-40"
           >
             <span className="w-[56px] h-[56px] rounded-full bg-red-500" />
           </button>
