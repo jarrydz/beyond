@@ -1,4 +1,5 @@
-import { BookmarkIcon, Card, Eyebrow, PillarBadge, useToast } from '@/components';
+import { useState } from 'react';
+import { BookmarkIcon, BottomSheet, Button, Card, Eyebrow, PillarBadge, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
@@ -18,6 +19,7 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
   const data = useData();
   const toast = useToast();
   const meal = useStoreState((s) => s.meals.find((m) => m.id === mealId));
+  const [cartSheetOpen, setCartSheetOpen] = useState(false);
   if (!meal) return null;
 
   const pillar = getPillar(meal.pillarId);
@@ -105,6 +107,25 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
           ))}
         </ol>
       </Card>
+
+      {/* Deliberate stub — hints at grocery hand-off without building it. */}
+      <Button variant="terra" className="w-full mt-1" onClick={() => setCartSheetOpen(true)}>
+        Add to shopping cart
+      </Button>
+
+      <BottomSheet
+        open={cartSheetOpen}
+        onClose={() => setCartSheetOpen(false)}
+        title="Shopping cart"
+        subtitle={`${meal.ingredients.length} ingredients from ${meal.title}`}
+      >
+        <p className="text-[14px] leading-relaxed mb-4">
+          Send these ingredients to your grocery order — coming soon.
+        </p>
+        <Button className="w-full" onClick={() => setCartSheetOpen(false)}>
+          Got it
+        </Button>
+      </BottomSheet>
     </section>
   );
 }
