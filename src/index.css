@@ -10,15 +10,35 @@
     margin: 0;
   }
 
+  /* iOS Safari samples the root/body background colour to tint its translucent
+     status bar and bottom toolbar (and the overscroll "rubber band"). Combined
+     with `viewport-fit=cover`, giving the root an explicit colour lets the app
+     surface bleed seamlessly into those bars instead of falling back to white
+     or a mismatched shade. Default to the app's cream surface. */
+  html {
+    background-color: #f4efe7;
+  }
+
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: #2a2a26;
     -webkit-tap-highlight-color: transparent;
+    /* Desktop: soft ambient wash behind the floating phone frame. */
     background:
       radial-gradient(1200px 600px at 20% -10%, #efe7d8 0%, transparent 60%),
       radial-gradient(900px 500px at 110% 10%, #e6e9df 0%, transparent 55%),
       #ede6da;
     min-height: 100%;
+  }
+
+  /* On phone-sized screens the app fills the viewport edge-to-edge, so the only
+     place the body shows through is behind Safari's bars. Match the cream app
+     surface there (a flat colour, not the desktop gradient) so the background
+     bleeds cleanly into the status bar and toolbar with no visible seam. */
+  @media (max-width: 480px) {
+    body {
+      background: #f4efe7;
+    }
   }
 
   *,
