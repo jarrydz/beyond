@@ -11,6 +11,7 @@ import type {
   Profile,
   Subscription,
 } from '@/types';
+import { readOnboarded } from './onboardingStorage';
 import {
   affirmations as seedAffirmations,
   checkIns as seedCheckIns,
@@ -47,7 +48,10 @@ export interface StoreState {
 
 export const initialState = (): StoreState => ({
   cohort: seedCohort,
-  profiles: seedProfiles.map((p) => ({ ...p })),
+  profiles: seedProfiles.map((p) => ({
+    ...p,
+    onboarded: p.onboarded || readOnboarded(p.id),
+  })),
   goals: seedGoals.map((g) => ({ ...g })),
   checkIns: seedCheckIns.map((c) => ({ ...c })),
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),

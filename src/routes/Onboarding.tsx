@@ -48,13 +48,27 @@ export function Onboarding() {
     navigate('/m', { replace: true });
   }
 
+  function skip() {
+    data.setOnboarded(me.id);
+    navigate('/m', { replace: true });
+  }
+
   return (
     <ScreenWrap withBottomNav={false}>
       <section className="px-5 pt-3 pb-8">
-        <div className="flex items-center gap-1.5 mb-5 mt-1.5">
-          <Dot active={step === 'cohort'} />
-          <Dot active={step === 'pillar'} />
-          <Dot active={step === 'goal'} />
+        <div className="flex items-center justify-between mb-5 mt-1.5">
+          <div className="flex items-center gap-1.5">
+            <Dot active={step === 'cohort'} />
+            <Dot active={step === 'pillar'} />
+            <Dot active={step === 'goal'} />
+          </div>
+          <button
+            type="button"
+            onClick={skip}
+            className="text-[13px] font-semibold text-green-soft hover:text-green transition-colors"
+          >
+            Skip
+          </button>
         </div>
 
         {step === 'cohort' && (

@@ -16,6 +16,7 @@ import type {
   Subscription,
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
+import { writeOnboarded } from '@/store/onboardingStorage';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
@@ -72,6 +73,7 @@ export function createDataService(store: MemoryStore) {
       });
     },
     setOnboarded(profileId: string): void {
+      writeOnboarded(profileId);
       store.set((s) => ({
         ...s,
         profiles: s.profiles.map((p) =>
