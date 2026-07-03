@@ -15,6 +15,7 @@ import { CommunityScreen } from './member/CommunityScreen';
 import { CoachScreen } from './member/CoachScreen';
 import { PillarsScreen } from './member/PillarsScreen';
 import { PillarDetailScreen } from './member/PillarDetailScreen';
+import { MealDetailScreen } from './member/MealDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
 import type { PillarId } from '@/types';
 
@@ -36,12 +37,14 @@ export function MemberHome() {
   const [prevTab, setPrevTab] = useState<Tab>('pillars');
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
+  const [openMealId, setOpenMealId] = useState<string | null>(null);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
       if (active !== 'profile') setPrevTab(active);
       setActive(next as Tab);
       setOpenPillarId(null);
+      setOpenMealId(null);
     }
   }
 
@@ -55,13 +58,19 @@ export function MemberHome() {
           else { setPrevTab(active); setActive('profile'); }
         }}
       />
-      <ScreenWrap key={`${active}:${openPillarId ?? ''}`} withBottomNav={!recorderOpen}>
+      <ScreenWrap key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}`} withBottomNav={!recorderOpen}>
         {active === 'home' && (
           <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
         )}
         {active === 'pillars' &&
-          (openPillarId ? (
-            <PillarDetailScreen pillarId={openPillarId} onBack={() => setOpenPillarId(null)} />
+          (openMealId ? (
+            <MealDetailScreen mealId={openMealId} onBack={() => setOpenMealId(null)} />
+          ) : openPillarId ? (
+            <PillarDetailScreen
+              pillarId={openPillarId}
+              onBack={() => setOpenPillarId(null)}
+              onOpenMeal={(id) => setOpenMealId(id)}
+            />
           ) : (
             <PillarsScreen onOpenPillar={(id) => setOpenPillarId(id)} />
           ))}
