@@ -16,7 +16,7 @@ import type {
   Subscription,
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
-import { ACTION_LABELS, AWARDS, type EarnAction } from '@/config/points';
+import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
   globalThis.crypto?.randomUUID?.() ?? `id-${Math.random().toString(36).slice(2, 10)}`;
@@ -257,6 +257,42 @@ export function createDataService(store: MemoryStore) {
         pointsBalance: s.pointsBalance + entry.points,
         pointsLedger: [...s.pointsLedger, entry],
       }));
+
+      // The single v1 milestone: pay the streak bonus exactly when the
+      // consecutive-day run reaches the threshold — not again on day 4+.
+      if (action === STREAK.action) {
+        const days = new Set(
+          store
+            .get()
+            .pointsLedger.filter((e) => e.action === STREAK.action)
+            .map((e) => new Date(e.at).toDateString()),
+        );
+        let run = 0;
+        const d = new Date();
+        while (days.has(d.toDateString())) {
+          run++;
+          d.setDate(d.getDate() - 1);
+        }
+        if (run === STREAK.days) {
+          const bonus = {
+            id: uid(),
+            action: STREAK.action,
+            points: STREAK.bonus,
+            at: new Date().toISOString(),
+            label: STREAK.label,
+          };
+          store.set((s) => ({
+            ...s,
+            pointsBalance: s.pointsBalance + bonus.points,
+            pointsLedger: [...s.pointsLedger, bonus],
+          }));
+          return {
+            points: entry.points + bonus.points,
+            label: `${entry.label} + ${STREAK.label}`,
+          };
+        }
+      }
+
       return { points: entry.points, label: entry.label };
     },
     /**
