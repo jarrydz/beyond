@@ -17,13 +17,15 @@ interface Props {
   onMarkDone?: (id: string) => void;
   /** Show a pillar pill on the media header (for multi-pillar lists). */
   showPillar?: boolean;
+  /** Recipe cards: jump to the retreat-kitchen library instead of the placeholder toast. */
+  onViewRecipes?: () => void;
 }
 
 /**
  * One content item as a media card, tinted by its pillar accent. Reused on the
  * pillar detail, Grow and Learn screens so the pillar reads consistently.
  */
-export function ContentCard({ item, meId, onMarkDone, showPillar = false }: Props) {
+export function ContentCard({ item, meId, onMarkDone, showPillar = false, onViewRecipes }: Props) {
   const toast = useToast();
   const pillar = getPillar(item.pillarId);
   const [showList, setShowList] = useState(false);
@@ -63,7 +65,10 @@ export function ContentCard({ item, meId, onMarkDone, showPillar = false }: Prop
         {item.type === 'recipe' ? (
           <>
             <ButtonRow>
-              <Button variant="ghost" onClick={() => toast('Recipe cards opening…')}>
+              <Button
+                variant="ghost"
+                onClick={() => (onViewRecipes ? onViewRecipes() : toast('Recipe cards opening…'))}
+              >
                 View recipes
               </Button>
               <Button variant="ghost" onClick={() => setShowList((v) => !v)}>

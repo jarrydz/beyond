@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Card, ContentCard, Eyebrow, MealCard, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
@@ -21,6 +21,7 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   const toast = useToast();
   const pillar = getPillar(pillarId);
   const [mealFilter, setMealFilter] = useState<'all' | 'saved'>('all');
+  const kitchenRef = useRef<HTMLDivElement>(null);
 
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const content = useStoreState((s) => s.content);
@@ -112,7 +113,7 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
       )}
 
       {pillarId === 'nourishment' && (
-        <div className="mt-6">
+        <div ref={kitchenRef} className="mt-6 scroll-mt-4">
           <h3 className="font-serif font-semibold text-[19px]">From the retreat kitchen</h3>
           <p className="text-muted text-[13px] mt-0.5 mb-3">
             Recipes to take home — grouped by when you’d eat them.
@@ -172,6 +173,14 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
             item={it}
             meId={me.id}
             onMarkDone={(id) => data.markContentDone(id)}
+            onViewRecipes={
+              pillarId === 'nourishment'
+                ? () => {
+                    setMealFilter('all');
+                    kitchenRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                : undefined
+            }
           />
         ))
       ) : (
