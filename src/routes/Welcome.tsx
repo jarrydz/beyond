@@ -5,6 +5,13 @@ import { useIsCompact } from '@/components/PhoneFrame';
 // resolve against BASE_URL to stay correct under the GitHub Pages base path.
 const bgUrl = `${import.meta.env.BASE_URL}beyond-bg.jpg`;
 
+// Colours sampled from the composited backdrop (photo + scrim) at the very top
+// and bottom of the phone viewport. iOS Safari tints its status bar / toolbar
+// from the background-color of a fixed element pinned to that edge, so these let
+// the bars match the image instead of falling back to the cream body colour.
+const EDGE_TOP = '#95a0a1';
+const EDGE_BOTTOM = '#0b1113';
+
 export function Welcome() {
   const navigate = useNavigate();
   const compact = useIsCompact();
@@ -13,11 +20,9 @@ export function Welcome() {
     <div className="absolute inset-0 z-[80] text-center text-cream">
       {/*
         Full-bleed backdrop. On a phone we pin it to the viewport (position:
-        fixed) so the image and its scrim run edge-to-edge behind iOS Safari's
-        status bar and toolbar — Safari samples this fixed layer's colour to tint
-        those bars, so they blend into the photo instead of showing a seam. On
-        desktop it stays absolute so it fills the framed device, not the window.
-        The interactive copy below keeps its own position in the visible area.
+        fixed) so the image and its scrim run edge-to-edge, sitting behind iOS
+        Safari's status bar and toolbar. On desktop it stays absolute so it fills
+        the framed device, not the window.
       */}
       <div
         className={compact ? 'fixed inset-0 -z-10' : 'absolute inset-0 -z-10'}
@@ -32,6 +37,36 @@ export function Welcome() {
           backgroundPosition: 'center, center',
         }}
       />
+
+      {/*
+        Bar-tint samplers (phone only). iOS Safari colours the translucent status
+        bar and bottom toolbar from the background-color of a fixed element at
+        that edge — a photo/gradient layer doesn't qualify, so without these the
+        bars fall back to the cream page background and leave a seam. Each strip
+        spans the safe-area inset (hidden under the bar) and is painted the exact
+        colour of the photo at that edge, so the bars read as a continuation of
+        the image with no visible band.
+      */}
+      {compact && (
+        <>
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-x-0 top-0 z-[81]"
+            style={{
+              height: 'max(env(safe-area-inset-top, 0px), 12px)',
+              backgroundColor: EDGE_TOP,
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-[81]"
+            style={{
+              height: 'max(env(safe-area-inset-bottom, 0px), 12px)',
+              backgroundColor: EDGE_BOTTOM,
+            }}
+          />
+        </>
+      )}
 
       {/* Wordmark sits ~65% up from the base (centre on the 35%-from-top line). */}
       <div
