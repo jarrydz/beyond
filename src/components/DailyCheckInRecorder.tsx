@@ -278,8 +278,15 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
             </p>
             <button
               type="button"
+              onClick={goTextMode}
+              className="mt-2 bg-white text-black font-semibold text-sm rounded-full px-6 py-2.5 transition active:scale-95"
+            >
+              Check in without camera
+            </button>
+            <button
+              type="button"
               onClick={() => acquireCamera()}
-              className="mt-2 text-white font-semibold text-sm border border-white/30 rounded-full px-5 py-2 transition active:scale-95"
+              className="text-white font-semibold text-sm border border-white/30 rounded-full px-5 py-2 transition active:scale-95"
             >
               Try the camera again
             </button>
