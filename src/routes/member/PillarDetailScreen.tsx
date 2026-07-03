@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { Card, ContentCard, Eyebrow, MealCard } from '@/components';
+import { useMemo, useState } from 'react';
+import { Card, ContentCard, Eyebrow, MealCard, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
@@ -18,7 +18,9 @@ interface Props {
 
 export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   const data = useData();
+  const toast = useToast();
   const pillar = getPillar(pillarId);
+  const [mealFilter, setMealFilter] = useState<'all' | 'saved'>('all');
 
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const content = useStoreState((s) => s.content);
@@ -27,9 +29,18 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   const meals = useStoreState((s) => s.meals);
 
   const mealGroups = useMemo(
-    () => (pillarId === 'nourishment' ? mealsByTime(meals) : []),
-    [meals, pillarId],
+    () =>
+      pillarId === 'nourishment'
+        ? mealsByTime(mealFilter === 'saved' ? meals.filter((m) => m.saved) : meals)
+        : [],
+    [meals, mealFilter, pillarId],
   );
+
+  function toggleSaveMeal(id: string) {
+    const wasSaved = meals.find((m) => m.id === id)?.saved;
+    data.toggleSaveMeal(id);
+    toast(wasSaved ? 'Removed from your saved recipes.' : 'Saved to your recipes.');
+  }
   const items = useMemo(() => contentForPillar(content, pillarId), [content, pillarId]);
   const goal = useMemo(
     () => goals.find((g) => g.profileId === me.id && g.pillarId === pillarId && g.active),
@@ -100,20 +111,56 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
         </Card>
       )}
 
-      {mealGroups.length > 0 && (
+      {pillarId === 'nourishment' && (
         <div className="mt-6">
           <h3 className="font-serif font-semibold text-[19px]">From the retreat kitchen</h3>
           <p className="text-muted text-[13px] mt-0.5 mb-3">
             Recipes to take home — grouped by when you’d eat them.
           </p>
-          {mealGroups.map((g) => (
-            <div key={g.id}>
-              <Eyebrow className="mt-4 mb-2">{g.label}</Eyebrow>
-              {g.items.map((m) => (
-                <MealCard key={m.id} meal={m} onOpen={(id) => onOpenMeal?.(id)} />
-              ))}
-            </div>
-          ))}
+          <div className="flex gap-2 mb-1">
+            {(
+              [
+                { key: 'all', label: 'All recipes' },
+                { key: 'saved', label: 'Saved' },
+              ] as const
+            ).map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                aria-pressed={mealFilter === f.key}
+                onClick={() => setMealFilter(f.key)}
+                className={[
+                  'rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold border transition-colors',
+                  mealFilter === f.key
+                    ? 'bg-green text-cream border-green'
+                    : 'bg-white text-muted border-line hover:border-sage',
+                ].join(' ')}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {mealGroups.length > 0 ? (
+            mealGroups.map((g) => (
+              <div key={g.id}>
+                <Eyebrow className="mt-4 mb-2">{g.label}</Eyebrow>
+                {g.items.map((m) => (
+                  <MealCard
+                    key={m.id}
+                    meal={m}
+                    onOpen={(id) => onOpenMeal?.(id)}
+                    onToggleSave={toggleSaveMeal}
+                  />
+                ))}
+              </div>
+            ))
+          ) : (
+            <Card className="mt-3">
+              <p className="text-muted text-[13.5px]">
+                Nothing saved yet — tap the bookmark on any recipe to keep it here.
+              </p>
+            </Card>
+          )}
         </div>
       )}
 

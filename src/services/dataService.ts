@@ -214,6 +214,12 @@ export function createDataService(store: MemoryStore) {
     getMeal(id: string): Meal | undefined {
       return store.get().meals.find((m) => m.id === id);
     },
+    toggleSaveMeal(id: string): void {
+      store.set((s) => ({
+        ...s,
+        meals: s.meals.map((m) => (m.id === id ? { ...m, saved: !m.saved } : m)),
+      }));
+    },
 
     // members (coach side)
     getMembers(): Profile[] {

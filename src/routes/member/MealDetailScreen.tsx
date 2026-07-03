@@ -1,4 +1,5 @@
-import { Card, Eyebrow, PillarBadge } from '@/components';
+import { BookmarkIcon, Card, Eyebrow, PillarBadge, useToast } from '@/components';
+import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
 import { darken } from '@/utils/pillars';
@@ -14,10 +15,18 @@ interface Props {
  * same pattern as PillarDetailScreen.
  */
 export function MealDetailScreen({ mealId, onBack }: Props) {
+  const data = useData();
+  const toast = useToast();
   const meal = useStoreState((s) => s.meals.find((m) => m.id === mealId));
   if (!meal) return null;
 
   const pillar = getPillar(meal.pillarId);
+
+  function toggleSave() {
+    if (!meal) return;
+    data.toggleSaveMeal(meal.id);
+    toast(meal.saved ? 'Removed from your saved recipes.' : 'Saved to your recipes.');
+  }
 
   return (
     <section className="px-5 pt-3 pb-7">
@@ -33,11 +42,21 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
       </button>
 
       <div
-        className="h-[150px] rounded-card shadow-card mb-4"
+        className="h-[150px] rounded-card shadow-card mb-4 relative"
         style={{
           background: `linear-gradient(135deg, ${meal.tint}, ${darken(meal.tint, 0.45)})`,
         }}
-      />
+      >
+        <button
+          type="button"
+          aria-label={meal.saved ? 'Remove from saved' : 'Save recipe'}
+          aria-pressed={meal.saved}
+          onClick={toggleSave}
+          className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/85 grid place-items-center shadow-card transition active:scale-90"
+        >
+          <BookmarkIcon filled={meal.saved} />
+        </button>
+      </div>
 
       <div className="flex items-start justify-between gap-3">
         <h2 className="font-serif font-semibold text-[23px] leading-tight">{meal.title}</h2>
