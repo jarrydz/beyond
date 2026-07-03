@@ -259,6 +259,29 @@ export function createDataService(store: MemoryStore) {
       }));
       return { points: entry.points, label: entry.label };
     },
+    /**
+     * Spend from the wallet — the PRD-03 marketplace seam. Hard guard:
+     * never a negative balance — insufficient funds no-ops and returns
+     * false. Spends land in the ledger as negative entries so the history
+     * stays a complete explanation of the balance.
+     */
+    spendPoints(n: number, label = ACTION_LABELS.marketplace_spend): boolean {
+      if (!Number.isFinite(n) || n <= 0) return false;
+      if (store.get().pointsBalance < n) return false;
+      const entry = {
+        id: uid(),
+        action: 'marketplace_spend' as const,
+        points: -n,
+        at: new Date().toISOString(),
+        label,
+      };
+      store.set((s) => ({
+        ...s,
+        pointsBalance: s.pointsBalance - n,
+        pointsLedger: [...s.pointsLedger, entry],
+      }));
+      return true;
+    },
     getPointsBalance(): number {
       return store.get().pointsBalance;
     },
