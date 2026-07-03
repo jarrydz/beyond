@@ -4,10 +4,12 @@ import type {
   ContentItem,
   Goal,
   Meal,
+  PointsLedgerEntry,
   Post,
   Profile,
   Subscription,
 } from '@/types';
+import { ACTION_LABELS, AWARDS } from '@/config/points';
 
 const now = Date.now();
 const days = (n: number) => new Date(now + n * 86_400_000).toISOString();
@@ -686,6 +688,37 @@ export const meals: Meal[] = [
     saved: false,
   },
 ];
+
+/**
+ * A believable little earn history: check-ins on the last two days (so one
+ * more today crosses the 3-day streak in a demo) plus one completed session.
+ * Balance is always the ledger sum — never seed them apart.
+ */
+export const pointsLedger: PointsLedgerEntry[] = [
+  {
+    id: 'pt-checkin-2',
+    action: 'daily_check_in',
+    points: AWARDS.daily_check_in,
+    at: days(-2),
+    label: ACTION_LABELS.daily_check_in,
+  },
+  {
+    id: 'pt-session-1',
+    action: 'content_complete',
+    points: AWARDS.content_complete,
+    at: days(-2),
+    label: ACTION_LABELS.content_complete,
+  },
+  {
+    id: 'pt-checkin-1',
+    action: 'daily_check_in',
+    points: AWARDS.daily_check_in,
+    at: days(-1),
+    label: ACTION_LABELS.daily_check_in,
+  },
+];
+
+export const pointsBalance = pointsLedger.reduce((sum, e) => sum + e.points, 0);
 
 export const affirmations: string[] = [
   'I am the kind of person who keeps the promises I make to myself.',

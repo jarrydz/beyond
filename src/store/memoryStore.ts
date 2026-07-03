@@ -6,6 +6,7 @@ import type {
   DailyCheckInEntry,
   Goal,
   Meal,
+  PointsLedgerEntry,
   Post,
   Profile,
   Subscription,
@@ -17,6 +18,8 @@ import {
   content as seedContent,
   goals as seedGoals,
   meals as seedMeals,
+  pointsBalance as seedPointsBalance,
+  pointsLedger as seedPointsLedger,
   posts as seedPosts,
   profiles as seedProfiles,
   subscriptions as seedSubscriptions,
@@ -31,6 +34,8 @@ export interface StoreState {
   posts: Post[];
   content: ContentItem[];
   meals: Meal[];
+  pointsBalance: number;
+  pointsLedger: PointsLedgerEntry[];
   subscriptions: Subscription[];
   dailyCheckIns: DailyCheckInEntry[];
   affirmations: string[];
@@ -48,6 +53,8 @@ export const initialState = (): StoreState => ({
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),
   content: seedContent.map((c) => ({ ...c, doneBy: [...c.doneBy] })),
   meals: seedMeals.map((m) => ({ ...m, ingredients: [...m.ingredients], steps: [...m.steps] })),
+  pointsBalance: seedPointsBalance,
+  pointsLedger: seedPointsLedger.map((e) => ({ ...e })),
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
   dailyCheckIns: [],
   affirmations: [...seedAffirmations],

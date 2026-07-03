@@ -8,6 +8,7 @@ import type {
   Goal,
   Meal,
   PillarId,
+  PointsLedgerEntry,
   Post,
   Profile,
   RecordCheckInInput,
@@ -219,6 +220,15 @@ export function createDataService(store: MemoryStore) {
         ...s,
         meals: s.meals.map((m) => (m.id === id ? { ...m, saved: !m.saved } : m)),
       }));
+    },
+
+    // points wallet
+    getPointsBalance(): number {
+      return store.get().pointsBalance;
+    },
+    getPointsLedger(): PointsLedgerEntry[] {
+      // Newest first — the order the earn history reads in.
+      return [...store.get().pointsLedger].sort((a, b) => b.at.localeCompare(a.at));
     },
 
     // members (coach side)

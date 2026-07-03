@@ -116,6 +116,30 @@ export interface Meal {
   saved: boolean;
 }
 
+/**
+ * Everything that can move the points balance. Earn actions reward real
+ * wellbeing behaviour (see config/points.ts for values + design intent);
+ * marketplace_spend is the PRD-03 debit side.
+ */
+export type PointsAction =
+  | 'daily_check_in'
+  | 'content_complete'
+  | 'save_recipe'
+  | 'goal_30_day'
+  | 'goal_100_day'
+  | 'meal_delivery_interest'
+  | 'marketplace_spend';
+
+export interface PointsLedgerEntry {
+  id: string;
+  action: PointsAction;
+  points: number; // positive = earned, negative = spent
+  at: string; // ISO timestamp
+  label: string; // human-readable, for the earn history
+  /** Optional subject (meal/content id) so awards can be once-per-thing, not farmable. */
+  refId?: string;
+}
+
 export interface Subscription {
   profileId: string;
   plan: string;
