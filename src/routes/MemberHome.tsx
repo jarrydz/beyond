@@ -19,6 +19,7 @@ import { PillarDetailScreen } from './member/PillarDetailScreen';
 import { MealDetailScreen } from './member/MealDetailScreen';
 import { MoreScreen } from './member/MoreScreen';
 import { MarketplaceScreen } from './member/MarketplaceScreen';
+import { ProductDetailScreen } from './member/ProductDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
 import type { PillarId } from '@/types';
 
@@ -48,6 +49,7 @@ export function MemberHome() {
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
   const [marketOpen, setMarketOpen] = useState(false);
+  const [openProductId, setOpenProductId] = useState<string | null>(null);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
@@ -56,6 +58,7 @@ export function MemberHome() {
       setOpenPillarId(null);
       setOpenMealId(null);
       setMarketOpen(false);
+      setOpenProductId(null);
     }
   }
 
@@ -72,7 +75,7 @@ export function MemberHome() {
         }}
       />
       <ScreenWrap
-        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${marketOpen}`}
+        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
       >
         {active === 'home' && (
@@ -93,8 +96,16 @@ export function MemberHome() {
         {active === 'community' && <CommunityScreen />}
         {active === 'coach' && <CoachScreen />}
         {active === 'more' &&
-          (marketOpen ? (
-            <MarketplaceScreen onBack={() => setMarketOpen(false)} onOpenProduct={() => {}} />
+          (openProductId ? (
+            <ProductDetailScreen
+              productId={openProductId}
+              onBack={() => setOpenProductId(null)}
+            />
+          ) : marketOpen ? (
+            <MarketplaceScreen
+              onBack={() => setMarketOpen(false)}
+              onOpenProduct={(id) => setOpenProductId(id)}
+            />
           ) : (
             <MoreScreen
               onOpenMarketplace={() => setMarketOpen(true)}
