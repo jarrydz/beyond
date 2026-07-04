@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useIsCompact } from '@/components/PhoneFrame';
+import { useData } from '@/services';
+import type { Role } from '@/types';
 
 // Calm still-water ripple from the refreshed founders deck. Lives in public/, so
 // resolve against BASE_URL to stay correct under the GitHub Pages base path.
@@ -14,7 +16,13 @@ const EDGE_BOTTOM = '#0b1113';
 
 export function Welcome() {
   const navigate = useNavigate();
+  const data = useData();
   const compact = useIsCompact();
+
+  function enter(role: Role) {
+    data.signIn(role);
+    navigate(role === 'coach' ? '/c' : '/m', { replace: true });
+  }
 
   return (
     <div className="absolute inset-0 z-[80] text-center text-cream">
@@ -86,14 +94,21 @@ export function Welcome() {
         </h1>
       </div>
 
-      {/* Action sits ~14% up from the base. */}
-      <div className="absolute inset-x-0 px-[30px]" style={{ bottom: '14%' }}>
+      {/* Actions sit ~14% up from the base. */}
+      <div className="absolute inset-x-0 px-[30px] space-y-3" style={{ bottom: '14%' }}>
         <button
           type="button"
-          onClick={() => navigate('/signin')}
+          onClick={() => enter('member')}
           className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-[#F1ECE2] text-green-deep hover:brightness-105"
         >
           Continue your journey
+        </button>
+        <button
+          type="button"
+          onClick={() => enter('coach')}
+          className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-black text-white hover:brightness-110"
+        >
+          Coach access
         </button>
       </div>
     </div>
