@@ -42,6 +42,8 @@ export interface StoreState {
   pointsLedger: PointsLedgerEntry[];
   products: Product[];
   orders: Order[];
+  /** Painted-door flag (PRD-04) — has the member joined the meal-delivery list? */
+  mealDeliveryInterest: boolean;
   subscriptions: Subscription[];
   dailyCheckIns: DailyCheckInEntry[];
   affirmations: string[];
@@ -66,6 +68,7 @@ export const initialState = (): StoreState => ({
   pointsLedger: seedPointsLedger.map((e) => ({ ...e })),
   products: seedProducts.map((p) => ({ ...p })),
   orders: [],
+  mealDeliveryInterest: false,
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
   dailyCheckIns: [],
   affirmations: [...seedAffirmations],

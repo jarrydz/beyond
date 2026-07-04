@@ -364,6 +364,18 @@ export function createDataService(store: MemoryStore) {
       return order;
     },
 
+    // meal delivery (PRD-04 painted door — records intent, nothing ships)
+    /**
+     * Join the meal-delivery list. Idempotent: a no-op returning null once
+     * registered, and the +5 rides the per-refId award guard, so un-join/
+     * re-join farming is impossible even if the flag is ever reset.
+     */
+    registerMealDeliveryInterest(): { points: number; label: string } | null {
+      if (store.get().mealDeliveryInterest) return null;
+      store.set((s) => ({ ...s, mealDeliveryInterest: true }));
+      return this.awardPoints('meal_delivery_interest', 'meal-delivery');
+    },
+
     // members (coach side)
     getMembers(): Profile[] {
       const s = store.get();
