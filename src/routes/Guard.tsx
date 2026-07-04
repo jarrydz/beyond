@@ -6,7 +6,7 @@ import { useStoreState } from '@/store/StoreProvider';
  * Decides where the user belongs based on auth + role + onboarding/paywall state.
  * Wrap any route that requires signed-in state; pass `need` to gate by role.
  *
- * Member flow:  signed-in → onboarded → /m
+ * Member flow:  signed-in → /onboarding → onboarded → /m
  * Coach flow:   signed-in → /c (no onboarding gate)
  */
 export function Guard({
@@ -52,8 +52,14 @@ export function Guard({
 export function PublicOnly({ children }: { children: ReactNode }) {
   const signedIn = useStoreState((s) => s.signedIn);
   const activeRole = useStoreState((s) => s.activeRole);
+  const onboarded = useStoreState((s) => {
+    const me = s.profiles.find((p) => p.id === s.currentUserId);
+    return Boolean(me?.onboarded);
+  });
   if (signedIn) {
-    return <Navigate to={activeRole === 'coach' ? '/c' : '/m'} replace />;
+    if (activeRole === 'coach') return <Navigate to="/c" replace />;
+    if (!onboarded) return <Navigate to="/onboarding" replace />;
+    return <Navigate to="/m" replace />;
   }
   return <>{children}</>;
 }

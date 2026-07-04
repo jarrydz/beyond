@@ -45,12 +45,12 @@ export function Onboarding() {
     }
     data.setActiveGoal(me.id, pillarId, title, goalWindow);
     data.setOnboarded(me.id);
-    navigate('/m', { replace: true });
+    navigate('/m', { replace: true, state: { tab: 'home' } });
   }
 
   function skip() {
     data.setOnboarded(me.id);
-    navigate('/m', { replace: true });
+    navigate('/m', { replace: true, state: { tab: 'pillars' } });
   }
 
   return (

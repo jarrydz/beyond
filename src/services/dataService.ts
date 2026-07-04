@@ -18,7 +18,7 @@ import type {
   Subscription,
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
-import { writeOnboarded } from '@/store/onboardingStorage';
+import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
@@ -50,11 +50,20 @@ export function createDataService(store: MemoryStore) {
             ? s.profiles.find((p) => p.role === 'coach')?.id ?? s.currentUserId
             : s.profiles.find((p) => p.id === 'member-jarryd')?.id ?? s.currentUserId;
         const alreadySubbed = s.subscriptions.some((x) => x.profileId === userId);
+        if (role === 'member') {
+          clearOnboarded(userId);
+        }
         return {
           ...s,
           signedIn: true,
           activeRole: role,
           currentUserId: userId,
+          profiles:
+            role === 'member'
+              ? s.profiles.map((p) =>
+                  p.id === userId ? { ...p, onboarded: false } : p,
+                )
+              : s.profiles,
           subscriptions: alreadySubbed
             ? s.subscriptions
             : [...s.subscriptions, { profileId: userId, plan: 'monthly', status: 'mock' as const, startedAt: new Date().toISOString() }],

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   BottomNav,
   DailyCheckInRecorder,
@@ -36,16 +37,26 @@ const navItems: NavItem[] = [
 
 type Tab = 'home' | 'pillars' | 'community' | 'coach' | 'more' | 'profile';
 
+type MemberHomeLocationState = {
+  tab?: Tab;
+};
+
+function initialTab(state: unknown): Tab {
+  const tab = (state as MemberHomeLocationState | null)?.tab;
+  if (tab === 'home' || tab === 'pillars') return tab;
+  return 'pillars';
+}
+
 export function MemberHome() {
+  const location = useLocation();
   const data = useData();
   const toast = useToast();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const pointsBalance = useStoreState((s) => s.pointsBalance);
   const pointsLedger = useStoreState((s) => s.pointsLedger);
   const [pointsOpen, setPointsOpen] = useState(false);
-  // Land on Pillars so the five pillars are the first thing a member or partner sees.
-  const [active, setActive] = useState<Tab>('pillars');
-  const [prevTab, setPrevTab] = useState<Tab>('pillars');
+  const [active, setActive] = useState<Tab>(() => initialTab(location.state));
+  const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state));
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);

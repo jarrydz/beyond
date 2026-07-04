@@ -15,3 +15,11 @@ export function writeOnboarded(profileId: string): void {
     // localStorage can be unavailable in private modes
   }
 }
+
+export function clearOnboarded(profileId: string): void {
+  try {
+    localStorage.removeItem(key(profileId));
+  } catch {
+    // localStorage can be unavailable in private modes
+  }
+}
