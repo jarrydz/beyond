@@ -16,9 +16,17 @@ interface Props {
   onOpenMeal?: (id: string) => void;
   /** Contextual marketplace placement — a product card inside its pillar. */
   onOpenProduct?: (id: string) => void;
+  /** PRD-04 painted door — the meal-delivery explainer (Nourishment only). */
+  onOpenMealDelivery?: () => void;
 }
 
-export function PillarDetailScreen({ pillarId, onBack, onOpenMeal, onOpenProduct }: Props) {
+export function PillarDetailScreen({
+  pillarId,
+  onBack,
+  onOpenMeal,
+  onOpenProduct,
+  onOpenMealDelivery,
+}: Props) {
   const data = useData();
   const toast = useToast();
   const pillar = getPillar(pillarId);
@@ -156,6 +164,41 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal, onOpenProduct
               </button>
             ))}
           </div>
+          {onOpenMealDelivery && (
+            <button
+              type="button"
+              onClick={onOpenMealDelivery}
+              className="w-full text-left rounded-card border border-line bg-white shadow-card p-3.5 mt-3 mb-1 flex items-center gap-3.5 transition active:scale-[0.985] hover:border-sage"
+            >
+              <div
+                className="w-12 h-12 rounded-[16px] grid place-items-center flex-none"
+                style={{ background: `${pillar.accent}1f`, color: pillar.accent }}
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                  <path d="M4 11h16l-1.5 8.5a1.5 1.5 0 0 1-1.5 1.2H7a1.5 1.5 0 0 1-1.5-1.2Z" />
+                  <path d="M12 11V7.5" />
+                  <path d="M12 7.5a2.5 2.5 0 1 1 2.5-2.5" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-serif font-semibold text-[17px] leading-tight">
+                  Retreat meals, delivered
+                </div>
+                <div className="text-muted text-[12.5px] mt-0.5">
+                  The kitchen you loved — at your door.
+                </div>
+              </div>
+              <svg
+                className="w-4 h-4 flex-none text-muted"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
+          )}
           {mealGroups.length > 0 ? (
             mealGroups.map((g) => (
               <div key={g.id}>

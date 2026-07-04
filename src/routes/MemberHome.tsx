@@ -17,6 +17,7 @@ import { CoachScreen } from './member/CoachScreen';
 import { PillarsScreen } from './member/PillarsScreen';
 import { PillarDetailScreen } from './member/PillarDetailScreen';
 import { MealDetailScreen } from './member/MealDetailScreen';
+import { MealDeliveryScreen } from './member/MealDeliveryScreen';
 import { MoreScreen } from './member/MoreScreen';
 import { MarketplaceScreen } from './member/MarketplaceScreen';
 import { ProductDetailScreen } from './member/ProductDetailScreen';
@@ -48,6 +49,7 @@ export function MemberHome() {
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [marketOpen, setMarketOpen] = useState(false);
   const [openProductId, setOpenProductId] = useState<string | null>(null);
 
@@ -57,6 +59,7 @@ export function MemberHome() {
       setActive(next as Tab);
       setOpenPillarId(null);
       setOpenMealId(null);
+      setDeliveryOpen(false);
       setMarketOpen(false);
       setOpenProductId(null);
     }
@@ -75,7 +78,7 @@ export function MemberHome() {
         }}
       />
       <ScreenWrap
-        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${marketOpen}:${openProductId ?? ''}`}
+        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
       >
         {active === 'home' && (
@@ -84,11 +87,16 @@ export function MemberHome() {
         {active === 'pillars' &&
           (openMealId ? (
             <MealDetailScreen mealId={openMealId} onBack={() => setOpenMealId(null)} />
+          ) : deliveryOpen ? (
+            <MealDeliveryScreen onBack={() => setDeliveryOpen(false)} />
           ) : openPillarId ? (
             <PillarDetailScreen
               pillarId={openPillarId}
               onBack={() => setOpenPillarId(null)}
               onOpenMeal={(id) => setOpenMealId(id)}
+              onOpenMealDelivery={
+                openPillarId === 'nourishment' ? () => setDeliveryOpen(true) : undefined
+              }
               onOpenProduct={(id) => {
                 goTab('more');
                 setMarketOpen(true);
