@@ -17,6 +17,7 @@ interface Props {
 export function ProductDetailScreen({ productId, onBack }: Props) {
   const data = useData();
   const product = useStoreState((s) => s.products.find((p) => p.id === productId));
+  const pointsBalance = useStoreState((s) => s.pointsBalance);
   const [confirmedMethod, setConfirmedMethod] = useState<'cash' | 'points' | null>(null);
   if (!product) return null;
 
@@ -66,6 +67,27 @@ export function ProductDetailScreen({ productId, onBack }: Props) {
       <Button variant="terra" className="w-full mt-1" onClick={() => order('cash')}>
         Order · {formatAud(product.priceAud)}
       </Button>
+
+      {product.pointCost != null && (
+        <>
+          <Button
+            variant="ghost"
+            className="w-full mt-2.5"
+            disabled={pointsBalance < product.pointCost}
+            onClick={() => order('points')}
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <SparkIcon className="w-3.5 h-3.5" />
+              Redeem · {product.pointCost} pts
+            </span>
+          </Button>
+          {pointsBalance < product.pointCost && (
+            <p className="text-muted text-[12px] text-center mt-2">
+              {product.pointCost - pointsBalance} more points to redeem — you have {pointsBalance}.
+            </p>
+          )}
+        </>
+      )}
 
       <BottomSheet
         open={confirmedMethod !== null}

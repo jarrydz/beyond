@@ -89,6 +89,11 @@ export function MemberHome() {
               pillarId={openPillarId}
               onBack={() => setOpenPillarId(null)}
               onOpenMeal={(id) => setOpenMealId(id)}
+              onOpenProduct={(id) => {
+                goTab('more');
+                setMarketOpen(true);
+                setOpenProductId(id);
+              }}
             />
           ) : (
             <PillarsScreen onOpenPillar={(id) => setOpenPillarId(id)} />
@@ -127,6 +132,11 @@ export function MemberHome() {
         onClose={() => setPointsOpen(false)}
         balance={pointsBalance}
         ledger={[...pointsLedger].sort((a, b) => b.at.localeCompare(a.at))}
+        onSpend={() => {
+          setPointsOpen(false);
+          goTab('more');
+          setMarketOpen(true);
+        }}
       />
       <DailyCheckInRecorder
         open={recorderOpen}

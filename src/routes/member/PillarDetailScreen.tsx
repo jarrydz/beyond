@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Card, ContentCard, Eyebrow, MealCard, useToast } from '@/components';
+import { Card, ContentCard, Eyebrow, MealCard, ProductCard, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
@@ -14,9 +14,11 @@ interface Props {
   onBack: () => void;
   /** Wired on the pillars tab so a meal card can push the recipe screen. */
   onOpenMeal?: (id: string) => void;
+  /** Contextual marketplace placement — a product card inside its pillar. */
+  onOpenProduct?: (id: string) => void;
 }
 
-export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
+export function PillarDetailScreen({ pillarId, onBack, onOpenMeal, onOpenProduct }: Props) {
   const data = useData();
   const toast = useToast();
   const pillar = getPillar(pillarId);
@@ -28,6 +30,14 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
   const goals = useStoreState((s) => s.goals);
   const checkIns = useStoreState((s) => s.checkIns);
   const meals = useStoreState((s) => s.meals);
+  const products = useStoreState((s) => s.products);
+
+  // The contrarian placement bet: a couple of curated products inside the
+  // pillar they serve, instead of relying on the standalone shop alone.
+  const pillarProducts = useMemo(
+    () => products.filter((p) => p.pillarId === pillarId).slice(0, 2),
+    [products, pillarId],
+  );
 
   const mealGroups = useMemo(
     () =>
@@ -196,6 +206,15 @@ export function PillarDetailScreen({ pillarId, onBack, onOpenMeal }: Props) {
         <Card>
           <p className="text-muted text-[13.5px]">Fresh content lands here every Monday.</p>
         </Card>
+      )}
+
+      {pillarProducts.length > 0 && onOpenProduct && (
+        <>
+          <Eyebrow className="mt-5 mb-2">From the marketplace</Eyebrow>
+          {pillarProducts.map((p) => (
+            <ProductCard key={p.id} product={p} onOpen={onOpenProduct} />
+          ))}
+        </>
       )}
 
       {pillarCheckIns.length > 0 && (

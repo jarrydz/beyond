@@ -8,13 +8,15 @@ interface Props {
   balance: number;
   /** Newest first. */
   ledger: PointsLedgerEntry[];
+  /** Jump to the marketplace — points and the shop are two ends of one loop. */
+  onSpend?: () => void;
 }
 
 /**
  * The earn history — total transparency: every entry shows what it was for,
  * how much, and when. Calm, not casino; no mystery mechanics.
  */
-export function PointsSheet({ open, onClose, balance, ledger }: Props) {
+export function PointsSheet({ open, onClose, balance, ledger, onSpend }: Props) {
   return (
     <BottomSheet
       open={open}
@@ -22,9 +24,20 @@ export function PointsSheet({ open, onClose, balance, ledger }: Props) {
       title="Your points"
       subtitle="Earned for real wellbeing actions — every point explained."
     >
-      <div className="flex items-baseline gap-2 mb-4">
-        <span className="font-serif font-semibold text-[34px] leading-none">{balance}</span>
-        <span className="text-muted text-[13px]">points</span>
+      <div className="flex items-baseline justify-between mb-4">
+        <div className="flex items-baseline gap-2">
+          <span className="font-serif font-semibold text-[34px] leading-none">{balance}</span>
+          <span className="text-muted text-[13px]">points</span>
+        </div>
+        {onSpend && (
+          <button
+            type="button"
+            onClick={onSpend}
+            className="text-green text-[13px] font-semibold underline underline-offset-4 transition active:scale-95"
+          >
+            Spend your points
+          </button>
+        )}
       </div>
 
       <div className="max-h-[300px] overflow-y-auto no-scrollbar -mx-1 px-1">
