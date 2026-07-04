@@ -3,7 +3,6 @@ import { StoreProvider } from './store/StoreProvider';
 import { ServicesProvider } from './services/ServicesProvider';
 import { InstallPrompt, PhoneFrame, ToastProvider } from './components';
 import { Welcome } from './routes/Welcome';
-import { SignIn } from './routes/SignIn';
 import { Onboarding } from './routes/Onboarding';
 import { Paywall } from './routes/Paywall';
 import { MemberHome } from './routes/MemberHome';
@@ -24,14 +23,6 @@ export default function App() {
                   element={
                     <PublicOnly>
                       <Welcome />
-                    </PublicOnly>
-                  }
-                />
-                <Route
-                  path="/signin"
-                  element={
-                    <PublicOnly>
-                      <SignIn />
                     </PublicOnly>
                   }
                 />

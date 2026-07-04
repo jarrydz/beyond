@@ -24,7 +24,7 @@ export function Guard({
   });
   const location = useLocation();
 
-  if (!signedIn) return <Navigate to="/signin" replace />;
+  if (!signedIn) return <Navigate to="/welcome" replace />;
 
   // Coach routes: skip onboarding/paywall.
   if (need === 'coach') {
@@ -47,7 +47,7 @@ export function Guard({
 }
 
 /**
- * For the welcome/signin routes — if you're already signed in, skip past.
+ * For the welcome route — if you're already signed in, skip past.
  */
 export function PublicOnly({ children }: { children: ReactNode }) {
   const signedIn = useStoreState((s) => s.signedIn);
