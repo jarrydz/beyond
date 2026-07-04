@@ -21,7 +21,7 @@ export function Welcome() {
 
   function enter(role: Role) {
     data.signIn(role);
-    navigate(role === 'coach' ? '/c' : '/m', { replace: true });
+    navigate(role === 'coach' ? '/c' : '/onboarding', { replace: true });
   }
 
   return (
