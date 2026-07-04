@@ -140,6 +140,38 @@ export interface PointsLedgerEntry {
   refId?: string;
 }
 
+export type ProductCategory = 'box' | 'supplement' | 'book' | 'drink';
+
+/**
+ * A curated marketplace product — mock, local-first, nothing charges or
+ * ships. Curation over catalogue: every product carries an editorial
+ * "recommended because" line, tied to a pillar where one fits.
+ */
+export interface Product {
+  id: string;
+  name: string;
+  category: ProductCategory;
+  blurb: string; // one line for the tile
+  description: string;
+  /** Hero tint (hex) — stands in for product photography (local-first, no remote assets). */
+  tint: string;
+  priceAud: number;
+  /** Redeemable with PRD-02 points when set. */
+  pointCost?: number;
+  /** Set when the recommendation ties to a pillar (shows the badge + contextual placement). */
+  pillarId?: PillarId;
+  /** The editorial "recommended because…" line. */
+  why: string;
+}
+
+export interface Order {
+  id: string;
+  productId: string;
+  placedAt: string; // ISO
+  method: 'cash' | 'points';
+  status: 'placed';
+}
+
 export interface Subscription {
   profileId: string;
   plan: string;

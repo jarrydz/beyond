@@ -6,6 +6,7 @@ import type {
   Meal,
   PointsLedgerEntry,
   Post,
+  Product,
   Profile,
   Subscription,
 } from '@/types';
@@ -719,6 +720,174 @@ export const pointsLedger: PointsLedgerEntry[] = [
 ];
 
 export const pointsBalance = pointsLedger.reduce((sum, e) => sum + e.points, 0);
+
+/**
+ * The marketplace catalogue — curated, not a catalogue dump. Prices in AUD;
+ * pointCost ≈ price × 10 so the wallet maths reads honestly. The Jiva shot
+ * is deliberately cheap enough to redeem from a near-seed balance.
+ */
+export const products: Product[] = [
+  // Drinks — the daily-habit SKUs
+  {
+    id: 'prod-jiva-shot',
+    name: 'Jiva turmeric shot',
+    category: 'drink',
+    blurb: 'The retreat morning ritual, single shot.',
+    description:
+      'Cold-pressed turmeric, ginger and black pepper — the shot served at the retreat juice bar every morning. One sharp, warming hit.',
+    tint: '#C9902E',
+    priceAud: 6.5,
+    pointCost: 30,
+    pillarId: 'nourishment',
+    why: 'The single most-asked-for item from the retreat kitchen — an easy daily anchor habit.',
+  },
+  {
+    id: 'prod-jiva-week',
+    name: 'Jiva shots · week of 7',
+    category: 'drink',
+    blurb: 'A shot a day, delivered as a box of seven.',
+    description:
+      'Seven cold-pressed turmeric shots — one for every morning of the week. Keep them in the fridge door where you can’t miss them.',
+    tint: '#B27B24',
+    priceAud: 42,
+    pointCost: 420,
+    pillarId: 'nourishment',
+    why: 'Buying the week, not the day, is how the morning shot becomes automatic.',
+  },
+  {
+    id: 'prod-dandelion-chai',
+    name: 'Dandelion chai blend',
+    category: 'drink',
+    blurb: 'The retreat’s caffeine-free coffee stand-in.',
+    description:
+      'Roasted dandelion root with cinnamon, cardamom and ginger — the blend behind the chai latte recipe in your Nourishment library.',
+    tint: '#8C6A4F',
+    priceAud: 18,
+    pointCost: 180,
+    pillarId: 'nourishment',
+    why: 'Pairs with easing off coffee — same ritual, none of the caffeine.',
+  },
+  // Supplements
+  {
+    id: 'prod-magnesium',
+    name: 'Magnesium night powder',
+    category: 'supplement',
+    blurb: 'Wind-down support before bed.',
+    description:
+      'Magnesium glycinate with a touch of passionflower — stirred into warm water twenty minutes before lights out.',
+    tint: '#5B6B8C',
+    priceAud: 38,
+    pointCost: 380,
+    pillarId: 'sleep',
+    why: 'Magnesium before bed supports deeper sleep — a natural pair with your Sleep pillar.',
+  },
+  {
+    id: 'prod-ashwagandha',
+    name: 'Ashwagandha capsules',
+    category: 'supplement',
+    blurb: 'Steady support for stressful weeks.',
+    description:
+      'KSM-66 ashwagandha, sixty capsules. The adaptogen the retreat naturopath talks about in the stress-resilience session.',
+    tint: '#8C7B9C',
+    priceAud: 29,
+    pointCost: 290,
+    pillarId: 'emotional',
+    why: 'Backs the nervous-system regulation work in Emotional Wellbeing.',
+  },
+  {
+    id: 'prod-greens',
+    name: 'Daily greens powder',
+    category: 'supplement',
+    blurb: 'One scoop when the vegetables didn’t happen.',
+    description:
+      'Spirulina, barley grass and broccoli sprout — a safety net for travel days, not a replacement for the real thing.',
+    tint: '#4E6B51',
+    priceAud: 55,
+    pointCost: 550,
+    pillarId: 'nourishment',
+    why: 'A backstop for plant-forward eating on the days life gets in the way.',
+  },
+  // Boxes
+  {
+    id: 'prod-pantry-box',
+    name: 'Retreat pantry box',
+    category: 'box',
+    blurb: 'The staples behind the recipe library.',
+    description:
+      'Tahini, buckwheat, chickpeas, olive oil, seeds and spices — the pantry that makes the retreat-kitchen recipes weeknight-possible.',
+    tint: '#C97B5A',
+    priceAud: 89,
+    pointCost: 890,
+    pillarId: 'nourishment',
+    why: 'Stocks the exact staples your saved recipes call for.',
+  },
+  {
+    id: 'prod-lowtox-box',
+    name: 'Low-tox home starter box',
+    category: 'box',
+    blurb: 'Swap the worst offenders in one go.',
+    description:
+      'Castile cleaner, laundry sheets, a low-tox dish bar and a room mist — the four swaps the Toxic Load pillar starts with.',
+    tint: '#7E9B6E',
+    priceAud: 59,
+    pointCost: 590,
+    pillarId: 'toxic_load',
+    why: 'One box covers the first month of low-tox swaps.',
+  },
+  {
+    id: 'prod-sleep-box',
+    name: 'Sleep wind-down box',
+    category: 'box',
+    blurb: 'Everything for the last hour of the day.',
+    description:
+      'Magnesium powder, a linen eye mask, chamomile blend and a small amber lamp bulb — a ready-made wind-down kit.',
+    tint: '#44536F',
+    priceAud: 49,
+    pointCost: 490,
+    pillarId: 'sleep',
+    why: 'Builds the pre-sleep routine from your Sleep pillar into objects you can’t ignore.',
+  },
+  // Books
+  {
+    id: 'prod-book-breath',
+    name: 'Breath — James Nestor',
+    category: 'book',
+    blurb: 'The book behind the breathwork sessions.',
+    description:
+      'Why nose-breathing, slow exhales and CO₂ tolerance matter — the science underneath the practices your coach teaches.',
+    tint: '#5C7470',
+    priceAud: 24,
+    pointCost: 240,
+    pillarId: 'emotional',
+    why: 'The reference text for the breathwork you’re already doing.',
+  },
+  {
+    id: 'prod-book-sleep',
+    name: 'Why We Sleep — Matthew Walker',
+    category: 'book',
+    blurb: 'The case for the ten o’clock bedtime.',
+    description:
+      'The research that convinced the retreat to build a pillar around sleep. Alarming in the useful way.',
+    tint: '#3E4A63',
+    priceAud: 27,
+    pointCost: 270,
+    pillarId: 'sleep',
+    why: 'If the Sleep pillar needs a why, this is the book that supplies it.',
+  },
+  {
+    id: 'prod-book-cook',
+    name: 'Eat Like the Retreat',
+    category: 'book',
+    blurb: 'The kitchen’s cookbook, extended.',
+    description:
+      'Ninety plant-forward recipes from the retreat kitchen — the full version of the library in your Nourishment pillar.',
+    tint: '#A8763E',
+    priceAud: 39,
+    pointCost: 390,
+    pillarId: 'nourishment',
+    why: 'Goes beyond your saved recipes when the twelve in the app stop being enough.',
+  },
+];
 
 export const affirmations: string[] = [
   'I am the kind of person who keeps the promises I make to myself.',

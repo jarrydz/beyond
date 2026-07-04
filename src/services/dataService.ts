@@ -7,9 +7,11 @@ import type {
   DailyCheckInEntry,
   Goal,
   Meal,
+  Order,
   PillarId,
   PointsLedgerEntry,
   Post,
+  Product,
   Profile,
   RecordCheckInInput,
   Role,
@@ -326,6 +328,40 @@ export function createDataService(store: MemoryStore) {
     getPointsLedger(): PointsLedgerEntry[] {
       // Newest first — the order the earn history reads in.
       return [...store.get().pointsLedger].sort((a, b) => b.at.localeCompare(a.at));
+    },
+
+    // marketplace (mock — nothing charges, nothing ships)
+    getProducts(): Product[] {
+      return store.get().products;
+    },
+    getProduct(id: string): Product | undefined {
+      return store.get().products.find((p) => p.id === id);
+    },
+    getOrders(): Order[] {
+      return [...store.get().orders].sort((a, b) => b.placedAt.localeCompare(a.placedAt));
+    },
+    /**
+     * Place a mock order. 'points' goes through the guarded spendPoints seam —
+     * insufficient balance returns null and records nothing; the wallet can
+     * never go negative from here.
+     */
+    placeOrder(productId: string, method: 'cash' | 'points'): Order | null {
+      const product = store.get().products.find((p) => p.id === productId);
+      if (!product) return null;
+      if (method === 'points') {
+        if (product.pointCost == null) return null;
+        const ok = this.spendPoints(product.pointCost, `Redeemed: ${product.name}`);
+        if (!ok) return null;
+      }
+      const order: Order = {
+        id: uid(),
+        productId,
+        placedAt: new Date().toISOString(),
+        method,
+        status: 'placed',
+      };
+      store.set((s) => ({ ...s, orders: [...s.orders, order] }));
+      return order;
     },
 
     // members (coach side)
