@@ -17,17 +17,22 @@ import { CoachScreen } from './member/CoachScreen';
 import { PillarsScreen } from './member/PillarsScreen';
 import { PillarDetailScreen } from './member/PillarDetailScreen';
 import { MealDetailScreen } from './member/MealDetailScreen';
+import { MoreScreen } from './member/MoreScreen';
+import { MarketplaceScreen } from './member/MarketplaceScreen';
 import { ProfileScreen } from './member/ProfileScreen';
 import type { PillarId } from '@/types';
 
+// Five tabs by decision (JZ, 2026-07-03): Marketplace lives inside More;
+// Community keeps its primary slot.
 const navItems: NavItem[] = [
   { key: 'home', label: 'Home', icon: NavIcons.home },
   { key: 'pillars', label: 'Pillars', icon: NavIcons.pillars },
   { key: 'community', label: 'Community', icon: NavIcons.group },
   { key: 'coach', label: 'Coach', icon: NavIcons.coach },
+  { key: 'more', label: 'More', icon: NavIcons.more },
 ];
 
-type Tab = 'home' | 'pillars' | 'community' | 'coach' | 'profile';
+type Tab = 'home' | 'pillars' | 'community' | 'coach' | 'more' | 'profile';
 
 export function MemberHome() {
   const data = useData();
@@ -42,6 +47,7 @@ export function MemberHome() {
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const [marketOpen, setMarketOpen] = useState(false);
 
   function goTab(next: string) {
     if (navItems.some((n) => n.key === next) || next === 'profile') {
@@ -49,6 +55,7 @@ export function MemberHome() {
       setActive(next as Tab);
       setOpenPillarId(null);
       setOpenMealId(null);
+      setMarketOpen(false);
     }
   }
 
@@ -64,7 +71,10 @@ export function MemberHome() {
           else { setPrevTab(active); setActive('profile'); }
         }}
       />
-      <ScreenWrap key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}`} withBottomNav={!recorderOpen}>
+      <ScreenWrap
+        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${marketOpen}`}
+        withBottomNav={!recorderOpen}
+      >
         {active === 'home' && (
           <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
         )}
@@ -82,6 +92,15 @@ export function MemberHome() {
           ))}
         {active === 'community' && <CommunityScreen />}
         {active === 'coach' && <CoachScreen />}
+        {active === 'more' &&
+          (marketOpen ? (
+            <MarketplaceScreen onBack={() => setMarketOpen(false)} onOpenProduct={() => {}} />
+          ) : (
+            <MoreScreen
+              onOpenMarketplace={() => setMarketOpen(true)}
+              onOpenProfile={() => goTab('profile')}
+            />
+          ))}
         {active === 'profile' && <ProfileScreen />}
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}

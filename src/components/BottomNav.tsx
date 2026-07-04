@@ -120,4 +120,12 @@ export const NavIcons = {
       <path d="M12 2.2a9.8 9.8 0 0 0 0 19.6" />
     </svg>
   ),
+  more: (
+    <svg viewBox="0 0 24 24">
+      <rect x="4" y="4" width="6.8" height="6.8" rx="2" />
+      <rect x="13.2" y="4" width="6.8" height="6.8" rx="2" />
+      <rect x="4" y="13.2" width="6.8" height="6.8" rx="2" />
+      <rect x="13.2" y="13.2" width="6.8" height="6.8" rx="2" />
+    </svg>
+  ),
 };
