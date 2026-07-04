@@ -106,7 +106,7 @@ export function Welcome() {
         <button
           type="button"
           onClick={() => enter('coach')}
-          className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-black text-white hover:brightness-110"
+          className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-transparent text-cream border border-cream/35 hover:bg-white/10"
         >
           Coach access
         </button>

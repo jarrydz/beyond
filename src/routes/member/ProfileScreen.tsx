@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Eyebrow, SparkIcon, useToast } from '@/components';
+import { Avatar, Card, Eyebrow, SparkIcon } from '@/components';
 import { relativeTime } from '@/utils/format';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
@@ -11,10 +11,8 @@ interface Props {
 
 export function ProfileScreen({ onOpenShop }: Props) {
   const data = useData();
-  const toast = useToast();
   const navigate = useNavigate();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
-  const activeRole = useStoreState((s) => s.activeRole);
   const subscription = useStoreState((s) =>
     s.subscriptions.find((sub) => sub.profileId === s.currentUserId),
   );
@@ -36,12 +34,6 @@ export function ProfileScreen({ onOpenShop }: Props) {
   const since = subscription?.startedAt
     ? new Date(subscription.startedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
     : null;
-
-  function switchToCoach() {
-    data.switchRole('coach');
-    toast('Switched to coach view');
-    navigate('/c', { replace: true });
-  }
 
   function signOut() {
     data.signOut();
@@ -120,23 +112,6 @@ export function ProfileScreen({ onOpenShop }: Props) {
             {statusLabel}
           </span>
         </div>
-      </Card>
-
-      <Eyebrow className="mt-4">Demo</Eyebrow>
-      <Card>
-        <button
-          type="button"
-          onClick={switchToCoach}
-          className="w-full flex items-center justify-between py-1"
-        >
-          <div>
-            <div className="font-semibold text-[14.5px]">Switch to coach view</div>
-            <div className="text-muted text-[12.5px] mt-0.5">See what {activeRole === 'member' ? 'the coach' : 'a member'} sees</div>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
       </Card>
 
       <button

@@ -1,19 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Eyebrow, useToast } from '@/components';
+import { Avatar } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 
 export function CoachProfileScreen() {
   const data = useData();
-  const toast = useToast();
   const navigate = useNavigate();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
-
-  function switchToMember() {
-    data.switchRole('member');
-    toast('Switched to member view');
-    navigate('/m', { replace: true });
-  }
 
   function signOut() {
     data.signOut();
@@ -27,23 +20,6 @@ export function CoachProfileScreen() {
         <h2 className="font-serif font-semibold text-[22px] mt-3">{me.fullName}</h2>
         <p className="text-muted text-[13px] mt-0.5">Coach</p>
       </div>
-
-      <Eyebrow>Demo</Eyebrow>
-      <Card>
-        <button
-          type="button"
-          onClick={switchToMember}
-          className="w-full flex items-center justify-between py-1"
-        >
-          <div>
-            <div className="font-semibold text-[14.5px]">Switch to member view</div>
-            <div className="text-muted text-[12.5px] mt-0.5">See what a member sees</div>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </Card>
 
       <button
         type="button"
