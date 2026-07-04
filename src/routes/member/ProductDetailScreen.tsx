@@ -1,4 +1,6 @@
-import { Card, Eyebrow, PillarBadge, SparkIcon } from '@/components';
+import { useState } from 'react';
+import { BottomSheet, Button, Card, Eyebrow, PillarBadge, SparkIcon } from '@/components';
+import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { darken } from '@/utils/pillars';
 import { formatAud } from '@/utils/products';
@@ -13,8 +15,16 @@ interface Props {
  * clear price. Café-order simplicity — the order actions live at the bottom.
  */
 export function ProductDetailScreen({ productId, onBack }: Props) {
+  const data = useData();
   const product = useStoreState((s) => s.products.find((p) => p.id === productId));
+  const [confirmedMethod, setConfirmedMethod] = useState<'cash' | 'points' | null>(null);
   if (!product) return null;
+
+  function order(method: 'cash' | 'points') {
+    if (!product) return;
+    const placed = data.placeOrder(product.id, method);
+    if (placed) setConfirmedMethod(method);
+  }
 
   return (
     <section className="px-5 pt-3 pb-7">
@@ -52,6 +62,27 @@ export function ProductDetailScreen({ productId, onBack }: Props) {
       <Card>
         <p className="text-[14px] leading-relaxed">{product.why}</p>
       </Card>
+
+      <Button variant="terra" className="w-full mt-1" onClick={() => order('cash')}>
+        Order · {formatAud(product.priceAud)}
+      </Button>
+
+      <BottomSheet
+        open={confirmedMethod !== null}
+        onClose={() => setConfirmedMethod(null)}
+        title="Order placed"
+        subtitle={product.name}
+      >
+        <p className="text-[14px] leading-relaxed mb-4">
+          We’ll send it to you.{' '}
+          {confirmedMethod === 'points'
+            ? 'Paid with points — your wallet has been updated.'
+            : 'Nothing was charged — orders are mock in this prototype.'}
+        </p>
+        <Button className="w-full" onClick={() => setConfirmedMethod(null)}>
+          Done
+        </Button>
+      </BottomSheet>
     </section>
   );
 }

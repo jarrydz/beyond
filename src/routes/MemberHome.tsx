@@ -112,7 +112,14 @@ export function MemberHome() {
               onOpenProfile={() => goTab('profile')}
             />
           ))}
-        {active === 'profile' && <ProfileScreen />}
+        {active === 'profile' && (
+          <ProfileScreen
+            onOpenShop={() => {
+              goTab('more');
+              setMarketOpen(true);
+            }}
+          />
+        )}
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}
       <PointsSheet

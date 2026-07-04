@@ -4,7 +4,12 @@ import { relativeTime } from '@/utils/format';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 
-export function ProfileScreen() {
+interface Props {
+  /** Jump to the marketplace (More tab) — the Profile "Shop" row. */
+  onOpenShop?: () => void;
+}
+
+export function ProfileScreen({ onOpenShop }: Props) {
   const data = useData();
   const toast = useToast();
   const navigate = useNavigate();
@@ -16,6 +21,12 @@ export function ProfileScreen() {
   const pointsBalance = useStoreState((s) => s.pointsBalance);
   const lastEarn = useStoreState(
     (s) => [...s.pointsLedger].sort((a, b) => b.at.localeCompare(a.at))[0],
+  );
+  const latestOrder = useStoreState(
+    (s) => [...s.orders].sort((a, b) => b.placedAt.localeCompare(a.placedAt))[0],
+  );
+  const orderedProduct = useStoreState((s) =>
+    latestOrder ? s.products.find((p) => p.id === latestOrder.productId) : undefined,
   );
 
   const planLabel = subscription ? 'Beyond · Monthly' : 'No active plan';
@@ -63,6 +74,39 @@ export function ProfileScreen() {
           </div>
           <SparkIcon className="w-5 h-5 text-green" />
         </div>
+      </Card>
+
+      <Eyebrow className="mt-4">Shop</Eyebrow>
+      <Card>
+        <button
+          type="button"
+          onClick={onOpenShop}
+          className="w-full flex items-center justify-between py-1"
+        >
+          <div>
+            <div className="font-semibold text-[14.5px]">Marketplace</div>
+            <div className="text-muted text-[12.5px] mt-0.5">
+              Recommended products from the retreat
+            </div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        {latestOrder && orderedProduct && (
+          <div className="flex items-center justify-between border-t border-line mt-2 pt-3 pb-1">
+            <div>
+              <div className="font-semibold text-[13.5px]">{orderedProduct.name}</div>
+              <div className="text-muted text-[12px] mt-0.5">
+                Ordered {relativeTime(latestOrder.placedAt)}
+                {latestOrder.method === 'points' ? ' · paid with points' : ''}
+              </div>
+            </div>
+            <span className="text-[11px] tracking-[0.13em] uppercase text-green font-semibold">
+              On its way
+            </span>
+          </div>
+        )}
       </Card>
 
       <Eyebrow className="mt-4">Subscription</Eyebrow>
