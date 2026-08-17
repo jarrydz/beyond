@@ -1,4 +1,5 @@
 import type {
+  Booking,
   Cohort,
   CheckIn,
   ContentItem,
@@ -69,6 +70,26 @@ export const members: Profile[] = [
 ];
 
 export const profiles: Profile[] = [coach, ...members];
+
+/**
+ * The one seeded reservation (PRD-05). Dated relative to the real clock —
+ * arrival is always a week out — so the demo lands mid-countdown (T-7, the
+ * taper live) regardless of when it's opened. The stage switcher moves the
+ * simulated clock around these dates; the dates themselves never change.
+ */
+export const booking: Booking = {
+  id: 'booking-gwinganna',
+  profileId: you.id,
+  confirmationNumber: '94167',
+  guestName: you.fullName,
+  packageName: 'Optimum Wellbeing',
+  roomType: 'Meditation Villas',
+  arrivalDate: days(7).slice(0, 10),
+  departureDate: days(12).slice(0, 10),
+  arrivalWindow: '2pm – 4pm',
+  hostName: 'Lucy',
+  hostRole: 'Your Program Manager',
+};
 
 export const goals: Goal[] = [
   {

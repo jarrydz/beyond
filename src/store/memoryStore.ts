@@ -16,8 +16,10 @@ import type {
   Subscription,
 } from '@/types';
 import { readOnboarded } from './onboardingStorage';
+import { prepTasks as seedPrepTasks } from '@/config/prepTasks';
 import {
   affirmations as seedAffirmations,
+  booking as seedBooking,
   checkIns as seedCheckIns,
   cohort as seedCohort,
   content as seedContent,
@@ -85,8 +87,8 @@ export const initialState = (): StoreState => ({
   currentUserId: seedYou.id,
   activeRole: 'member',
   signedIn: false,
-  booking: null,
-  prepTasks: [],
+  booking: seedBooking,
+  prepTasks: seedPrepTasks.map((t) => ({ ...t, done: false })),
   taperTicks: [],
   demoDayOffset: 0,
 });
