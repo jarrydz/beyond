@@ -289,6 +289,16 @@ export const content: ContentItem[] = [
     weekOf: thisMonday,
     doneBy: [],
   },
+  {
+    id: 'content-toxic',
+    type: 'nature',
+    pillarId: 'nourishment',
+    themes: ['low_tox', 'environment'],
+    title: 'Low-tox swap of the week',
+    description: 'Swap one spa or cleaning product for a low-tox one — then 20 minutes barefoot in nature.',
+    weekOf: thisMonday,
+    doneBy: [],
+  },
   // Movement
   {
     id: 'content-movement',
@@ -316,16 +326,6 @@ export const content: ContentItem[] = [
     pillarId: 'sleep',
     title: 'Wind-down at the same time',
     description: 'A 20-minute pre-sleep routine to anchor your body clock.',
-    weekOf: thisMonday,
-    doneBy: [],
-  },
-  // Toxic Load
-  {
-    id: 'content-toxic',
-    type: 'nature',
-    pillarId: 'toxic_load',
-    title: 'Low-tox swap of the week',
-    description: 'Swap one spa or cleaning product for a low-tox one — then 20 minutes barefoot in nature.',
     weekOf: thisMonday,
     doneBy: [],
   },
@@ -827,11 +827,12 @@ export const products: Product[] = [
     category: 'box',
     blurb: 'Swap the worst offenders in one go.',
     description:
-      'Castile cleaner, laundry sheets, a low-tox dish bar and a room mist — the four swaps the Toxic Load pillar starts with.',
+      'Castile cleaner, laundry sheets, a low-tox dish bar and a room mist — the four swaps a low-tox home starts with.',
     tint: '#7E9B6E',
     priceAud: 59,
     pointCost: 590,
-    pillarId: 'toxic_load',
+    pillarId: 'nourishment',
+    themes: ['low_tox'],
     why: 'One box covers the first month of low-tox swaps.',
   },
   {
