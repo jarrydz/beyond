@@ -81,3 +81,15 @@ export function writeGoalWhy(profileId: string, value: StoredGoalWhy): void {
     // localStorage can be unavailable in private modes
   }
 }
+
+/** Demo reset — wipe everything the journey persisted for this profile. */
+export function clearJourney(profileId: string): void {
+  try {
+    localStorage.removeItem(doneKey(profileId));
+    localStorage.removeItem(taperKey(profileId));
+    localStorage.removeItem(whyKey(profileId));
+    localStorage.removeItem(offsetKey);
+  } catch {
+    // localStorage can be unavailable in private modes
+  }
+}

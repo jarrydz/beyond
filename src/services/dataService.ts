@@ -23,13 +23,15 @@ import type {
 import { MemoryStore } from '@/store/memoryStore';
 import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
 import {
+  clearJourney,
   writeDemoOffset,
   writeDoneTasks,
   writeGoalWhy,
   writeTaperTicks,
 } from '@/store/journeyStorage';
 import { daysUntil, stageFor } from '@/utils/journey';
-import type { TaperSubstance } from '@/config/prepTasks';
+import { prepTasks as prepTaskSeeds, type TaperSubstance } from '@/config/prepTasks';
+import { goals as seedGoals } from '@/store/seed';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
@@ -543,6 +545,22 @@ export function createDataService(store: MemoryStore) {
     setDemoDayOffset(offset: number): void {
       writeDemoOffset(offset);
       store.set((s) => ({ ...s, demoDayOffset: offset }));
+    },
+    /**
+     * Demo-only: wipe journey state for a clean run with the next viewer —
+     * persistence survives refresh by design, so the switcher alone can
+     * move time but never un-live it. Resets tasks, taper, the goal + why
+     * and the clock (offset 0 = the T-7 default open).
+     */
+    resetJourneyDemo(): void {
+      clearJourney(store.get().currentUserId);
+      store.set((s) => ({
+        ...s,
+        prepTasks: prepTaskSeeds.map((t) => ({ ...t, done: false })),
+        taperTicks: [],
+        demoDayOffset: 0,
+        goals: seedGoals.map((g) => ({ ...g })),
+      }));
     },
   };
 }

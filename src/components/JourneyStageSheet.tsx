@@ -1,4 +1,4 @@
-import { BottomSheet } from '.';
+import { BottomSheet, useToast } from '.';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { offsetForDate } from '@/utils/journey';
@@ -16,6 +16,7 @@ interface Props {
  */
 export function JourneyStageSheet({ open, onClose }: Props) {
   const data = useData();
+  const toast = useToast();
   const booking = useStoreState((s) =>
     s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
   );
@@ -68,6 +69,17 @@ export function JourneyStageSheet({ open, onClose }: Props) {
           </button>
         );
       })}
+      <button
+        type="button"
+        onClick={() => {
+          data.resetJourneyDemo();
+          onClose();
+          toast('Demo reset — a clean run from 7 days out');
+        }}
+        className="mt-2 w-full text-center text-[13.5px] text-muted py-3 font-semibold"
+      >
+        Reset demo
+      </button>
     </BottomSheet>
   );
 }
