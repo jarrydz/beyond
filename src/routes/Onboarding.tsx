@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Eyebrow, ScreenWrap, useToast } from '@/components';
+import { Button, Card, Eyebrow, GoalWhyForm, ScreenWrap } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
@@ -17,35 +17,14 @@ const GOAL_SUGGESTION: Record<PillarId, string> = {
   sleep: 'Asleep before 10pm',
 };
 
-const WINDOWS = ['30 days', '100 days'] as const;
-
 export function Onboarding() {
   const data = useData();
-  const toast = useToast();
   const navigate = useNavigate();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const cohort = useStoreState((s) => s.cohort);
 
   const [step, setStep] = useState<Step>('cohort');
   const [pillarId, setPillarId] = useState<PillarId>('sleep');
-  const [goalTitle, setGoalTitle] = useState(GOAL_SUGGESTION.sleep);
-  const [goalWindow, setGoalWindow] = useState<(typeof WINDOWS)[number]>('30 days');
-
-  function pickPillar(id: PillarId) {
-    setPillarId(id);
-    setGoalTitle(GOAL_SUGGESTION[id]);
-  }
-
-  function finish() {
-    const title = goalTitle.trim();
-    if (!title) {
-      toast('Give your goal a name');
-      return;
-    }
-    data.setActiveGoal(me.id, pillarId, title, goalWindow);
-    data.setOnboarded(me.id);
-    navigate('/m', { replace: true, state: { tab: 'home' } });
-  }
 
   function skip() {
     data.setOnboarded(me.id);
@@ -105,7 +84,7 @@ export function Onboarding() {
                   <button
                     key={p.id}
                     type="button"
-                    onClick={() => pickPillar(p.id)}
+                    onClick={() => setPillarId(p.id)}
                     className={[
                       'w-full text-left rounded-card border bg-white p-3 flex items-center gap-3 transition',
                       on ? 'shadow-card' : 'border-line',
@@ -172,58 +151,23 @@ export function Onboarding() {
               . You can change it later.
             </p>
 
-            <Card>
-              <label className="block">
-                <Eyebrow>Goal</Eyebrow>
-                <input
-                  className="w-full bg-transparent border-0 border-b border-line focus:border-green outline-none py-2 text-[16px] font-serif"
-                  value={goalTitle}
-                  onChange={(e) => setGoalTitle(e.target.value)}
-                  placeholder="e.g. Asleep before 10pm"
-                />
-              </label>
+            <GoalWhyForm
+              pillarId={pillarId}
+              initialTitle={GOAL_SUGGESTION[pillarId]}
+              cta="Save my goal"
+              onSaved={() => {
+                data.setOnboarded(me.id);
+                navigate('/m', { replace: true, state: { tab: 'home' } });
+              }}
+            />
 
-              <div className="mt-4">
-                <Eyebrow>Goal window</Eyebrow>
-                <div className="flex gap-2.5 mt-1">
-                  {WINDOWS.map((w) => {
-                    const on = w === goalWindow;
-                    return (
-                      <button
-                        key={w}
-                        type="button"
-                        onClick={() => setGoalWindow(w)}
-                        className={[
-                          'flex-1 font-semibold text-sm rounded-btn py-2.5 border transition',
-                          on
-                            ? 'bg-green text-cream border-transparent'
-                            : 'bg-white text-muted border-line',
-                        ].join(' ')}
-                      >
-                        {w}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </Card>
-
-            <div className="flex gap-2.5">
-              <button
-                type="button"
-                onClick={() => setStep('pillar')}
-                className="flex-1 font-semibold text-sm rounded-btn py-[13px] text-muted border border-line bg-white"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={finish}
-                className="flex-1 font-semibold text-sm rounded-btn py-[13px] bg-green text-cream"
-              >
-                Save my goal
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setStep('pillar')}
+              className="w-full font-semibold text-sm rounded-btn py-[13px] mt-2.5 text-muted border border-line bg-white"
+            >
+              Back
+            </button>
           </>
         )}
       </section>
