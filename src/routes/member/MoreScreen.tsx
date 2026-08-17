@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 interface Props {
   onOpenMarketplace: () => void;
   onOpenProfile: () => void;
+  /** Present only when a booking exists — the PRD-05 demo stage switcher. */
+  onOpenStageSheet?: () => void;
 }
 
 /**
@@ -10,7 +12,7 @@ interface Props {
  * later features land here instead of growing the nav). Marketplace lives
  * here by decision (JZ, 2026-07-03): Community keeps its primary tab.
  */
-export function MoreScreen({ onOpenMarketplace, onOpenProfile }: Props) {
+export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet }: Props) {
   return (
     <section className="px-5 pt-3 pb-7">
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">More</h2>
@@ -39,6 +41,19 @@ export function MoreScreen({ onOpenMarketplace, onOpenProfile }: Props) {
             </svg>
           }
         />
+        {onOpenStageSheet && (
+          <MoreRow
+            title="Journey stage (demo)"
+            subtitle="Demo control — move the simulated clock"
+            onClick={onOpenStageSheet}
+            icon={
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="M12 7.5V12l3 2" />
+              </svg>
+            }
+          />
+        )}
       </div>
     </section>
   );

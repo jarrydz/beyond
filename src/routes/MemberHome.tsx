@@ -4,6 +4,7 @@ import {
   BottomNav,
   DailyCheckInRecorder,
   FloatingHeader,
+  JourneyStageSheet,
   NavIcons,
   PointsSheet,
   ScreenWrap,
@@ -45,10 +46,12 @@ type MemberHomeLocationState = {
   tab?: Tab;
 };
 
-function initialTab(state: unknown): Tab {
+function initialTab(state: unknown, hasBooking: boolean): Tab {
   const tab = (state as MemberHomeLocationState | null)?.tab;
   if (tab === 'home' || tab === 'pillars') return tab;
-  return 'pillars';
+  // PRD-05: a booking means the journey is the story — land on Home. The
+  // no-booking default stays Pillars (the shipped demo path, unchanged).
+  return hasBooking ? 'home' : 'pillars';
 }
 
 export function MemberHome() {
@@ -64,8 +67,9 @@ export function MemberHome() {
   );
   const stage = useStoreState((s) => stageFor(booking, s.demoDayOffset));
   const [pointsOpen, setPointsOpen] = useState(false);
-  const [active, setActive] = useState<Tab>(() => initialTab(location.state));
-  const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state));
+  const [active, setActive] = useState<Tab>(() => initialTab(location.state, !!booking));
+  const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state, !!booking));
+  const [stageSheetOpen, setStageSheetOpen] = useState(false);
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
@@ -89,9 +93,12 @@ export function MemberHome() {
   // Restraint reads as premium — the app steps back while they're on property.
   if (stage === 'on_retreat' && booking) {
     return (
-      <ScreenWrap withBottomNav={false}>
-        <QuietScreen booking={booking} />
-      </ScreenWrap>
+      <>
+        <ScreenWrap withBottomNav={false}>
+          <QuietScreen booking={booking} onOpenStageSheet={() => setStageSheetOpen(true)} />
+        </ScreenWrap>
+        <JourneyStageSheet open={stageSheetOpen} onClose={() => setStageSheetOpen(false)} />
+      </>
     );
   }
 
@@ -161,6 +168,7 @@ export function MemberHome() {
             <MoreScreen
               onOpenMarketplace={() => setMarketOpen(true)}
               onOpenProfile={() => goTab('profile')}
+              onOpenStageSheet={booking ? () => setStageSheetOpen(true) : undefined}
             />
           ))}
         {active === 'profile' && (
@@ -173,6 +181,7 @@ export function MemberHome() {
         )}
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}
+      <JourneyStageSheet open={stageSheetOpen} onClose={() => setStageSheetOpen(false)} />
       <PointsSheet
         open={pointsOpen}
         onClose={() => setPointsOpen(false)}
