@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import type {
+  Booking,
   CheckIn,
   Cohort,
   ContentItem,
@@ -9,6 +10,7 @@ import type {
   Order,
   PointsLedgerEntry,
   Post,
+  PrepTask,
   Product,
   Profile,
   Subscription,
@@ -51,6 +53,14 @@ export interface StoreState {
   // session-only — not modelled in the schema but needed by Phase 2's role switcher
   activeRole: 'member' | 'coach';
   signedIn: boolean;
+  // PRD-05 — the retreat journey
+  /** The seeded reservation (Gwinganna's side). Connection happens via the T-21 prep task. */
+  booking: Booking | null;
+  prepTasks: PrepTask[];
+  /** Ticked taper cells, keyed `${daysBeforeArrival}:${substance}` — e.g. '5:caffeine'. */
+  taperTicks: string[];
+  /** Demo-only simulated clock: whole app computes dates as real today + this many days. */
+  demoDayOffset: number;
 }
 
 export const initialState = (): StoreState => ({
@@ -75,6 +85,10 @@ export const initialState = (): StoreState => ({
   currentUserId: seedYou.id,
   activeRole: 'member',
   signedIn: false,
+  booking: null,
+  prepTasks: [],
+  taperTicks: [],
+  demoDayOffset: 0,
 });
 
 export type StoreListener = (s: StoreState) => void;

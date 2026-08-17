@@ -49,8 +49,54 @@ export interface Goal {
   pillarId: PillarId;
   title: string;
   target?: string;
+  /** The member's why, in their own words — captured at T-21, restated at the handoff and in reintegration. */
+  why?: string;
   active: boolean;
   createdAt: string;
+}
+
+/**
+ * The journey lifecycle (PRD-05). Always DERIVED from the booking and the
+ * simulated clock via utils/journey.ts stageFor() — never stored as a flag.
+ * `member` is the fallback: no booking, or departure + 15d onward.
+ */
+export type JourneyStage = 'pre_retreat' | 'on_retreat' | 'reintegration' | 'member';
+
+/** A Gwinganna reservation — the anchor every journey date derives from. */
+export interface Booking {
+  id: string;
+  profileId: string;
+  confirmationNumber: string; // e.g. '94167'
+  guestName: string;
+  packageName: string; // e.g. 'Optimum Wellbeing'
+  roomType: string; // e.g. 'Meditation Villas'
+  arrivalDate: string; // ISO date
+  departureDate: string; // ISO date
+  arrivalWindow: string; // e.g. '2pm – 4pm'
+  hostName: string; // the Program Manager — e.g. 'Lucy'
+  hostRole: string; // e.g. 'Your Program Manager'
+}
+
+export type PrepKind = 'video' | 'form' | 'choice' | 'reflect' | 'read' | 'track';
+
+/**
+ * One step of the pre-retreat countdown. Copy lives in config/prepTasks.ts —
+ * the same single-source-of-truth pattern as config/pillars.ts.
+ */
+export interface PrepTask {
+  id: string;
+  /** Days before arrival this unlocks. 21, 14, 10, 7, 5, 3, 1. */
+  unlocksAt: number;
+  title: string;
+  blurb: string;
+  kind: PrepKind;
+  /** true = Gwinganna needs this done. false = preparation, not admin. */
+  required: boolean;
+  /** Label for the external deep-link sheet, for kind: 'form'. */
+  externalLabel?: string;
+  /** Ties prep to the pillar taxonomy where one fits. Optional by design. */
+  pillarId?: PillarId;
+  done: boolean;
 }
 
 export type CheckInStatus = 'upcoming' | 'completed' | 'cancelled';
