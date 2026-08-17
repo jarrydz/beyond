@@ -1,4 +1,4 @@
-import type { Booking, JourneyStage } from '@/types';
+import type { Booking, JourneyStage, PrepTask } from '@/types';
 
 /**
  * The simulated clock (PRD-05). Every date calculation in the journey reads
@@ -71,4 +71,15 @@ export function dayOfReintegration(booking: Booking, offset: number): number {
  */
 export function offsetForDate(iso: string, delta: number): number {
   return daysUntil(iso, 0) + delta;
+}
+
+/**
+ * Whether a prep task is open. The T-21 trio (connect, meet your host,
+ * goal + why) is not date-dependent, so it is available from the moment a
+ * booking exists — a guest who books four months out installs the app at
+ * peak motivation and must find something to do, not twelve locked rows
+ * (JZ, 2026-08-17). The taper stays genuinely time-bound at T-7.
+ */
+export function isTaskUnlocked(task: Pick<PrepTask, 'unlocksAt'>, daysToArrival: number): boolean {
+  return task.unlocksAt >= 21 || daysToArrival <= task.unlocksAt;
 }

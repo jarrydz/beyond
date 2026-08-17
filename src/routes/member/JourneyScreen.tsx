@@ -3,7 +3,7 @@ import { BottomSheet, Button, ButtonRow, Card, Eyebrow, Ring, useToast } from '@
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { PREP_TASK_BODY, PREP_VIDEO_META } from '@/config/prepTasks';
-import { daysUntil } from '@/utils/journey';
+import { daysUntil, isTaskUnlocked, today } from '@/utils/journey';
 import type { Booking, PrepTask } from '@/types';
 import { ConnectBookingScreen } from './ConnectBookingScreen';
 import { GoalWhyScreen } from './GoalWhyScreen';
@@ -38,11 +38,11 @@ export function JourneyScreen() {
   const connected = tasks.some((t) => t.id === 'prep-connect' && t.done);
 
   const unlocked = useMemo(
-    () => tasks.filter((t) => daysToGo <= t.unlocksAt),
+    () => tasks.filter((t) => isTaskUnlocked(t, daysToGo)),
     [tasks, daysToGo],
   );
   const locked = useMemo(
-    () => tasks.filter((t) => daysToGo > t.unlocksAt),
+    () => tasks.filter((t) => !isTaskUnlocked(t, daysToGo)),
     [tasks, daysToGo],
   );
   const doneCount = unlocked.filter((t) => t.done).length;
@@ -91,6 +91,10 @@ export function JourneyScreen() {
           ? `${formatDate(booking.arrivalDate)} · ${booking.packageName}`
           : 'Connect your booking to start the countdown.'}
       </p>
+
+      {!hero && locked.length > 0 && (
+        <CaughtUpCard daysToGo={daysToGo} locked={locked} offset={offset} />
+      )}
 
       {hero && (
         <Card tone="dark">
@@ -216,6 +220,41 @@ function LockedRow({ task, daysToGo }: { task: PrepTask; daysToGo: number }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * The diligent guest's state: everything available is done, more unlocks
+ * later. Without this, finishing early reads as an incomplete ring — the
+ * most engaged guest being told they're behind.
+ */
+function CaughtUpCard({
+  daysToGo,
+  locked,
+  offset,
+}: {
+  daysToGo: number;
+  locked: PrepTask[];
+  offset: number;
+}) {
+  const inDays = Math.min(...locked.map((t) => daysToGo - t.unlocksAt));
+  // A weekday name only reads unambiguously inside the week ahead.
+  const when =
+    inDays === 1
+      ? 'tomorrow'
+      : inDays <= 6
+        ? today(offset + inDays).toLocaleDateString('en-AU', { weekday: 'long' })
+        : `${inDays} days from now`;
+  return (
+    <Card tone="sage">
+      <Eyebrow>All caught up</Eyebrow>
+      <p className="font-serif font-semibold text-[19px] leading-snug">
+        Nothing left until {when}.
+      </p>
+      <p className="text-[13.5px] text-muted mt-1.5">
+        Everything that's open is done. The next step unlocks itself.
+      </p>
+    </Card>
   );
 }
 
