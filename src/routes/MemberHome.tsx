@@ -24,6 +24,8 @@ import { MarketplaceScreen } from './member/MarketplaceScreen';
 import { ProductDetailScreen } from './member/ProductDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
 import { JourneyScreen } from './member/JourneyScreen';
+import { QuietScreen } from './member/QuietScreen';
+import { ReintegrationScreen } from './member/ReintegrationScreen';
 import { stageFor } from '@/utils/journey';
 import type { PillarId } from '@/types';
 
@@ -57,12 +59,10 @@ export function MemberHome() {
   const pointsBalance = useStoreState((s) => s.pointsBalance);
   const pointsLedger = useStoreState((s) => s.pointsLedger);
   // PRD-05: the lifecycle stage — always derived, never stored. Home renders the stage.
-  const stage = useStoreState((s) =>
-    stageFor(
-      s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
-      s.demoDayOffset,
-    ),
+  const booking = useStoreState((s) =>
+    s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
   );
+  const stage = useStoreState((s) => stageFor(booking, s.demoDayOffset));
   const [pointsOpen, setPointsOpen] = useState(false);
   const [active, setActive] = useState<Tab>(() => initialTab(location.state));
   const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state));
@@ -85,6 +85,16 @@ export function MemberHome() {
     }
   }
 
+  // Quiet mode (decision 2): one screen, no nav, no points pill, no chrome.
+  // Restraint reads as premium — the app steps back while they're on property.
+  if (stage === 'on_retreat' && booking) {
+    return (
+      <ScreenWrap withBottomNav={false}>
+        <QuietScreen booking={booking} />
+      </ScreenWrap>
+    );
+  }
+
   return (
     <>
       <FloatingHeader
@@ -104,6 +114,11 @@ export function MemberHome() {
         {active === 'home' &&
           (stage === 'pre_retreat' ? (
             <JourneyScreen />
+          ) : stage === 'reintegration' && booking ? (
+            <ReintegrationScreen
+              booking={booking}
+              onOpenDailyCheckIn={() => setRecorderOpen(true)}
+            />
           ) : (
             <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
           ))}

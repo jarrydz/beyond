@@ -159,3 +159,29 @@ export const PREP_VIDEO_META: Record<string, { duration: string; tint: string }>
   'prep-host-video': { duration: '2:10', tint: '#5C7470' },
   'prep-room-video': { duration: '1:45', tint: '#8C7B9C' },
 };
+
+/** The shape of a retreat day — quiet mode's schedule and the T-3 read. */
+export const RETREAT_DAY_SCHEDULE = [
+  { time: '5:30am', item: 'Wake' },
+  { time: '6:00am', item: 'Qi gong on the lawn' },
+  { time: '7:30am', item: 'Breakfast' },
+  { time: '9:00am', item: 'Morning hike' },
+  { time: '12:30pm', item: 'Lunch' },
+  { time: '2:00pm', item: 'Seminar · rest · pools' },
+  { time: '6:00pm', item: 'Dinner' },
+  { time: '9:00pm', item: 'Lights down' },
+] as const;
+
+/** Mock booked treatments shown in quiet mode (local-first — no real spa data). */
+export const RETREAT_TREATMENTS = [
+  { time: '2:30pm', name: 'Remedial massage', therapist: 'Mara' },
+  { time: '4:15pm', name: 'Salt therapy', therapist: 'Jonah' },
+] as const;
+
+/** Reintegration's "one thing today", keyed by the goal's pillar. */
+export const REINTEGRATION_ONE_THING: Record<string, string> = {
+  nourishment: 'Cook one retreat recipe tonight — the bircher takes ten minutes.',
+  movement: 'Twenty minutes of movement before the first screen of the day.',
+  emotional: 'Four minutes of box breathing when the 3pm slump lands.',
+  sleep: 'Screens off at 9 — the wind-down you kept there works here too.',
+};

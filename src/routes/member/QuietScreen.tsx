@@ -1,0 +1,74 @@
+import { Card, Eyebrow } from '@/components';
+import { useStoreState } from '@/store/StoreProvider';
+import { RETREAT_DAY_SCHEDULE, RETREAT_TREATMENTS } from '@/config/prepTasks';
+import { dayOfStay, stayLength, today } from '@/utils/journey';
+import type { Booking } from '@/types';
+
+interface Props {
+  booking: Booking;
+  /** Demo escape hatch — quiet mode hides all chrome, so the stage switcher hides behind this. */
+  onOpenStageSheet?: () => void;
+}
+
+/**
+ * Quiet mode (PRD-05, decision 2). One screen: the day's shape and nothing
+ * else. No nav, no feed, no points, no content. Gwinganna restricts devices
+ * on property — an engaging app on-site fights the client and the brand.
+ */
+export function QuietScreen({ booking, onOpenStageSheet }: Props) {
+  const offset = useStoreState((s) => s.demoDayOffset);
+  const day = Math.min(dayOfStay(booking, offset), stayLength(booking));
+  const date = today(offset).toLocaleDateString('en-AU', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
+  return (
+    <section className="px-5 pt-3 pb-10 min-h-full">
+      <p className="text-muted text-[13px] mt-8 mb-1">{date}</p>
+      <h2 className="font-serif font-semibold text-[27px] leading-tight mb-6">
+        Day {day} of {stayLength(booking)}
+      </h2>
+
+      <Eyebrow>Today</Eyebrow>
+      <Card>
+        {RETREAT_DAY_SCHEDULE.map((row) => (
+          <div key={row.time} className="flex gap-4 py-[5px] items-baseline">
+            <span className="text-muted text-[12.5px] tabular-nums w-[58px] flex-none">
+              {row.time}
+            </span>
+            <span className="text-[14.5px]">{row.item}</span>
+          </div>
+        ))}
+      </Card>
+
+      <Eyebrow className="mt-5">Your treatments</Eyebrow>
+      <Card>
+        {RETREAT_TREATMENTS.map((t) => (
+          <div key={t.time} className="flex gap-4 py-[5px] items-baseline">
+            <span className="text-muted text-[12.5px] tabular-nums w-[58px] flex-none">
+              {t.time}
+            </span>
+            <span className="text-[14.5px]">
+              {t.name} <span className="text-muted">· with {t.therapist}</span>
+            </span>
+          </div>
+        ))}
+      </Card>
+
+      <p className="text-muted text-[13px] text-center mt-10">
+        Everything else is waiting for you at home.
+      </p>
+
+      {onOpenStageSheet && (
+        <button
+          type="button"
+          aria-label="Journey stage (demo)"
+          onClick={onOpenStageSheet}
+          className="absolute bottom-4 right-4 w-3 h-3 rounded-full bg-line/70 active:bg-sage"
+        />
+      )}
+    </section>
+  );
+}
