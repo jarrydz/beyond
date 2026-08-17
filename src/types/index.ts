@@ -12,6 +12,14 @@ export type PillarId =
   | 'sleep'
   | 'toxic_load';
 
+/**
+ * Cross-cutting themes — additive metadata on content and products, not a
+ * second navigation axis. Every item still resolves to exactly one PillarId.
+ * `low_tox`: organic / no-preservative food, low-tox spa and cleaning products.
+ * `environment`: nature immersion, the member's physical surroundings.
+ */
+export type ContentTheme = 'low_tox' | 'environment';
+
 export interface Pillar {
   id: PillarId;
   order: number;
@@ -89,6 +97,8 @@ export interface ContentItem {
   title: string;
   description?: string;
   payload?: any;
+  /** Cross-cutting themes (additive metadata) — see ContentTheme. */
+  themes?: ContentTheme[];
   weekOf: string;
   doneBy: string[];
 }
@@ -160,6 +170,8 @@ export interface Product {
   pointCost?: number;
   /** Set when the recommendation ties to a pillar (shows the badge + contextual placement). */
   pillarId?: PillarId;
+  /** Cross-cutting themes (additive metadata) — see ContentTheme. */
+  themes?: ContentTheme[];
   /** The editorial "recommended because…" line. */
   why: string;
 }
