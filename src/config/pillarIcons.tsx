@@ -4,7 +4,7 @@ import type { PillarId } from '@/types';
 /**
  * Line icons for each pillar, in the same bare style as components/BottomNav.tsx —
  * no fill/stroke attributes here; the consumer sets stroke + size via classes.
- * leaf · figure · heart · moon · lotus (deck order).
+ * leaf · figure · heart · moon (app order).
  */
 export const pillarIcons: Record<PillarId, ReactNode> = {
   nourishment: (
@@ -29,13 +29,6 @@ export const pillarIcons: Record<PillarId, ReactNode> = {
   sleep: (
     <svg viewBox="0 0 24 24">
       <path d="M20 14.5A8 8 0 1 1 9.5 4 7 7 0 0 0 20 14.5Z" />
-    </svg>
-  ),
-  toxic_load: (
-    <svg viewBox="0 0 24 24">
-      <path d="M12 21c-2.2 0-4.2-1.2-4.2-1.2.7-3.8 4.2-7 4.2-7s3.5 3.2 4.2 7c0 0-2 1.2-4.2 1.2Z" />
-      <path d="M12 20c-3 0-7-1.8-7-1.8 1-2.6 3.6-3 5-2.6" />
-      <path d="M12 20c3 0 7-1.8 7-1.8-1-2.6-3.6-3-5-2.6" />
     </svg>
   ),
 };

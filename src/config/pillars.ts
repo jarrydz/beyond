@@ -63,18 +63,6 @@ export const pillars: Pillar[] = [
     ],
     accent: '#5B6B8C',
   },
-  {
-    id: 'toxic_load',
-    order: 5,
-    label: 'Toxic Load',
-    tagline: 'Reduce the load on your body',
-    detail: [
-      'Organic, no-preservative food',
-      'Low-tox spa and cleaning products',
-      'Immersion in nature',
-    ],
-    accent: '#7E9B6E',
-  },
 ];
 
 const byId = Object.fromEntries(pillars.map((p) => [p.id, p])) as Record<

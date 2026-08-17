@@ -98,7 +98,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
       <Card onClick={() => onGoTab('pillars')} className="cursor-pointer">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <Eyebrow>Your Five Pillars</Eyebrow>
+            <Eyebrow>Your Pillars</Eyebrow>
             <div className="font-semibold text-[15px]">The work you took home</div>
             <div className="text-muted text-[12.5px]">Where your goals and content live</div>
           </div>

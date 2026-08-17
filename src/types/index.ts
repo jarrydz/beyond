@@ -1,7 +1,7 @@
 export type Role = 'member' | 'coach';
 
 /**
- * The Five Pillars — the WHAT members work on, delivered by the Three Enablers
+ * The Pillars — the WHAT members work on, delivered by the Enablers
  * (Coach, Community, Platform). Key off this stable id, never the display label.
  * Source of truth for copy/accent/order: src/config/pillars.ts.
  */
@@ -9,8 +9,7 @@ export type PillarId =
   | 'nourishment'
   | 'movement'
   | 'emotional'
-  | 'sleep'
-  | 'toxic_load';
+  | 'sleep';
 
 /**
  * Cross-cutting themes — additive metadata on content and products, not a

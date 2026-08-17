@@ -8,7 +8,7 @@ interface Props {
   onOpenPillar: (id: PillarId) => void;
 }
 
-/** The hero of the demo: all five pillars in deck order, each tappable. */
+/** The hero of the demo: every pillar in app order, each tappable. */
 export function PillarsScreen({ onOpenPillar }: Props) {
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const content = useStoreState((s) => s.content);
@@ -17,10 +17,10 @@ export function PillarsScreen({ onOpenPillar }: Props) {
 
   return (
     <section className="px-5 pt-3 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">The Five Pillars</h2>
+      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">The Pillars</h2>
       <p className="text-muted text-[13.5px] mb-4">
-        The work you took home from Gwinganna — five areas, delivered by your coach, your
-        group and the app.
+        The work you took home from Gwinganna — delivered by your coach, your group and
+        the app.
       </p>
 
       <div className="space-y-3">
