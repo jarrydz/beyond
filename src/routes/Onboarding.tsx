@@ -9,13 +9,15 @@ import type { PillarId } from '@/types';
 
 type Step = 'cohort' | 'pillar' | 'goal';
 
-/** A goal-shaped suggestion per pillar, so the goal step starts with something real. */
-const GOAL_SUGGESTION: Record<PillarId, string> = {
+/**
+ * A goal-shaped suggestion per pillar, so the goal step starts with something real.
+ * Partial only until toxic_load leaves the PillarId union — restore Record then.
+ */
+const GOAL_SUGGESTION: Partial<Record<PillarId, string>> = {
   nourishment: 'Plant-forward dinners, 5 nights',
   movement: 'Morning Chi Gong, daily',
   emotional: 'Breathe through the 3pm slump',
   sleep: 'Asleep before 10pm',
-  toxic_load: 'One low-tox swap a week',
 };
 
 const WINDOWS = ['30 days', '100 days'] as const;
@@ -29,12 +31,12 @@ export function Onboarding() {
 
   const [step, setStep] = useState<Step>('cohort');
   const [pillarId, setPillarId] = useState<PillarId>('sleep');
-  const [goalTitle, setGoalTitle] = useState(GOAL_SUGGESTION.sleep);
+  const [goalTitle, setGoalTitle] = useState(GOAL_SUGGESTION.sleep ?? '');
   const [goalWindow, setGoalWindow] = useState<(typeof WINDOWS)[number]>('30 days');
 
   function pickPillar(id: PillarId) {
     setPillarId(id);
-    setGoalTitle(GOAL_SUGGESTION[id]);
+    setGoalTitle(GOAL_SUGGESTION[id] ?? '');
   }
 
   function finish() {
