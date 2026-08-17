@@ -16,7 +16,14 @@ import type {
   Subscription,
 } from '@/types';
 import { readOnboarded } from './onboardingStorage';
+import {
+  readDemoOffset,
+  readDoneTasks,
+  readGoalWhy,
+  readTaperTicks,
+} from './journeyStorage';
 import { prepTasks as seedPrepTasks } from '@/config/prepTasks';
+import { pillars } from '@/config/pillars';
 import {
   affirmations as seedAffirmations,
   booking as seedBooking,
@@ -65,13 +72,36 @@ export interface StoreState {
   demoDayOffset: number;
 }
 
+/**
+ * Restore the goal + why typed at the T-21 prep task. Reintegration's payoff
+ * is the why restated verbatim — it must survive a refresh even though the
+ * in-memory store resets.
+ */
+function restoredGoals(): Goal[] {
+  const base = seedGoals.map((g) => ({ ...g }));
+  const stored = readGoalWhy(seedYou.id);
+  if (!stored || !pillars.some((p) => p.id === stored.pillarId)) return base;
+  return [
+    ...base.map((g) => (g.profileId === seedYou.id ? { ...g, active: false } : g)),
+    {
+      id: 'goal-journey-restored',
+      profileId: seedYou.id,
+      pillarId: stored.pillarId as Goal['pillarId'],
+      title: stored.title,
+      why: stored.why || undefined,
+      active: true,
+      createdAt: new Date().toISOString(),
+    },
+  ];
+}
+
 export const initialState = (): StoreState => ({
   cohort: seedCohort,
   profiles: seedProfiles.map((p) => ({
     ...p,
     onboarded: p.onboarded || readOnboarded(p.id),
   })),
-  goals: seedGoals.map((g) => ({ ...g })),
+  goals: restoredGoals(),
   checkIns: seedCheckIns.map((c) => ({ ...c })),
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),
   content: seedContent.map((c) => ({ ...c, doneBy: [...c.doneBy] })),
@@ -88,9 +118,12 @@ export const initialState = (): StoreState => ({
   activeRole: 'member',
   signedIn: false,
   booking: seedBooking,
-  prepTasks: seedPrepTasks.map((t) => ({ ...t, done: false })),
-  taperTicks: [],
-  demoDayOffset: 0,
+  prepTasks: (() => {
+    const done = new Set(readDoneTasks(seedYou.id));
+    return seedPrepTasks.map((t) => ({ ...t, done: done.has(t.id) }));
+  })(),
+  taperTicks: readTaperTicks(seedYou.id),
+  demoDayOffset: readDemoOffset(),
 });
 
 export type StoreListener = (s: StoreState) => void;

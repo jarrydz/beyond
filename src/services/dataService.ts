@@ -2,15 +2,18 @@
 // Screens import only this module — never the store directly.
 
 import type {
+  Booking,
   CheckIn,
   ContentItem,
   DailyCheckInEntry,
   Goal,
+  JourneyStage,
   Meal,
   Order,
   PillarId,
   PointsLedgerEntry,
   Post,
+  PrepTask,
   Product,
   Profile,
   RecordCheckInInput,
@@ -19,6 +22,14 @@ import type {
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
 import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
+import {
+  writeDemoOffset,
+  writeDoneTasks,
+  writeGoalWhy,
+  writeTaperTicks,
+} from '@/store/journeyStorage';
+import { daysUntil, stageFor } from '@/utils/journey';
+import type { TaperSubstance } from '@/config/prepTasks';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
@@ -181,6 +192,7 @@ export function createDataService(store: MemoryStore) {
       pillarId: PillarId,
       title: string,
       target?: string,
+      why?: string,
     ): Goal {
       const goal: Goal = {
         id: uid(),
@@ -188,9 +200,12 @@ export function createDataService(store: MemoryStore) {
         pillarId,
         title,
         target,
+        why,
         active: true,
         createdAt: new Date().toISOString(),
       };
+      // The why is reintegration's payoff — it must survive a refresh.
+      if (why) writeGoalWhy(profileId, { title, pillarId, why });
       store.set((s) => ({
         ...s,
         goals: [
@@ -450,6 +465,84 @@ export function createDataService(store: MemoryStore) {
     // affirmations (small thing, but it's seeded data)
     getAffirmations(): string[] {
       return store.get().affirmations;
+    },
+
+    // ——— PRD-05: the retreat journey ———
+
+    /** The current user's reservation, or null — the anchor stageFor derives from. */
+    getBooking(): Booking | null {
+      const s = store.get();
+      return s.booking && s.booking.profileId === s.currentUserId ? s.booking : null;
+    },
+    /** Derived, never stored (decision 6). */
+    getJourneyStage(): JourneyStage {
+      const s = store.get();
+      return stageFor(this.getBooking(), s.demoDayOffset);
+    },
+    getPrepTasks(): PrepTask[] {
+      return store.get().prepTasks;
+    },
+    /**
+     * The T-21 connect step. Validates the confirmation number + surname
+     * against the seeded reservation (mock — no network). Success marks the
+     * connect task done; failure returns null and changes nothing.
+     */
+    connectBooking(confirmationNumber: string, surname: string): Booking | null {
+      const booking = this.getBooking();
+      if (!booking) return null;
+      const surnameOnFile = booking.guestName.trim().split(/\s+/).at(-1) ?? '';
+      const ok =
+        confirmationNumber.trim() === booking.confirmationNumber &&
+        surname.trim().toLowerCase() === surnameOnFile.toLowerCase();
+      if (!ok) return null;
+      this.completePrepTask('prep-connect');
+      return booking;
+    },
+    /** Mark a prep task done. No points before arrival (decision 5). */
+    completePrepTask(taskId: string): void {
+      store.set((s) => {
+        const prepTasks = s.prepTasks.map((t) =>
+          t.id === taskId ? { ...t, done: true } : t,
+        );
+        writeDoneTasks(
+          s.currentUserId,
+          prepTasks.filter((t) => t.done).map((t) => t.id),
+        );
+        return { ...s, prepTasks };
+      });
+    },
+    /**
+     * Tick/untick one cell of the 7×3 taper grid. The Step down task counts
+     * as done once any cell is ticked on the CURRENT day — never only when
+     * the whole grid is full, or it could never complete before arrival.
+     */
+    setTaperCell(daysBeforeArrival: number, substance: TaperSubstance, on: boolean): void {
+      const cell = `${daysBeforeArrival}:${substance}`;
+      store.set((s) => {
+        const taperTicks = on
+          ? s.taperTicks.includes(cell)
+            ? s.taperTicks
+            : [...s.taperTicks, cell]
+          : s.taperTicks.filter((t) => t !== cell);
+        writeTaperTicks(s.currentUserId, taperTicks);
+        return { ...s, taperTicks };
+      });
+      const s = store.get();
+      const booking = this.getBooking();
+      if (!booking) return;
+      const todayCell = daysUntil(booking.arrivalDate, s.demoDayOffset);
+      const tickedToday = s.taperTicks.some((t) => t.startsWith(`${todayCell}:`));
+      if (tickedToday && !s.prepTasks.find((t) => t.id === 'prep-taper')?.done) {
+        this.completePrepTask('prep-taper');
+      }
+    },
+    getTaperTicks(): string[] {
+      return store.get().taperTicks;
+    },
+    /** Demo-only: move the simulated clock. The whole app recomputes from this. */
+    setDemoDayOffset(offset: number): void {
+      writeDemoOffset(offset);
+      store.set((s) => ({ ...s, demoDayOffset: offset }));
     },
   };
 }
