@@ -23,6 +23,8 @@ import { MoreScreen } from './member/MoreScreen';
 import { MarketplaceScreen } from './member/MarketplaceScreen';
 import { ProductDetailScreen } from './member/ProductDetailScreen';
 import { ProfileScreen } from './member/ProfileScreen';
+import { JourneyScreen } from './member/JourneyScreen';
+import { stageFor } from '@/utils/journey';
 import type { PillarId } from '@/types';
 
 // Five tabs by decision (JZ, 2026-07-03): Marketplace lives inside More;
@@ -54,6 +56,13 @@ export function MemberHome() {
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const pointsBalance = useStoreState((s) => s.pointsBalance);
   const pointsLedger = useStoreState((s) => s.pointsLedger);
+  // PRD-05: the lifecycle stage — always derived, never stored. Home renders the stage.
+  const stage = useStoreState((s) =>
+    stageFor(
+      s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
+      s.demoDayOffset,
+    ),
+  );
   const [pointsOpen, setPointsOpen] = useState(false);
   const [active, setActive] = useState<Tab>(() => initialTab(location.state));
   const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state));
@@ -92,9 +101,12 @@ export function MemberHome() {
         key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
       >
-        {active === 'home' && (
-          <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
-        )}
+        {active === 'home' &&
+          (stage === 'pre_retreat' ? (
+            <JourneyScreen />
+          ) : (
+            <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
+          ))}
         {active === 'pillars' &&
           (openMealId ? (
             <MealDetailScreen mealId={openMealId} onBack={() => setOpenMealId(null)} />
