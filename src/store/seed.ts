@@ -383,6 +383,8 @@ export const content: ContentItem[] = [
   // Nourishment
   {
     id: 'content-recipe',
+    format: 'read',
+    tint: '#C97B5A',
     type: 'recipe',
     pillarId: 'nourishment',
     title: '5 plant-forward dinners',
@@ -404,6 +406,8 @@ export const content: ContentItem[] = [
   },
   {
     id: 'content-cookalong',
+    format: 'video',
+    tint: '#B5663F',
     type: 'event',
     pillarId: 'nourishment',
     title: 'Group cook-along',
@@ -413,6 +417,8 @@ export const content: ContentItem[] = [
   },
   {
     id: 'content-toxic',
+    format: 'read',
+    tint: '#A8763E',
     type: 'nature',
     pillarId: 'nourishment',
     themes: ['low_tox', 'environment'],
@@ -424,6 +430,8 @@ export const content: ContentItem[] = [
   // Movement
   {
     id: 'content-movement',
+    format: 'video',
+    tint: '#5C7470',
     type: 'movement',
     pillarId: 'movement',
     title: 'Morning Chi Gong · 8 min',
@@ -434,6 +442,8 @@ export const content: ContentItem[] = [
   // Emotional Wellbeing
   {
     id: 'content-breathwork',
+    format: 'audio',
+    tint: '#8C7B9C',
     type: 'breathwork',
     pillarId: 'emotional',
     title: 'Box breathing · 4 min',
@@ -444,6 +454,8 @@ export const content: ContentItem[] = [
   // Sleep
   {
     id: 'content-sleep',
+    format: 'read',
+    tint: '#5B6B8C',
     type: 'sleep',
     pillarId: 'sleep',
     title: 'Wind-down at the same time',

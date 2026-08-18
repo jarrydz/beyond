@@ -161,6 +161,16 @@ export type ContentType =
   | 'nature'
   | 'mindset';
 
+/**
+ * How a piece of content is delivered (PRD-07) — the modalities band from
+ * the Aug '26 deck as a field, minus SMS/WhatsApp which are outbound-only
+ * and correctly absent from the app.
+ */
+export type ContentFormat = 'video' | 'audio' | 'read' | 'interactive';
+
+/** Keys into the local interactive-component registry (src/content/registry.ts). */
+export type InteractiveKey = 'breath_pacer' | 'step_sequence' | 'week_planner';
+
 export interface ContentItem {
   id: string;
   type: ContentType;
@@ -171,7 +181,29 @@ export interface ContentItem {
   payload?: any;
   /** Cross-cutting themes (additive metadata) — see ContentTheme. */
   themes?: ContentTheme[];
-  weekOf: string;
+  /** How this is delivered. The modalities band as a field. */
+  format: ContentFormat;
+  /** Minutes, for the library row. Optional on `read`. */
+  durationMin?: number;
+  /** Who's delivering it — 'Leo', 'Lucy', 'The Gwinganna kitchen'. */
+  presenter?: string;
+  /**
+   * The media contract (PRD-07 decision 2). Real assets when they exist;
+   * absent → the tint gradient poster and the honest placeholder sheet.
+   * The film shoot becomes a data edit, not a code change.
+   */
+  posterUrl?: string;
+  mediaUrl?: string;
+  /** Documented photography stand-in, same pattern as Meal.tint / Product.tint. */
+  tint: string;
+  /** `format: 'read'` — plain-text paragraphs. No markdown, no HTML. */
+  body?: string[];
+  /** `format: 'interactive'` — key into the local component registry. */
+  componentKey?: InteractiveKey;
+  /** Config the registered component reads. Per-component shape; JSON-serialisable. */
+  config?: Record<string, unknown>;
+  /** Set on weekly programming; absent on permanent library items. Nothing reads it yet. */
+  weekOf?: string;
   doneBy: string[];
 }
 
