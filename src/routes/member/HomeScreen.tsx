@@ -5,8 +5,8 @@ import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
 import { pillarIcons } from '@/config/pillarIcons';
 import { YOUR_WEEK, YOUR_WEEK_NOTE } from '@/config/yourWeek';
-import { today } from '@/utils/journey';
-import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/format';
+import { daysUntil, today } from '@/utils/journey';
+import { formatCheckInTime, greeting, relativeTime } from '@/utils/format';
 
 interface Props {
   onGoTab: (tab: string) => void;
@@ -60,7 +60,14 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
   const todayMovement = useMemo(() => content.find((c) => c.type === 'movement'), [content]);
   const movementDone = todayMovement?.doneBy.includes(me.id) ?? false;
 
-  const daySinceRetreat = activeGoal ? daysSince(activeGoal.createdAt) : 0;
+  // D3 (cold-start audit): the day count derives from the booking's real
+  // departure on the sim clock — never from goal age. No booking, no number:
+  // a plain greeting beats a fabricated one.
+  const booking = useStoreState((st) =>
+    st.booking && st.booking.profileId === me.id ? st.booking : null,
+  );
+  const offset = useStoreState((st) => st.demoDayOffset);
+  const daysHome = booking ? -daysUntil(booking.departureDate, offset) : null;
   const goalScore = lastCompleted?.goalScore ?? 0;
 
   const dailyCheckIns = useStoreState((s) => s.dailyCheckIns);
@@ -79,9 +86,13 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">
         {greeting()}, {me.fullName.split(' ')[0]}
       </h2>
-      <p className="text-muted text-[13.5px] mb-4">
-        Day {daySinceRetreat} since you left the retreat. Keep going.
-      </p>
+      {daysHome !== null && daysHome > 0 ? (
+        <p className="text-muted text-[13.5px] mb-4">
+          Day {daysHome} since you left the retreat. Keep going.
+        </p>
+      ) : (
+        <div className="mb-4" />
+      )}
 
       {/* PRD-06: the daily loop leads. With an active goal the Today card IS
           the check-in entry (JZ, option b); the plain card below remains the
