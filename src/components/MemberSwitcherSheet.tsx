@@ -21,18 +21,20 @@ export function MemberSwitcherSheet({ open, onClose }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
   const currentUserId = useStoreState((s) => s.currentUserId);
-  const personas = useStoreState((s) =>
-    s.profiles
-      .filter((p) => p.id === 'member-jarryd' || p.id === 'member-evelyn')
-      .map((p) => ({
-        id: p.id,
-        name: p.fullName,
-        subtitle:
-          s.booking?.profileId === p.id
-            ? 'Booked · arriving soon — the guest story'
-            : 'Alumna · no booking — the cold start',
-      })),
-  );
+  // Select stable references only — a selector that maps to a fresh array
+  // every snapshot sends useSyncExternalStore into an infinite re-render.
+  const profiles = useStoreState((s) => s.profiles);
+  const bookingProfileId = useStoreState((s) => s.booking?.profileId);
+  const personas = profiles
+    .filter((p) => p.id === 'member-jarryd' || p.id === 'member-evelyn')
+    .map((p) => ({
+      id: p.id,
+      name: p.fullName,
+      subtitle:
+        bookingProfileId === p.id
+          ? 'Booked · arriving soon — the guest story'
+          : 'Alumna · no booking — the cold start',
+    }));
 
   function switchTo(id: string, name: string) {
     if (id === currentUserId) {
