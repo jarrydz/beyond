@@ -15,6 +15,10 @@ import type {
 } from '@/types';
 import { ACTION_LABELS, AWARDS } from '@/config/points';
 
+// PRD-07: the permanent content library is authored backend-shaped in
+// src/content/library.ts (pure data) — seed only re-exports it.
+export { library } from '@/content/library';
+
 const now = Date.now();
 const days = (n: number) => new Date(now + n * 86_400_000).toISOString();
 const hours = (n: number) => new Date(now + n * 3_600_000).toISOString();

@@ -18,10 +18,12 @@ import type {
 } from '@/types';
 import { readOnboarded } from './onboardingStorage';
 import {
+  readContentDone,
   readDailyCheckIns,
   readDemoOffset,
   readDoneTasks,
   readGoalWhy,
+  readPlannerTicks,
   readTaperTicks,
 } from './journeyStorage';
 import { prepTasks as seedPrepTasks } from '@/config/prepTasks';
@@ -32,6 +34,7 @@ import {
   checkIns as seedCheckIns,
   cohort as seedCohort,
   content as seedContent,
+  library as seedLibrary,
   goals as seedGoals,
   meals as seedMeals,
   pointsBalance as seedPointsBalance,
@@ -50,6 +53,10 @@ export interface StoreState {
   checkIns: CheckIn[];
   posts: Post[];
   content: ContentItem[];
+  /** PRD-07: the permanent content library — twelve pieces, three per pillar. */
+  library: ContentItem[];
+  /** Week-planner commitments, keyed `${dayIndex}:${sessionKey}` (PRD-07). */
+  plannerTicks: string[];
   meals: Meal[];
   pointsBalance: number;
   pointsLedger: PointsLedgerEntry[];
@@ -116,6 +123,14 @@ export const initialState = (): StoreState => ({
   checkIns: seedCheckIns.map((c) => ({ ...c })),
   posts: seedPosts.map((p) => ({ ...p, likedBy: [...p.likedBy] })),
   content: seedContent.map((c) => ({ ...c, doneBy: [...c.doneBy] })),
+  library: (() => {
+    const done = new Set(readContentDone(seedYou.id));
+    return seedLibrary.map((it) => ({
+      ...it,
+      doneBy: done.has(it.id) ? [seedYou.id] : [],
+    }));
+  })(),
+  plannerTicks: readPlannerTicks(seedYou.id),
   meals: seedMeals.map((m) => ({ ...m, ingredients: [...m.ingredients], steps: [...m.steps] })),
   pointsBalance: seedPointsBalance,
   pointsLedger: seedPointsLedger.map((e) => ({ ...e })),

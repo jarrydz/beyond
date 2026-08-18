@@ -87,6 +87,24 @@ export function writeGoalWhy(profileId: string, value: StoredGoalWhy): void {
 }
 
 const checkInsKey = (profileId: string) => `journey:checkIns:${profileId}`;
+const contentDoneKey = (profileId: string) => `content:done:${profileId}`;
+const plannerKey = (profileId: string) => `content:planner:${profileId}`;
+
+/** Completed library items (PRD-07) — a finished practice must survive a refresh. */
+export function readContentDone(profileId: string): string[] {
+  return readList(contentDoneKey(profileId));
+}
+export function writeContentDone(profileId: string, ids: string[]): void {
+  writeList(contentDoneKey(profileId), ids);
+}
+
+/** Week-planner commitments (PRD-07), keyed `${dayIndex}:${sessionKey}`. */
+export function readPlannerTicks(profileId: string): string[] {
+  return readList(plannerKey(profileId));
+}
+export function writePlannerTicks(profileId: string, ticks: string[]): void {
+  writeList(plannerKey(profileId), ticks);
+}
 
 /**
  * Logged daily check-ins (PRD-06) — focus answers are worthless if they
@@ -123,6 +141,8 @@ export function clearJourney(profileId: string): void {
     localStorage.removeItem(taperKey(profileId));
     localStorage.removeItem(whyKey(profileId));
     localStorage.removeItem(checkInsKey(profileId));
+    localStorage.removeItem(contentDoneKey(profileId));
+    localStorage.removeItem(plannerKey(profileId));
     localStorage.removeItem(offsetKey);
   } catch {
     // localStorage can be unavailable in private modes

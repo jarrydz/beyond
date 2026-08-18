@@ -24,10 +24,12 @@ import { MemoryStore } from '@/store/memoryStore';
 import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
 import {
   clearJourney,
+  writeContentDone,
   writeDailyCheckIns,
   writeDemoOffset,
   writeDoneTasks,
   writeGoalWhy,
+  writePlannerTicks,
   writeTaperTicks,
 } from '@/store/journeyStorage';
 import { daysUntil, stageFor, today } from '@/utils/journey';
@@ -261,14 +263,39 @@ export function createDataService(store: MemoryStore) {
     markContentDone(contentId: string): void {
       store.set((s) => {
         const me = s.currentUserId;
-        return {
-          ...s,
-          content: s.content.map((c) =>
-            c.id === contentId && !c.doneBy.includes(me)
-              ? { ...c, doneBy: [...c.doneBy, me] }
-              : c,
-          ),
-        };
+        const mark = (c: ContentItem) =>
+          c.id === contentId && !c.doneBy.includes(me)
+            ? { ...c, doneBy: [...c.doneBy, me] }
+            : c;
+        const library = s.library.map(mark);
+        // Library completion survives a refresh (PRD-07); weekly programming
+        // stays session-scoped as it always has.
+        writeContentDone(
+          me,
+          library.filter((c) => c.doneBy.includes(me)).map((c) => c.id),
+        );
+        return { ...s, content: s.content.map(mark), library };
+      });
+    },
+
+    // ——— PRD-07: the content library ———
+    getLibrary(): ContentItem[] {
+      return store.get().library;
+    },
+    getLibraryItem(id: string): ContentItem | undefined {
+      return store.get().library.find((c) => c.id === id);
+    },
+    /** Toggle one week-planner commitment. Persisted — a plan that vanishes isn't a plan. */
+    setPlannerCell(dayIndex: number, sessionKey: string, on: boolean): void {
+      const cell = `${dayIndex}:${sessionKey}`;
+      store.set((s) => {
+        const plannerTicks = on
+          ? s.plannerTicks.includes(cell)
+            ? s.plannerTicks
+            : [...s.plannerTicks, cell]
+          : s.plannerTicks.filter((t) => t !== cell);
+        writePlannerTicks(s.currentUserId, plannerTicks);
+        return { ...s, plannerTicks };
       });
     },
 
@@ -770,6 +797,8 @@ export function createDataService(store: MemoryStore) {
         goals: seedGoals.map((g) => ({ ...g })),
         dailyCheckIns: [],
         guestFocus: {},
+        plannerTicks: [],
+        library: s.library.map((c) => ({ ...c, doneBy: [] })),
       }));
     },
   };
