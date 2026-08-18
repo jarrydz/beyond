@@ -8,6 +8,7 @@ import type {
   Goal,
   Meal,
   Order,
+  PillarId,
   PointsLedgerEntry,
   Post,
   PrepTask,
@@ -71,6 +72,12 @@ export interface StoreState {
   taperTicks: string[];
   /** Demo-only simulated clock: whole app computes dates as real today + this many days. */
   demoDayOffset: number;
+  /**
+   * PRD-06: focus set by the coach for seeded cohort guests, keyed by
+   * booking id. Set dressing for the departure board — the real member's
+   * focus lives on their Goal with provenance. Session-only by design.
+   */
+  guestFocus: Record<string, { pillarId: PillarId; note?: string }>;
 }
 
 /**
@@ -121,6 +128,7 @@ export const initialState = (): StoreState => ({
   currentUserId: seedYou.id,
   activeRole: 'member',
   signedIn: false,
+  guestFocus: {},
   booking: seedBooking,
   prepTasks: (() => {
     const done = new Set(readDoneTasks(seedYou.id));

@@ -86,6 +86,24 @@ export interface Booking {
   hostRole: string; // e.g. 'Your Program Manager'
 }
 
+/**
+ * One row of the coach's arrivals/departures board (PRD-06) — a booking
+ * plus the guest's goal and prep standing. Synthetic guests come from the
+ * seeded cohort; the demo member is assembled from live store state.
+ */
+export interface GuestBooking {
+  booking: Booking;
+  goalPillarId: PillarId;
+  goalTitle: string;
+  goalWhy: string;
+  requiredDone: number;
+  requiredTotal: number;
+  erfDone: boolean;
+  taperStarted: boolean;
+  /** True once the coach has set this guest's focus at departure. */
+  focusSet?: boolean;
+}
+
 export type PrepKind = 'video' | 'form' | 'choice' | 'reflect' | 'read' | 'track';
 
 /**

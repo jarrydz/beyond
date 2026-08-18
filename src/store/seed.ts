@@ -5,6 +5,7 @@ import type {
   ContentItem,
   DailyCheckInEntry,
   Goal,
+  GuestBooking,
   Meal,
   PointsLedgerEntry,
   Post,
@@ -113,6 +114,59 @@ export function seedDailyHistory(base: Date): DailyCheckInEntry[] {
       focusAnswers: { sleep_lights_out: lightsOut, sleep_waking: waking },
     };
   });
+}
+
+/**
+ * The seeded guest cohort for the coach's arrivals/departures board
+ * (PRD-06). Generated relative to the SIMULATED today — the same sliding
+ * pattern as seedDailyHistory — so the board has arrivals, departures and
+ * a real roll-up percentage on every canonical demo day.
+ *
+ * Prep completion is deliberately varied: a strip reading 100% is not
+ * credible and hides the product's own argument. Required total mirrors
+ * the seven required prep tasks in config/prepTasks.ts.
+ */
+export function seedCohortBookings(base: Date): GuestBooking[] {
+  const iso = (daysFromBase: number) =>
+    new Date(base.getTime() + daysFromBase * 86_400_000).toISOString().slice(0, 10);
+  // [name, package, room, arrival offset (days from sim today), requiredDone,
+  //  erf, taper, pillar, goal, why] — stays: 5 nights, departure = arrival + 5.
+  const rows: Array<
+    [string, string, string, number, number, boolean, boolean, Goal['pillarId'], string, string]
+  > = [
+    ['Marion Wells', 'Optimum Wellbeing', 'Orchard Suites', -5, 7, true, true, 'sleep', 'Asleep by 10:30', "I've run on six hours for a decade. My cardiologist stopped joking about it."],
+    ['Dale Hutchins', 'Fitness Focus', 'Mountain View', -4, 6, true, true, 'movement', 'Move every morning', 'My knees gave me a warning I intend to hear.'],
+    ['Amara Okafor', 'Optimum Wellbeing', 'Meditation Villas', -3, 7, true, true, 'emotional', 'A day with margins', "I answered email at my son's recital. That was the moment."],
+    ['Theo Brandt', 'Detox & Reset', 'Orchard Suites', 0, 7, true, true, 'nourishment', 'Cook four nights a week', 'Takeaway five nights running and I stopped tasting it.'],
+    ['Priscilla Yeo', 'Optimum Wellbeing', 'Garden Rooms', 0, 5, true, false, 'sleep', 'Off the sleeping tablets', 'Two years on them; I want to know who I am without.'],
+    ['Rob McAllister', 'Fitness Focus', 'Mountain View', 2, 3, false, false, 'movement', 'Back on the bike', 'Sold the bike when work took over. Buying it back.'],
+    ['Hana Vasquez', 'Optimum Wellbeing', 'Meditation Villas', 3, 7, true, true, 'emotional', 'Phone down by 8', 'My daughter drew the family — I was holding a rectangle.'],
+    ['Gordon Pryce', 'Detox & Reset', 'Garden Rooms', 4, 2, true, false, 'nourishment', 'Alcohol-free weekdays', "The nightly wine stopped being a choice a while ago."],
+    ['Ingrid Solberg', 'Optimum Wellbeing', 'Orchard Suites', 6, 4, false, true, 'sleep', 'Wake without the 3am gap', 'The 3am hour is where my worry lives. I want it back.'],
+    ['Felix Ambrose', 'Fitness Focus', 'Mountain View', 9, 0, false, false, 'movement', 'Ten thousand honest steps', "Just booked. Haven't opened the app until now."],
+  ];
+  return rows.map(([name, pkg, room, arrive, done, erf, taper, pillarId, goalTitle, goalWhy], i) => ({
+    booking: {
+      id: `booking-guest-${i}`,
+      profileId: `guest-${i}`,
+      confirmationNumber: String(90210 + i * 137),
+      guestName: name,
+      packageName: pkg,
+      roomType: room,
+      arrivalDate: iso(arrive),
+      departureDate: iso(arrive + 5),
+      arrivalWindow: '2pm – 4pm',
+      hostName: 'Lucy',
+      hostRole: 'Your Program Manager',
+    },
+    goalPillarId: pillarId,
+    goalTitle,
+    goalWhy,
+    requiredDone: done,
+    requiredTotal: 7,
+    erfDone: erf,
+    taperStarted: taper,
+  }));
 }
 
 export const booking: Booking = {

@@ -32,8 +32,9 @@ import {
 } from '@/store/journeyStorage';
 import { daysUntil, stageFor, today } from '@/utils/journey';
 import { prepTasks as prepTaskSeeds, type TaperSubstance } from '@/config/prepTasks';
-import { goals as seedGoals, seedDailyHistory } from '@/store/seed';
+import { goals as seedGoals, seedCohortBookings, seedDailyHistory } from '@/store/seed';
 import { FOCUS_INSIGHT } from '@/config/focusQuestions';
+import type { GuestBooking } from '@/types';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
@@ -677,6 +678,78 @@ export function createDataService(store: MemoryStore) {
     },
 
     /**
+     * The coach's working board (PRD-06): today's arrivals, this week's
+     * departures, and the roll-up strip Gwinganna reads over her shoulder.
+     * Everything is computed from booking + prep state — Lucy does nothing
+     * extra to produce it; that is the design. The demo member is assembled
+     * live from the store; the seeded cohort slides with the sim clock.
+     */
+    getCoachBoard(): {
+      arrivingToday: GuestBooking[];
+      departingSoon: Array<GuestBooking & { departsInDays: number }>;
+      rollup: { arrivingNext7: number; readyPct: number; erfDone: number; tapersStarted: number };
+    } {
+      const s = store.get();
+      const du = (iso: string) => daysUntil(iso, s.demoDayOffset);
+      const guests = seedCohortBookings(today(s.demoDayOffset)).map((g) => {
+        const set = s.guestFocus[g.booking.id];
+        return set ? { ...g, goalPillarId: set.pillarId, focusSet: true } : g;
+      });
+      const all: GuestBooking[] = [...guests];
+      const memberGoal = s.goals.find((g) => g.profileId === 'member-jarryd' && g.active);
+      if (s.booking && memberGoal) {
+        const required = s.prepTasks.filter((t) => t.required);
+        all.push({
+          booking: s.booking,
+          goalPillarId: memberGoal.pillarId,
+          goalTitle: memberGoal.title,
+          goalWhy: memberGoal.why ?? '',
+          requiredDone: required.filter((t) => t.done).length,
+          requiredTotal: required.length,
+          erfDone: s.prepTasks.some((t) => t.id === 'prep-reservation-form' && t.done),
+          taperStarted: s.taperTicks.length > 0,
+          focusSet: memberGoal.focusSetBy === 'coach',
+        });
+      }
+      const arrivingToday = all.filter((g) => du(g.booking.arrivalDate) === 0);
+      const departingSoon = all
+        .filter((g) => du(g.booking.arrivalDate) < 0 && du(g.booking.departureDate) >= 0)
+        .map((g) => ({ ...g, departsInDays: du(g.booking.departureDate) }))
+        .sort((a, b) => a.departsInDays - b.departsInDays);
+      const next7 = all.filter((g) => {
+        const d = du(g.booking.arrivalDate);
+        return d >= 0 && d <= 7;
+      });
+      const ready = next7.filter((g) => g.requiredDone === g.requiredTotal).length;
+      return {
+        arrivingToday,
+        departingSoon,
+        rollup: {
+          arrivingNext7: next7.length,
+          readyPct: next7.length ? Math.round((100 * ready) / next7.length) : 0,
+          erfDone: next7.filter((g) => g.erfDone).length,
+          tapersStarted: next7.filter((g) => g.taperStarted).length,
+        },
+      };
+    },
+    /**
+     * The departure handoff. For the demo member this is the real thing —
+     * provenance on the Goal, persisted, restated on day 1 home. For seeded
+     * cohort guests it updates the session board only (set dressing).
+     */
+    setGuestFocus(bookingId: string, pillarId: PillarId, note?: string): void {
+      const s = store.get();
+      if (s.booking && s.booking.id === bookingId) {
+        this.setFocus(s.booking.profileId, pillarId, 'coach', note);
+        return;
+      }
+      store.set((st) => ({
+        ...st,
+        guestFocus: { ...st.guestFocus, [bookingId]: { pillarId, note } },
+      }));
+    },
+
+    /**
      * Demo-only: wipe journey state for a clean run with the next viewer —
      * persistence survives refresh by design, so the switcher alone can
      * move time but never un-live it. Resets tasks, taper, the goal + why
@@ -691,6 +764,7 @@ export function createDataService(store: MemoryStore) {
         demoDayOffset: 0,
         goals: seedGoals.map((g) => ({ ...g })),
         dailyCheckIns: [],
+        guestFocus: {},
       }));
     },
   };
