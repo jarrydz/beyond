@@ -7,6 +7,8 @@ import type { Booking } from '@/types';
 interface Props {
   booking: Booking;
   onOpenDailyCheckIn: () => void;
+  /** PRD-07 — the Today card's guidance opens a real library item. */
+  onOpenContent?: (id: string) => void;
 }
 
 /**
@@ -16,7 +18,7 @@ interface Props {
  * themselves three weeks earlier. The TodayCard is the loop: the log is
  * the one thing today, and it's where the points economy starts.
  */
-export function ReintegrationScreen({ booking, onOpenDailyCheckIn }: Props) {
+export function ReintegrationScreen({ booking, onOpenDailyCheckIn, onOpenContent }: Props) {
   const offset = useStoreState((s) => s.demoDayOffset);
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const goal = useStoreState((s) => s.goals.find((g) => g.profileId === me.id && g.active));
@@ -52,7 +54,7 @@ export function ReintegrationScreen({ booking, onOpenDailyCheckIn }: Props) {
         </Card>
       )}
 
-      <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} />
+      <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} onOpenContent={onOpenContent} />
 
       <p className="text-muted text-[13px] text-center mt-6">
         {booking.hostName} checks in with you on day 7.

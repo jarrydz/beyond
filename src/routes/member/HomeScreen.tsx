@@ -11,9 +11,11 @@ import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/fo
 interface Props {
   onGoTab: (tab: string) => void;
   onOpenDailyCheckIn: () => void;
+  /** PRD-07 — the Today card's guidance opens a real library item. */
+  onOpenContent?: (id: string) => void;
 }
 
-export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
+export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props) {
   const data = useData();
   const toast = useToast();
 
@@ -84,7 +86,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
       {/* PRD-06: the daily loop leads. With an active goal the Today card IS
           the check-in entry (JZ, option b); the plain card below remains the
           alumni path — a member with no goal behaves exactly as before. */}
-      <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} />
+      <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} onOpenContent={onOpenContent} />
       <YourWeekCard />
 
       {!activeGoal && (

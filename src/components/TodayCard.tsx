@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BottomSheet, Button, Card, Eyebrow, PillarBadge, useToast } from '.';
+import { BottomSheet, Button, Card, Eyebrow, LibraryRow, PillarBadge, useToast } from '.';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { FOCUS_DAILY_PROMPT } from '@/config/focusQuestions';
@@ -10,6 +10,8 @@ import type { Goal } from '@/types';
 
 interface Props {
   onOpenDailyCheckIn: () => void;
+  /** PRD-07: the day's guidance is a real library item — this opens it. */
+  onOpenContent?: (id: string) => void;
 }
 
 /**
@@ -20,7 +22,7 @@ interface Props {
  *
  * Renders nothing without an active goal — the alumni path is untouched.
  */
-export function TodayCard({ onOpenDailyCheckIn }: Props) {
+export function TodayCard({ onOpenDailyCheckIn, onOpenContent }: Props) {
   const data = useData();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const goal = useStoreState((s) => s.goals.find((g) => g.profileId === me.id && g.active));
@@ -33,7 +35,7 @@ export function TodayCard({ onOpenDailyCheckIn }: Props) {
 
   const logged = data.getTodayCheckIn();
   const sequence = FOCUS_SEQUENCE[goal.pillarId];
-  const guidance = sequence[data.getFocusDayIndex() % sequence.length];
+  const dayItem = data.getLibraryItem(sequence[data.getFocusDayIndex() % sequence.length]);
   const insight = data.getFocusInsight(goal.pillarId);
 
   // The 60-day stale check: focus must not go stale because a human didn't
@@ -94,10 +96,17 @@ export function TodayCard({ onOpenDailyCheckIn }: Props) {
         {insight && (
           <p className="font-serif text-[18px] leading-snug mb-3">{insight}</p>
         )}
-        <div className="rounded-[14px] bg-sand/60 px-3.5 py-3">
-          <div className="font-semibold text-[14px] mb-0.5">{guidance.title}</div>
-          <p className="text-[13.5px] leading-relaxed text-muted">{guidance.body}</p>
-        </div>
+        {dayItem &&
+          (onOpenContent ? (
+            <LibraryRow item={dayItem} meId={me.id} onOpen={onOpenContent} />
+          ) : (
+            <div className="rounded-[14px] bg-sand/60 px-3.5 py-3">
+              <div className="font-semibold text-[14px] mb-0.5">{dayItem.title}</div>
+              {dayItem.description && (
+                <p className="text-[13.5px] leading-relaxed text-muted">{dayItem.description}</p>
+              )}
+            </div>
+          ))}
         {staleLine}
       </Card>
       {changeSheet}
