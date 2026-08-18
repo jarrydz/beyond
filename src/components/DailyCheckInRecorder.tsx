@@ -1,17 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
+import { FOCUS_QUESTIONS } from '@/config/focusQuestions';
+import type { PillarId } from '@/types';
 
 /** What a completed check-in hands back — video path sets videoUrl, the no-camera path sets mood/note. */
 export interface CheckInResult {
   videoUrl?: string;
   mood?: number;
   note?: string;
+  /** PRD-06: answers to the two focus questions, keyed by question id. */
+  focusAnswers?: Record<string, number>;
 }
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onSave: (result: CheckInResult) => void;
+  /**
+   * PRD-06: the active goal's pillar. When set, one extra screen with the
+   * two focus questions follows the send — BOTH paths (camera and
+   * text/mood) converge on it, then on the same onSave. Absent = the step
+   * never renders; the alumni check-in is untouched.
+   */
+  focusPillarId?: PillarId;
 }
 
 /** The no-camera mood scale — calm words, not a smiley barrage. */
@@ -35,7 +46,7 @@ const CAMERA_TIMEOUT_MS = 8000;
 /** Why the camera isn't available — each renders a message and a way forward. */
 type CamState = 'requesting' | 'ready' | 'denied' | 'timeout';
 
-export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
+export function DailyCheckInRecorder({ open, onClose, onSave, focusPillarId }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -47,10 +58,13 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   const [camState, setCamState] = useState<CamState>('requesting');
   const [elapsed, setElapsed] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
-  /** 'video' records a selfie; 'text' is the first-class no-camera path. */
-  const [mode, setMode] = useState<'video' | 'text'>('video');
+  /** 'video' records a selfie; 'text' is the first-class no-camera path; 'focus' is the shared final step. */
+  const [mode, setMode] = useState<'video' | 'text' | 'focus'>('video');
   const [mood, setMood] = useState<number | null>(null);
   const [note, setNote] = useState('');
+  /** The path's result, parked while the focus step runs — both paths converge here. */
+  const pendingRef = useRef<CheckInResult | null>(null);
+  const [focusAnswers, setFocusAnswers] = useState<Record<string, number>>({});
   const timerRef = useRef<ReturnType<typeof setInterval>>();
 
   const cleanup = useCallback(() => {
@@ -69,6 +83,8 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
     setMode('video');
     setMood(null);
     setNote('');
+    pendingRef.current = null;
+    setFocusAnswers({});
   }, [resultUrl]);
 
   const acquireCamera = useCallback(async () => {
@@ -152,8 +168,21 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
     recorderRef.current?.stop();
   }
 
+  /**
+   * Both paths route through here: with a focus pillar, park the result and
+   * show the focus step; without one, save as always. One handler, no fork.
+   */
+  function finishPath(result: CheckInResult) {
+    if (focusPillarId) {
+      pendingRef.current = result;
+      setMode('focus');
+    } else {
+      onSave(result);
+    }
+  }
+
   function handleSend() {
-    onSave({ videoUrl: resultUrl ?? undefined });
+    finishPath({ videoUrl: resultUrl ?? undefined });
   }
 
   /** Switch to the no-camera path — release the camera, it isn't needed. */
@@ -166,7 +195,14 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
 
   function handleSendText() {
     if (mood == null) return;
-    onSave({ mood, note: note.trim() || undefined });
+    finishPath({ mood, note: note.trim() || undefined });
+  }
+
+  /** The focus step's exit — with answers, or skipped clean. Same award either way. */
+  function handleFocusDone(skip: boolean) {
+    const base = pendingRef.current ?? {};
+    const answered = !skip && Object.keys(focusAnswers).length > 0;
+    onSave(answered ? { ...base, focusAnswers } : base);
   }
 
   function handleRetake() {
@@ -183,6 +219,75 @@ export function DailyCheckInRecorder({ open, onClose, onSave }: Props) {
   }
 
   if (!open) return null;
+
+  if (mode === 'focus' && focusPillarId) {
+    const questions = FOCUS_QUESTIONS[focusPillarId];
+    return (
+      <div className="absolute inset-0 z-[100] bg-cream flex flex-col">
+        <section className="flex-1 overflow-y-auto px-6 pt-[110px] pb-8">
+          <h2 className="font-serif font-semibold text-[23px] leading-tight">While it's fresh</h2>
+          <p className="text-muted text-[13.5px] mt-1 mb-6">
+            Two taps on today's focus. This is what your trend is made of.
+          </p>
+
+          {questions.map((q) => (
+            <div key={q.id} className="mb-6">
+              <div className="text-[11px] tracking-[0.13em] uppercase text-green-soft font-semibold mb-2.5">
+                {q.prompt}
+              </div>
+              <div className="flex justify-between gap-1.5">
+                {q.scale.map((label, idx) => {
+                  const on = focusAnswers[q.id] === idx;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() =>
+                        setFocusAnswers((a) => ({ ...a, [q.id]: idx }))
+                      }
+                      className="flex-1 flex flex-col items-center gap-1.5 transition active:scale-95"
+                    >
+                      <span
+                        className={[
+                          'w-full h-9 rounded-[10px] border grid place-items-center transition-colors',
+                          on ? 'bg-green border-green' : 'bg-white border-line',
+                        ].join(' ')}
+                      >
+                        <span
+                          className={[
+                            'w-2 h-2 rounded-full',
+                            on ? 'bg-cream' : 'bg-line',
+                          ].join(' ')}
+                        />
+                      </span>
+                      <span
+                        className={[
+                          'text-[10.5px] font-semibold leading-tight text-center',
+                          on ? 'text-green' : 'text-muted',
+                        ].join(' ')}
+                      >
+                        {label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          <Button onClick={() => handleFocusDone(false)}>Send to coach</Button>
+          <button
+            type="button"
+            onClick={() => handleFocusDone(true)}
+            className="mt-3 w-full text-center text-[13.5px] text-muted py-2 font-semibold"
+          >
+            Skip today
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   if (mode === 'text') {
     return (

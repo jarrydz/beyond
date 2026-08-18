@@ -66,6 +66,10 @@ export function MemberHome() {
     s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
   );
   const stage = useStoreState((s) => stageFor(booking, s.demoDayOffset));
+  // PRD-06: the active goal's pillar IS the focus — the check-in asks about it.
+  const focusPillarId = useStoreState(
+    (s) => s.goals.find((g) => g.profileId === s.currentUserId && g.active)?.pillarId,
+  );
   const [pointsOpen, setPointsOpen] = useState(false);
   const [active, setActive] = useState<Tab>(() => initialTab(location.state, !!booking));
   const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state, !!booking));
@@ -195,6 +199,7 @@ export function MemberHome() {
       />
       <DailyCheckInRecorder
         open={recorderOpen}
+        focusPillarId={focusPillarId}
         onClose={() => setRecorderOpen(false)}
         onSave={(result) => {
           data.addDailyCheckIn(result);
