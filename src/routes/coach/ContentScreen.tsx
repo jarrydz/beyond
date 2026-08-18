@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { Card } from '@/components';
+import { Card, Sheet, WaterHeader } from '@/components';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
 import { pillarIcons } from '@/config/pillarIcons';
@@ -61,11 +61,14 @@ export function ContentScreen() {
   const groups = useMemo(() => contentByPillar(content), [content]);
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">This week</h2>
-      <p className="text-muted text-[13.5px] mb-4">
-        What your {memberCount} members receive across the Pillars.
-      </p>
+    <>
+      <WaterHeader depth="shallow" eyebrow="Coach · Content" showPoints={false}>
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05]">This week</h1>
+        <p className="text-[12.5px] text-white/[.68] mt-1.5">
+          What your {memberCount} members receive across the Pillars.
+        </p>
+      </WaterHeader>
+      <Sheet>
 
       {groups.map((g) => {
         const pillar = getPillar(g.pillarId);
@@ -93,7 +96,8 @@ export function ContentScreen() {
           </div>
         );
       })}
-    </section>
+      </Sheet>
+    </>
   );
 }
 

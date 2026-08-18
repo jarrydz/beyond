@@ -1,5 +1,5 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
-import { Avatar, Button, Card, useToast } from '@/components';
+import { Avatar, Button, Card, Sheet, WaterHeader, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { relativeTime } from '@/utils/format';
@@ -49,11 +49,14 @@ export function CommunityScreen() {
   }
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">Your group</h2>
-      <p className="text-muted text-[13.5px] mb-4">
-        {cohort.retreatName} · {cohort.name} · {memberCount} members
-      </p>
+    <>
+      <WaterHeader depth="deep" eyebrow="Community">
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05]">Your group</h1>
+        <p className="text-[12.5px] text-white/[.62] mt-1.5">
+          {cohort.retreatName} · {cohort.name} · {memberCount} members
+        </p>
+      </WaterHeader>
+      <Sheet>
 
       <Card tone="sage">
         <div className="flex gap-2.5 items-center">
@@ -98,7 +101,8 @@ export function CommunityScreen() {
         if (!author) return null;
         return <PostCard key={post.id} post={post} author={author} meId={me.id} onLike={() => data.toggleLike(post.id)} />;
       })}
-    </section>
+      </Sheet>
+    </>
   );
 }
 

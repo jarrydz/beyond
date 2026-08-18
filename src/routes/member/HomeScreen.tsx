@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, TodayCard, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, Sheet, TodayCard, WaterHeader, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
@@ -82,17 +82,18 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
   const affirmation = affirmations[affirmIdx] ?? '';
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">
-        {greeting()}, {me.fullName.split(' ')[0]}
-      </h2>
-      {daysHome !== null && daysHome > 0 ? (
-        <p className="text-muted text-[13.5px] mb-4">
-          Day {daysHome} since you left the retreat. Keep going.
-        </p>
-      ) : (
-        <div className="mb-4" />
-      )}
+    <>
+      <WaterHeader depth="deep" eyebrow="Home">
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05]">
+          {greeting()}, {me.fullName.split(' ')[0]}
+        </h1>
+        {daysHome !== null && daysHome > 0 && (
+          <p className="text-[12.5px] text-white/[.62] mt-1.5">
+            Day {daysHome} since you left the retreat. Keep going.
+          </p>
+        )}
+      </WaterHeader>
+      <Sheet>
 
       {/* PRD-06: the daily loop leads. With an active goal the Today card IS
           the check-in entry (JZ, option b); the plain card below remains the
@@ -280,7 +281,8 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
           </Card>
         </>
       )}
-    </section>
+      </Sheet>
+    </>
   );
 }
 

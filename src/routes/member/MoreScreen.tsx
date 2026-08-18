@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Sheet, WaterHeader } from '@/components';
 
 interface Props {
   onOpenMarketplace: () => void;
@@ -16,9 +17,14 @@ interface Props {
  */
 export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet, onOpenMemberSheet }: Props) {
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">More</h2>
-      <p className="text-muted text-[13.5px] mb-4">The rest of Beyond, out of the way.</p>
+    <>
+      <WaterHeader depth="deep" eyebrow="More">
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05]">More</h1>
+        <p className="text-[12.5px] text-white/[.62] mt-1.5">
+          The rest of Beyond, out of the way.
+        </p>
+      </WaterHeader>
+      <Sheet>
 
       <div className="space-y-3">
         <MoreRow
@@ -72,7 +78,8 @@ export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet,
           />
         )}
       </div>
-    </section>
+      </Sheet>
+    </>
   );
 }
 

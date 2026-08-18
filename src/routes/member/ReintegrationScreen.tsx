@@ -1,4 +1,4 @@
-import { Card, Eyebrow, TodayCard } from '@/components';
+import { Card, Eyebrow, Sheet, TodayCard, WaterHeader } from '@/components';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
 import { dayOfReintegration } from '@/utils/journey';
@@ -26,11 +26,15 @@ export function ReintegrationScreen({ booking, onOpenDailyCheckIn, onOpenContent
   const day = dayOfReintegration(booking, offset);
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <Eyebrow className="mt-1.5">Home again</Eyebrow>
-      <h2 className="font-serif font-semibold text-[25px] leading-tight mb-4">
-        Day {day} of your first 14.
-      </h2>
+    <>
+      <WaterHeader depth="deep" eyebrow="Home again">
+        <h1 className="font-serif font-normal text-[30px] leading-[1.1]">
+          Day {day} of your
+          <br />
+          first 14.
+        </h1>
+      </WaterHeader>
+      <Sheet>
 
       {goal?.focusSetBy === 'coach' && goal.focusNote && (
         <Card tone="sage">
@@ -59,6 +63,7 @@ export function ReintegrationScreen({ booking, onOpenDailyCheckIn, onOpenContent
       <p className="text-muted text-[13px] text-center mt-6">
         {booking.hostName} checks in with you on day 7.
       </p>
-    </section>
+      </Sheet>
+    </>
   );
 }

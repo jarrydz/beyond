@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Avatar, Card, Eyebrow } from '@/components';
+import { Avatar, Card, SectionHeader, Sheet, WaterHeader } from '@/components';
 import { useStoreState } from '@/store/StoreProvider';
 import type { CheckIn, Goal, Profile } from '@/types';
 
@@ -19,13 +19,15 @@ export function MembersScreen({ onOpenMember }: Props) {
   );
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">Your cohort</h2>
-      <p className="text-muted text-[13.5px] mb-4">
-        {members.length} members. Tap to open a record.
-      </p>
-
-      <Eyebrow className="mb-2">Roster</Eyebrow>
+    <>
+      <WaterHeader depth="shallow" eyebrow="Coach · Members" showPoints={false}>
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05]">Your cohort</h1>
+        <p className="text-[12.5px] text-white/[.68] mt-1.5">
+          {members.length} members. Tap to open a record.
+        </p>
+      </WaterHeader>
+      <Sheet>
+      <SectionHeader count={members.length}>Roster</SectionHeader>
       <div className="space-y-2">
         {members.map((m) => (
           <MemberRow
@@ -37,7 +39,8 @@ export function MembersScreen({ onOpenMember }: Props) {
           />
         ))}
       </div>
-    </section>
+      </Sheet>
+    </>
   );
 }
 
