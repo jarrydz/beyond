@@ -14,6 +14,7 @@ export { AppHeader } from './AppHeader';
 export { RoleSwitcherSheet } from './RoleSwitcherSheet';
 export { JourneyStageSheet } from './JourneyStageSheet';
 export { GoalWhyForm } from './GoalWhyForm';
+export { TodayCard } from './TodayCard';
 export { Avatar, avatarColor } from './Avatar';
 export { Ring } from './Ring';
 export { InstallPrompt } from './InstallPrompt';

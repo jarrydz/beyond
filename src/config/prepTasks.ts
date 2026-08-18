@@ -177,11 +177,3 @@ export const RETREAT_TREATMENTS = [
   { time: '2:30pm', name: 'Remedial massage', therapist: 'Mara' },
   { time: '4:15pm', name: 'Salt therapy', therapist: 'Jonah' },
 ] as const;
-
-/** Reintegration's "one thing today", keyed by the goal's pillar. */
-export const REINTEGRATION_ONE_THING: Record<string, string> = {
-  nourishment: 'Cook one retreat recipe tonight — the bircher takes ten minutes.',
-  movement: 'Twenty minutes of movement before the first screen of the day.',
-  emotional: 'Four minutes of box breathing when the 3pm slump lands.',
-  sleep: 'Screens off at 9 — the wind-down you kept there works here too.',
-};

@@ -51,6 +51,14 @@ export const FOCUS_INSIGHT: Record<PillarId, FocusInsightRule> = {
   },
 };
 
+/** The Today card's standing invitation, per pillar — the log IS the one thing today. */
+export const FOCUS_DAILY_PROMPT: Record<PillarId, string> = {
+  sleep: 'How did last night go? Thirty seconds, while you remember it.',
+  nourishment: "How did today's food and water go? Thirty seconds.",
+  movement: 'Did the body get what it needed today? Thirty seconds.',
+  emotional: 'What pace did today run at? Thirty seconds.',
+};
+
 export const FOCUS_QUESTIONS: Record<PillarId, [FocusQuestion, FocusQuestion]> = {
   sleep: [
     {
