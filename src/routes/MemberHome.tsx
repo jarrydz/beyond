@@ -207,8 +207,6 @@ export function MemberHome() {
             <MoreScreen
               onOpenMarketplace={() => setMarketOpen(true)}
               onOpenProfile={() => goTab('profile')}
-              onOpenStageSheet={booking ? () => setStageSheetOpen(true) : undefined}
-              onOpenMemberSheet={() => setMemberSheetOpen(true)}
             />
           ))}
         {active === 'profile' && (
@@ -217,6 +215,8 @@ export function MemberHome() {
               goTab('more');
               setMarketOpen(true);
             }}
+            onOpenStageSheet={booking ? () => setStageSheetOpen(true) : undefined}
+            onOpenMemberSheet={() => setMemberSheetOpen(true)}
           />
         )}
       </ScreenWrap>

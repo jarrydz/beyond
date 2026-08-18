@@ -4,18 +4,15 @@ import { Sheet, WaterHeader } from '@/components';
 interface Props {
   onOpenMarketplace: () => void;
   onOpenProfile: () => void;
-  /** Present only when a booking exists — the PRD-05 demo stage switcher. */
-  onOpenStageSheet?: () => void;
-  /** Demo member switcher — the two personas (guest / alumna). */
-  onOpenMemberSheet?: () => void;
 }
 
 /**
  * The overflow tab — a calm list of secondary surfaces (deliberately roomy so
  * later features land here instead of growing the nav). Marketplace lives
- * here by decision (JZ, 2026-07-03): Community keeps its primary tab.
+ * here by decision (JZ, 2026-07-03): Community keeps its primary tab. The
+ * demo controls live under Profile → Demo settings (JZ, 2026-08-18).
  */
-export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet, onOpenMemberSheet }: Props) {
+export function MoreScreen({ onOpenMarketplace, onOpenProfile }: Props) {
   return (
     <>
       <WaterHeader depth="deep" eyebrow="More">
@@ -49,34 +46,6 @@ export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet,
             </svg>
           }
         />
-        {onOpenStageSheet && (
-          <MoreRow
-            title="Journey stage (demo)"
-            subtitle="Demo control — move the simulated clock"
-            onClick={onOpenStageSheet}
-            icon={
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="M12 7.5V12l3 2" />
-              </svg>
-            }
-          />
-        )}
-        {onOpenMemberSheet && (
-          <MoreRow
-            title="Member (demo)"
-            subtitle="Demo control — guest or alumna persona"
-            onClick={onOpenMemberSheet}
-            icon={
-              <svg viewBox="0 0 24 24">
-                <circle cx="9" cy="8.5" r="3" />
-                <path d="M3.5 19.5a5.5 5.5 0 0 1 11 0" />
-                <circle cx="17" cy="10" r="2.4" />
-                <path d="M14.5 19.5a4.6 4.6 0 0 1 6 0" />
-              </svg>
-            }
-          />
-        )}
       </div>
       </Sheet>
     </>

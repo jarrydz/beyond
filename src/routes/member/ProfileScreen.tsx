@@ -7,9 +7,13 @@ import { useStoreState } from '@/store/StoreProvider';
 interface Props {
   /** Jump to the marketplace (More tab) — the Profile "Shop" row. */
   onOpenShop?: () => void;
+  /** Present only when a booking exists — the PRD-05 demo stage switcher. */
+  onOpenStageSheet?: () => void;
+  /** Demo member switcher — the two personas (guest / alumna). */
+  onOpenMemberSheet?: () => void;
 }
 
-export function ProfileScreen({ onOpenShop }: Props) {
+export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet }: Props) {
   const data = useData();
   const navigate = useNavigate();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
@@ -116,6 +120,51 @@ export function ProfileScreen({ onOpenShop }: Props) {
           </span>
         </div>
       </Card>
+
+      {(onOpenStageSheet || onOpenMemberSheet) && (
+        <>
+          <Eyebrow className="mt-4">Demo settings</Eyebrow>
+          <Card>
+            {onOpenStageSheet && (
+              <button
+                type="button"
+                onClick={onOpenStageSheet}
+                className="w-full flex items-center justify-between py-1"
+              >
+                <div>
+                  <div className="font-semibold text-[14.5px]">Journey stage</div>
+                  <div className="text-muted text-[12.5px] mt-0.5">
+                    Move the simulated clock
+                  </div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+            {onOpenMemberSheet && (
+              <button
+                type="button"
+                onClick={onOpenMemberSheet}
+                className={[
+                  'w-full flex items-center justify-between py-1',
+                  onOpenStageSheet ? 'border-t border-line mt-2 pt-3' : '',
+                ].join(' ')}
+              >
+                <div>
+                  <div className="font-semibold text-[14.5px]">Member</div>
+                  <div className="text-muted text-[12.5px] mt-0.5">
+                    Guest or alumna persona
+                  </div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+          </Card>
+        </>
+      )}
 
       <button
         type="button"
