@@ -155,7 +155,7 @@ function Pacer({
 
       <div className="grid place-items-center py-6">
         {reducedMotion ? (
-          <div className="w-[190px] h-[190px] rounded-full border-2 border-sage grid place-items-center bg-white">
+          <div className="w-[190px] h-[190px] rounded-full border-2 border-line-alt grid place-items-center bg-white">
             <div className="text-center">
               <div className="font-serif font-semibold text-[21px]">
                 {finished ? 'Done' : running ? PHASE_LABEL[phase] : 'Ready'}
@@ -170,15 +170,15 @@ function Pacer({
             <div
               className="w-[130px] h-[130px] rounded-full grid place-items-center"
               style={{
-                background: 'radial-gradient(circle at 35% 30%, #A7B59C, #3A5145)',
+                background: 'radial-gradient(circle at 35% 30%, #5C8A8F, #173238)',
                 transform: running ? `scale(${expanded ? 1.5 : 1})` : 'scale(1.15)',
                 transition: running
                   ? `transform ${phaseSeconds}s ease-in-out`
                   : 'transform 0.6s ease',
-                boxShadow: '0 10px 40px rgba(58,81,69,0.25)',
+                boxShadow: '0 10px 40px rgba(18,38,43,0.3)',
               }}
             >
-              <span className="text-cream text-[13px] font-semibold text-center leading-tight px-3">
+              <span className="text-white text-[13px] font-semibold text-center leading-tight px-3">
                 {finished ? 'Done' : running ? PHASE_LABEL[phase] : ''}
               </span>
             </div>

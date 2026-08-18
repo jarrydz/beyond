@@ -257,62 +257,7 @@ function heroCta(task: PrepTask): string {
   }
 }
 
-function TaskRow({ task, onClick }: { task: PrepTask; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full text-left rounded-[16px] border border-line bg-white px-3.5 py-3 flex items-center gap-3 transition active:scale-[0.985] hover:border-sage"
-    >
-      <span
-        className={[
-          'w-[22px] h-[22px] rounded-full grid place-items-center flex-none border',
-          task.done ? 'bg-green border-green' : 'border-line',
-        ].join(' ')}
-      >
-        {task.done && (
-          <svg className="w-3 h-3 text-cream" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M5 12l5 5L20 7" />
-          </svg>
-        )}
-      </span>
-      <div className="flex-1 min-w-0">
-        <div
-          className={[
-            'font-semibold text-[14px] leading-tight',
-            task.done ? 'text-muted line-through decoration-line' : '',
-          ].join(' ')}
-        >
-          {task.title}
-        </div>
-        {!task.done && (
-          <div className="text-muted text-[12px] leading-snug mt-0.5 truncate">{task.blurb}</div>
-        )}
-      </div>
-      {task.required && !task.done && <RequiredTag />}
-    </button>
-  );
-}
 
-function LockedRow({ task, daysToGo }: { task: PrepTask; daysToGo: number }) {
-  const inDays = daysToGo - task.unlocksAt;
-  return (
-    <div className="rounded-[16px] border border-line/70 bg-white/45 px-3.5 py-3 flex items-center gap-3">
-      <span className="w-[22px] h-[22px] rounded-full grid place-items-center flex-none text-muted/70">
-        <svg className="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <rect x="5" y="11" width="14" height="9" rx="2" />
-          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-        </svg>
-      </span>
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-[14px] leading-tight text-muted">{task.title}</div>
-        <div className="text-muted/80 text-[12px] mt-0.5">
-          Unlocks {inDays === 1 ? 'tomorrow' : `in ${inDays} days`}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /**
  * The diligent guest's state: everything available is done, more unlocks
@@ -349,18 +294,6 @@ function CaughtUpCard({
   );
 }
 
-function RequiredTag({ onDark = false }: { onDark?: boolean }) {
-  return (
-    <span
-      className={[
-        'flex-none text-[10px] tracking-[0.08em] uppercase font-semibold rounded-full px-2 py-1',
-        onDark ? 'bg-cream/15 text-cream/85' : 'bg-sand text-green-soft',
-      ].join(' ')}
-    >
-      Needed by Gwinganna
-    </span>
-  );
-}
 
 function BookingCard({ booking }: { booking: Booking }) {
   return (
@@ -386,11 +319,11 @@ function ReadyState({ booking }: { booking: Booking }) {
   const goal = useStoreState((s) => s.goals.find((g) => g.profileId === me.id && g.active));
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <Eyebrow className="mt-1.5">Your retreat</Eyebrow>
-      <h2 className="font-serif font-semibold text-[27px] leading-tight mb-4">
-        You're ready.
-      </h2>
+    <>
+      <WaterHeader depth="deep" eyebrow={booking.packageName}>
+        <h1 className="font-serif font-normal text-[34px] leading-[1.05]">You're ready.</h1>
+      </WaterHeader>
+      <Sheet>
 
       {goal && (
         <Card tone="dark">
@@ -420,7 +353,8 @@ function ReadyState({ booking }: { booking: Booking }) {
           the gate onwards there's nothing to organise, decide or check. That part is done.
         </p>
       </Card>
-    </section>
+      </Sheet>
+    </>
   );
 }
 

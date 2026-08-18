@@ -272,14 +272,6 @@ export function TodayScreen({ onOpenMember }: Props) {
         )}
       </Card>
 
-      <Card>
-        <div className="grid grid-cols-3 divide-x divide-line">
-          <Stat num={members.length} label="members" />
-          <Stat num={callsThisWeek.length} label="calls this week" />
-          <Stat num={attention.length} label={attention.length === 1 ? 'needs attention' : 'need attention'} tone={attention.length > 0 ? 'terra' : undefined} />
-        </div>
-      </Card>
-
       <SectionHeader className="mt-6" count={attention.length}>
         Needs attention
       </SectionHeader>
