@@ -22,12 +22,20 @@ export function MealCard({ meal, onOpen, onToggleSave }: Props) {
         onClick={() => onOpen(meal.id)}
         className="w-full text-left rounded-card border border-line bg-white shadow-card p-3 flex items-center gap-3.5 transition active:scale-[0.985] hover:border-sage"
       >
-        <div
-          className="w-[58px] h-[58px] rounded-[14px] flex-none"
-          style={{
-            background: `linear-gradient(135deg, ${meal.tint}, ${darken(meal.tint, 0.45)})`,
-          }}
-        />
+        {meal.photoUrl ? (
+          <img
+            src={meal.photoUrl}
+            alt=""
+            className="w-[58px] h-[58px] rounded-[14px] flex-none object-cover"
+          />
+        ) : (
+          <div
+            className="w-[58px] h-[58px] rounded-[14px] flex-none"
+            style={{
+              background: `linear-gradient(135deg, ${meal.tint}, ${darken(meal.tint, 0.45)})`,
+            }}
+          />
+        )}
         <div className="flex-1 min-w-0 pr-8">
           <div className="font-semibold text-[14.5px] leading-snug">{meal.title}</div>
           <div className="text-muted text-[12.5px] mt-0.5">{mealMeta(meal)}</div>

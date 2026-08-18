@@ -32,6 +32,8 @@ export interface Profile {
   id: string;
   fullName: string;
   avatarInitial: string;
+  /** Portrait photo — same contract as posterUrl: set it and the initials fall away. */
+  photoUrl?: string;
   role: Role;
   cohortId: string;
   onboarded: boolean;
@@ -228,8 +230,10 @@ export interface Meal {
   title: string;
   mealTime: MealTime;
   intro: string;
-  /** Hero tint (hex) — stands in for food photography while the prototype ships no remote assets. */
+  /** Hero tint (hex) — the fallback when no photo has landed yet. */
   tint: string;
+  /** Food photography — same contract as posterUrl: set it and the tint falls away. */
+  photoUrl?: string;
   prepMins: number;
   cookMins: number;
   servings: number;

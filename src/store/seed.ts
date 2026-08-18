@@ -32,6 +32,9 @@ const hours = (n: number) => new Date(now + n * 3_600_000).toISOString();
 const localISODate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+/** Static assets live in public/images/ — prefix the Pages base path. */
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
 export const cohort: Cohort = {
   id: 'cohort-april',
   name: 'April Cohort',
@@ -42,6 +45,7 @@ export const coach: Profile = {
   id: 'coach-lucy',
   fullName: 'Lucy Holloway',
   avatarInitial: 'L',
+  photoUrl: asset('images/people/lucy.jpg'),
   role: 'coach',
   cohortId: cohort.id,
   onboarded: true,
@@ -458,6 +462,7 @@ export const content: ContentItem[] = [
     id: 'content-movement',
     format: 'video',
     tint: '#5C7470',
+    posterUrl: asset('images/library/chi-gong.jpg'),
     type: 'movement',
     pillarId: 'movement',
     title: 'Morning Chi Gong · 8 min',
@@ -505,6 +510,7 @@ export const meals: Meal[] = [
     intro:
       'The retreat classic — oats soaked overnight so mornings ask nothing of you. Sweetness comes from the pear, not the packet.',
     tint: '#A8763E',
+    photoUrl: asset('images/meals/bircher-muesli.jpg'),
     prepMins: 10,
     cookMins: 15,
     servings: 2,

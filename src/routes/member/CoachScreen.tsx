@@ -99,16 +99,28 @@ export function CoachScreen() {
     <>
       <WaterHeader depth="deep" eyebrow="Your coach">
         <div className="flex items-center gap-4 mb-5">
-          {/* Portrait slot — gradient + serif initials until the real photo lands. */}
-          <div
-            className="w-[78px] h-[78px] rounded-full grid place-items-center flex-none font-serif text-[26px] text-white/90"
-            style={{
-              background: 'linear-gradient(160deg, #5C8A8F, #2C5259)',
-              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.3)',
-            }}
-          >
-            {coachInitials}
-          </div>
+          {/* Portrait slot — the photo when one exists, gradient + serif initials otherwise. */}
+          {coach.photoUrl ? (
+            <img
+              src={coach.photoUrl}
+              alt={coach.fullName}
+              className="w-[78px] h-[78px] rounded-full flex-none object-cover"
+              style={{
+                objectPosition: '50% 25%',
+                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.3)',
+              }}
+            />
+          ) : (
+            <div
+              className="w-[78px] h-[78px] rounded-full grid place-items-center flex-none font-serif text-[26px] text-white/90"
+              style={{
+                background: 'linear-gradient(160deg, #5C8A8F, #2C5259)',
+                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.3)',
+              }}
+            >
+              {coachInitials}
+            </div>
+          )}
           <div className="min-w-0">
             <h1 className="font-serif font-normal text-[30px] leading-[1.05]">
               {coach.fullName}

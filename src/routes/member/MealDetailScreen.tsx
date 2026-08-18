@@ -49,11 +49,16 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
       </button>
 
       <div
-        className="h-[150px] rounded-card shadow-card mb-4 relative"
-        style={{
-          background: `linear-gradient(135deg, ${meal.tint}, ${darken(meal.tint, 0.45)})`,
-        }}
+        className="h-[150px] rounded-card shadow-card mb-4 relative overflow-hidden"
+        style={
+          meal.photoUrl
+            ? undefined
+            : { background: `linear-gradient(135deg, ${meal.tint}, ${darken(meal.tint, 0.45)})` }
+        }
       >
+        {meal.photoUrl && (
+          <img src={meal.photoUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        )}
         <button
           type="button"
           aria-label={meal.saved ? 'Remove from saved' : 'Save recipe'}
