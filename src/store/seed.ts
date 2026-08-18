@@ -3,6 +3,7 @@ import type {
   Cohort,
   CheckIn,
   ContentItem,
+  DailyCheckInEntry,
   Goal,
   Meal,
   PointsLedgerEntry,
@@ -77,6 +78,43 @@ export const profiles: Profile[] = [coach, ...members];
  * taper live) regardless of when it's opened. The stage switcher moves the
  * simulated clock around these dates; the dates themselves never change.
  */
+/**
+ * Ten days of check-in back-history for the demo member, on the sleep focus
+ * (PRD-06). Generated RELATIVE TO THE SIMULATED TODAY, not seeded statically
+ * at boot — the stage switcher moves the clock ±90 days and the insight must
+ * have something true to say on every canonical demo day. Two missed days
+ * (4 and 9 days ago) keep the record credible; misses are neutral, never red.
+ *
+ * Deterministic by design — same base date, same history, every render.
+ */
+export function seedDailyHistory(base: Date): DailyCheckInEntry[] {
+  // [daysAgo, mood, lightsOutIdx (0='Before 9'…4='After 12'), wakingIdx]
+  const rows: Array<[number, number, number, number]> = [
+    [1, 4, 1, 3],
+    [2, 4, 1, 3],
+    [3, 3, 2, 2],
+    [5, 4, 1, 4],
+    [6, 5, 1, 4],
+    [7, 3, 3, 1],
+    [8, 4, 1, 3],
+    [10, 3, 1, 2],
+    [11, 4, 2, 3],
+    [12, 3, 1, 2],
+  ];
+  return rows.map(([ago, mood, lightsOut, waking]) => {
+    const d = new Date(base.getTime() - ago * 86_400_000);
+    d.setHours(20, 40, 0, 0); // evenings — when a sleep-focus member actually logs
+    return {
+      id: `seed-ci-${ago}`,
+      memberId: you.id,
+      recordedAt: d.toISOString(),
+      mood,
+      pillarId: 'sleep' as const,
+      focusAnswers: { sleep_lights_out: lightsOut, sleep_waking: waking },
+    };
+  });
+}
+
 export const booking: Booking = {
   id: 'booking-gwinganna',
   profileId: you.id,
