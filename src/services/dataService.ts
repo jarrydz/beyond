@@ -24,20 +24,37 @@ import { MemoryStore } from '@/store/memoryStore';
 import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
 import {
   clearJourney,
+  writeDailyCheckIns,
   writeDemoOffset,
   writeDoneTasks,
   writeGoalWhy,
   writeTaperTicks,
 } from '@/store/journeyStorage';
-import { daysUntil, stageFor } from '@/utils/journey';
+import { daysUntil, stageFor, today } from '@/utils/journey';
 import { prepTasks as prepTaskSeeds, type TaperSubstance } from '@/config/prepTasks';
-import { goals as seedGoals } from '@/store/seed';
+import { goals as seedGoals, seedDailyHistory } from '@/store/seed';
+import { FOCUS_INSIGHT } from '@/config/focusQuestions';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
 
 const uid = () =>
   globalThis.crypto?.randomUUID?.() ?? `id-${Math.random().toString(36).slice(2, 10)}`;
 
 export function createDataService(store: MemoryStore) {
+  /**
+   * "Now" on the simulated clock: today(demoDayOffset)'s date with the real
+   * time of day. Timestamps written with this stay consistent with what the
+   * stage switcher shows — a check-in logged on a canonical day belongs to
+   * that day, not to the real one.
+   */
+  const simNow = () => {
+    const d = today(store.get().demoDayOffset);
+    const real = new Date();
+    d.setHours(real.getHours(), real.getMinutes(), real.getSeconds());
+    return d.toISOString();
+  };
+  const sameSimDay = (iso: string) =>
+    new Date(iso).toDateString() === today(store.get().demoDayOffset).toDateString();
+
   return {
     // identity & session
     getCurrentUser(): Profile {
@@ -203,11 +220,21 @@ export function createDataService(store: MemoryStore) {
         title,
         target,
         why,
+        // The member's own pick is a focus decision too — it starts the 60-day clock.
+        focusSetBy: 'member',
+        focusSetAt: simNow(),
         active: true,
         createdAt: new Date().toISOString(),
       };
       // The why is reintegration's payoff — it must survive a refresh.
-      if (why) writeGoalWhy(profileId, { title, pillarId, why });
+      if (why)
+        writeGoalWhy(profileId, {
+          title,
+          pillarId,
+          why,
+          focusSetBy: 'member',
+          focusSetAt: goal.focusSetAt,
+        });
       store.set((s) => ({
         ...s,
         goals: [
@@ -265,9 +292,9 @@ export function createDataService(store: MemoryStore) {
     awardPoints(action: EarnAction, refId?: string): { points: number; label: string } | null {
       const s = store.get();
       if (action === 'daily_check_in') {
-        const today = new Date().toDateString();
+        // One award per SIMULATED day — the stage switcher moves this too.
         const already = s.pointsLedger.some(
-          (e) => e.action === 'daily_check_in' && new Date(e.at).toDateString() === today,
+          (e) => e.action === 'daily_check_in' && sameSimDay(e.at),
         );
         if (already) return null;
       }
@@ -278,7 +305,7 @@ export function createDataService(store: MemoryStore) {
         id: uid(),
         action,
         points: AWARDS[action],
-        at: new Date().toISOString(),
+        at: simNow(),
         label: ACTION_LABELS[action],
         refId,
       };
@@ -298,7 +325,7 @@ export function createDataService(store: MemoryStore) {
             .map((e) => new Date(e.at).toDateString()),
         );
         let run = 0;
-        const d = new Date();
+        const d = today(store.get().demoDayOffset);
         while (days.has(d.toDateString())) {
           run++;
           d.setDate(d.getDate() - 1);
@@ -308,7 +335,7 @@ export function createDataService(store: MemoryStore) {
             id: uid(),
             action: STREAK.action,
             points: STREAK.bonus,
-            at: new Date().toISOString(),
+            at: simNow(),
             label: STREAK.label,
           };
           store.set((s) => ({
@@ -446,21 +473,37 @@ export function createDataService(store: MemoryStore) {
       return s.dailyCheckIns.filter((d) => d.memberId === s.currentUserId);
     },
     addDailyCheckIn(
-      input: { videoUrl?: string; mood?: number; note?: string } = {},
+      input: {
+        videoUrl?: string;
+        mood?: number;
+        note?: string;
+        focusAnswers?: Record<string, number>;
+      } = {},
     ): DailyCheckInEntry {
       const s = store.get();
+      // Denormalise the focus pillar at logging time (PRD-06) — history must
+      // stay true if the coach changes focus at a later consult.
+      const activeGoal = s.goals.find((g) => g.profileId === s.currentUserId && g.active);
       const entry: DailyCheckInEntry = {
         id: uid(),
         memberId: s.currentUserId,
-        recordedAt: new Date().toISOString(),
+        recordedAt: simNow(),
         videoUrl: input.videoUrl,
         mood: input.mood,
         note: input.note,
+        pillarId: activeGoal?.pillarId,
+        focusAnswers: input.focusAnswers,
       };
-      store.set((s) => ({
-        ...s,
-        dailyCheckIns: [...s.dailyCheckIns, entry],
-      }));
+      store.set((st) => {
+        const dailyCheckIns = [...st.dailyCheckIns, entry];
+        writeDailyCheckIns(
+          st.currentUserId,
+          dailyCheckIns.filter((d) => d.memberId === st.currentUserId) as unknown as Array<
+            Record<string, unknown>
+          >,
+        );
+        return { ...st, dailyCheckIns };
+      });
       return entry;
     },
 
@@ -546,6 +589,93 @@ export function createDataService(store: MemoryStore) {
       writeDemoOffset(offset);
       store.set((s) => ({ ...s, demoDayOffset: offset }));
     },
+    // ——— PRD-06: focus ———
+
+    /**
+     * The second (and only other) setter of focus. Member proposes at T-21
+     * via GoalWhyForm; the coach decides here — at departure or at the
+     * monthly consult. Writes provenance; keeps the member's title and why.
+     */
+    setFocus(
+      memberId: string,
+      pillarId: PillarId,
+      setBy: 'member' | 'coach',
+      note?: string,
+    ): void {
+      const at = simNow();
+      store.set((s) => ({
+        ...s,
+        goals: s.goals.map((g) =>
+          g.profileId === memberId && g.active
+            ? {
+                ...g,
+                pillarId,
+                focusSetBy: setBy,
+                focusNote: note?.trim() || undefined,
+                focusSetAt: at,
+              }
+            : g,
+        ),
+      }));
+      const goal = store.get().goals.find((g) => g.profileId === memberId && g.active);
+      if (goal?.why || goal?.focusNote) {
+        writeGoalWhy(memberId, {
+          title: goal.title,
+          pillarId: goal.pillarId,
+          why: goal.why ?? '',
+          focusSetBy: goal.focusSetBy,
+          focusNote: goal.focusNote,
+          focusSetAt: goal.focusSetAt,
+        });
+      }
+    },
+    /**
+     * Check-in history for the current user on the simulated clock: the
+     * seeded back-history (generated relative to today(offset) so every
+     * canonical demo day has a true story) merged with real logged entries.
+     */
+    getFocusHistory(): DailyCheckInEntry[] {
+      const s = store.get();
+      const seeded =
+        s.currentUserId === 'member-jarryd' ? seedDailyHistory(today(s.demoDayOffset)) : [];
+      const real = s.dailyCheckIns.filter((d) => d.memberId === s.currentUserId);
+      return [...seeded, ...real].sort((a, b) => a.recordedAt.localeCompare(b.recordedAt));
+    },
+    /** The real entry logged on the simulated today, if any — drives the Today card's state. */
+    getTodayCheckIn(): DailyCheckInEntry | undefined {
+      const s = store.get();
+      return s.dailyCheckIns.find(
+        (d) => d.memberId === s.currentUserId && sameSimDay(d.recordedAt),
+      );
+    },
+    /** Deterministic guidance index: whole days since the epoch of the simulated today. */
+    getFocusDayIndex(): number {
+      return Math.floor(today(store.get().demoDayOffset).getTime() / 86_400_000);
+    },
+    /**
+     * The one insight line (decision 6): descriptive only — counting and
+     * ranging over the member's own log. Null below four entries in the
+     * last fourteen days; nothing beats a thin claim. No causal language.
+     */
+    getFocusInsight(pillarId: PillarId): string | null {
+      const s = store.get();
+      const now = today(s.demoDayOffset).getTime();
+      const cutoff = now - 13 * 86_400_000;
+      const window = this.getFocusHistory().filter((d) => {
+        const t = new Date(d.recordedAt).getTime();
+        return d.pillarId === pillarId && t >= cutoff && t < now + 86_400_000;
+      });
+      if (window.length < 4) return null;
+      const rule = FOCUS_INSIGHT[pillarId];
+      const recent = window.slice(-7);
+      const answered = recent.filter((d) => d.focusAnswers?.[rule.questionId] != null);
+      const hits = answered.filter((d) =>
+        rule.hit.includes(d.focusAnswers![rule.questionId]),
+      ).length;
+      if (answered.length >= 4 && hits >= 3) return rule.line(hits, answered.length);
+      return `You've logged ${window.length} of the last fourteen days.`;
+    },
+
     /**
      * Demo-only: wipe journey state for a clean run with the next viewer —
      * persistence survives refresh by design, so the switcher alone can
@@ -560,6 +690,7 @@ export function createDataService(store: MemoryStore) {
         taperTicks: [],
         demoDayOffset: 0,
         goals: seedGoals.map((g) => ({ ...g })),
+        dailyCheckIns: [],
       }));
     },
   };

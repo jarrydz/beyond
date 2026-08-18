@@ -62,6 +62,10 @@ export interface StoredGoalWhy {
   title: string;
   pillarId: string;
   why: string;
+  /** PRD-06 focus provenance — Lucy's read must survive a refresh. */
+  focusSetBy?: 'member' | 'coach';
+  focusNote?: string;
+  focusSetAt?: string;
 }
 
 export function readGoalWhy(profileId: string): StoredGoalWhy | null {
@@ -82,12 +86,43 @@ export function writeGoalWhy(profileId: string, value: StoredGoalWhy): void {
   }
 }
 
+const checkInsKey = (profileId: string) => `journey:checkIns:${profileId}`;
+
+/**
+ * Logged daily check-ins (PRD-06) — focus answers are worthless if they
+ * vanish on reload. videoUrl is stripped before writing: an object URL is
+ * dead in the next session anyway.
+ */
+export function readDailyCheckIns(profileId: string): unknown[] {
+  try {
+    const raw = localStorage.getItem(checkInsKey(profileId));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+export function writeDailyCheckIns(
+  profileId: string,
+  entries: Array<Record<string, unknown>>,
+): void {
+  try {
+    localStorage.setItem(
+      checkInsKey(profileId),
+      JSON.stringify(entries.map(({ videoUrl: _videoUrl, ...rest }) => rest)),
+    );
+  } catch {
+    // localStorage can be unavailable in private modes
+  }
+}
+
 /** Demo reset — wipe everything the journey persisted for this profile. */
 export function clearJourney(profileId: string): void {
   try {
     localStorage.removeItem(doneKey(profileId));
     localStorage.removeItem(taperKey(profileId));
     localStorage.removeItem(whyKey(profileId));
+    localStorage.removeItem(checkInsKey(profileId));
     localStorage.removeItem(offsetKey);
   } catch {
     // localStorage can be unavailable in private modes

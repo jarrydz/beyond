@@ -15,6 +15,42 @@ export interface FocusQuestion {
   scale: [string, string, string, string, string];
 }
 
+/**
+ * The one insight rule per pillar (PRD-06, decision 6): DESCRIPTIVE ONLY —
+ * counting and ranging over logged answers. No "because", no "linked to",
+ * no recommendation, ever. If a sentence needs a mechanism, it doesn't ship.
+ */
+export interface FocusInsightRule {
+  questionId: string;
+  /** Scale indices that count as a hit. */
+  hit: number[];
+  /** The counted line — n hits of m recent entries. */
+  line: (n: number, m: number) => string;
+}
+
+export const FOCUS_INSIGHT: Record<PillarId, FocusInsightRule> = {
+  sleep: {
+    questionId: 'sleep_lights_out',
+    hit: [0, 1],
+    line: (n, m) => `${n} of your last ${m} nights, lights out before 10.`,
+  },
+  nourishment: {
+    questionId: 'nourish_water',
+    hit: [3, 4],
+    line: (n, m) => `Water's been there ${n} of the last ${m} days.`,
+  },
+  movement: {
+    questionId: 'move_amount',
+    hit: [2, 3, 4],
+    line: (n, m) => `You've moved ${n} of the last ${m} days.`,
+  },
+  emotional: {
+    questionId: 'emotional_space',
+    hit: [2, 3, 4],
+    line: (n, m) => `You found time to yourself ${n} of the last ${m} days.`,
+  },
+};
+
 export const FOCUS_QUESTIONS: Record<PillarId, [FocusQuestion, FocusQuestion]> = {
   sleep: [
     {

@@ -17,6 +17,7 @@ import type {
 } from '@/types';
 import { readOnboarded } from './onboardingStorage';
 import {
+  readDailyCheckIns,
   readDemoOffset,
   readDoneTasks,
   readGoalWhy,
@@ -89,6 +90,9 @@ function restoredGoals(): Goal[] {
       pillarId: stored.pillarId as Goal['pillarId'],
       title: stored.title,
       why: stored.why || undefined,
+      focusSetBy: stored.focusSetBy,
+      focusNote: stored.focusNote,
+      focusSetAt: stored.focusSetAt,
       active: true,
       createdAt: new Date().toISOString(),
     },
@@ -112,7 +116,7 @@ export const initialState = (): StoreState => ({
   orders: [],
   mealDeliveryInterest: false,
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
-  dailyCheckIns: [],
+  dailyCheckIns: readDailyCheckIns(seedYou.id) as DailyCheckInEntry[],
   affirmations: [...seedAffirmations],
   currentUserId: seedYou.id,
   activeRole: 'member',
