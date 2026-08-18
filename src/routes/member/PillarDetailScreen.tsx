@@ -197,8 +197,35 @@ export function PillarDetailScreen({
           ))}
         </div>
 
+        <SectionHeader count={items.length}>This week</SectionHeader>
+        {featured ? (
+          <FeaturedWeekly
+            item={featured}
+            meId={me.id}
+            doneCount={doneCount}
+            total={items.length}
+            onMarkDone={markDone}
+            onViewRecipes={pillarId === 'nourishment' ? viewRecipes : undefined}
+          />
+        ) : (
+          <p className="text-muted text-[13.5px]">Fresh content lands here every Monday.</p>
+        )}
+        {rest.length > 0 && (
+          <div className="mt-4 border-t border-line">
+            {rest.map((it) => (
+              <WeeklyRow
+                key={it.id}
+                item={it}
+                meId={me.id}
+                onMarkDone={markDone}
+                onViewRecipes={pillarId === 'nourishment' ? viewRecipes : undefined}
+              />
+            ))}
+          </div>
+        )}
+
         {pillarId === 'nourishment' && (
-          <div ref={kitchenRef} className="mb-7 scroll-mt-4">
+          <div ref={kitchenRef} className="mt-7 scroll-mt-4">
             <SectionHeader>From the retreat kitchen</SectionHeader>
             <p className="text-muted text-[13px] -mt-2 mb-3">
               Recipes to take home — grouped by when you’d eat them.
@@ -279,33 +306,6 @@ export function PillarDetailScreen({
                 Nothing saved yet — tap the bookmark on any recipe to keep it here.
               </p>
             )}
-          </div>
-        )}
-
-        <SectionHeader count={items.length}>This week</SectionHeader>
-        {featured ? (
-          <FeaturedWeekly
-            item={featured}
-            meId={me.id}
-            doneCount={doneCount}
-            total={items.length}
-            onMarkDone={markDone}
-            onViewRecipes={pillarId === 'nourishment' ? viewRecipes : undefined}
-          />
-        ) : (
-          <p className="text-muted text-[13.5px]">Fresh content lands here every Monday.</p>
-        )}
-        {rest.length > 0 && (
-          <div className="mt-4 border-t border-line">
-            {rest.map((it) => (
-              <WeeklyRow
-                key={it.id}
-                item={it}
-                meId={me.id}
-                onMarkDone={markDone}
-                onViewRecipes={pillarId === 'nourishment' ? viewRecipes : undefined}
-              />
-            ))}
           </div>
         )}
 
