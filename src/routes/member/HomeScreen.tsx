@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, TodayCard, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
@@ -78,6 +78,10 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
       <p className="text-muted text-[13.5px] mb-4">
         Day {daySinceRetreat} since you left the retreat. Keep going.
       </p>
+
+      {/* PRD-06: the daily loop, additive at the top — everything below is
+          untouched until JZ rules on the restructure (the contested step). */}
+      <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} />
 
       <Card>
         <Eyebrow>Daily check-in</Eyebrow>

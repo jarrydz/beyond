@@ -57,12 +57,16 @@ export function PillarsScreen({ onOpenPillar }: Props) {
                   )}
                 </div>
                 <div className="text-muted text-[12.5px] leading-snug mt-0.5">{p.tagline}</div>
-                <div className="mt-2 h-[5px] rounded-full bg-sand overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${m.value * 10}%`, background: p.accent }}
-                  />
-                </div>
+                {/* Progress on the focus pillar only (PRD-06 decision 8): three
+                    bars permanently at zero read as failing 75% of your wellbeing. */}
+                {m.hasGoal && (
+                  <div className="mt-2 h-[5px] rounded-full bg-sand overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{ width: `${m.value * 10}%`, background: p.accent }}
+                    />
+                  </div>
+                )}
               </div>
 
               <svg
