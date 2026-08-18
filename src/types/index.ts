@@ -51,6 +51,15 @@ export interface Goal {
   target?: string;
   /** The member's why, in their own words — captured at T-21, restated at the handoff and in reintegration. */
   why?: string;
+  /**
+   * Focus provenance (PRD-06). The pillar IS the focus — no parallel concept.
+   * Who last set it: absent = the member, at T-21.
+   */
+  focusSetBy?: 'member' | 'coach';
+  /** The coach's one line on why this pillar, in her words. Shown on day 1 home. */
+  focusNote?: string;
+  /** ISO timestamp of the last focus decision — drives the 60-day stale check. */
+  focusSetAt?: string;
   active: boolean;
   createdAt: string;
 }
@@ -263,4 +272,12 @@ export interface DailyCheckInEntry {
   mood?: number;
   /** Optional short note from the no-camera path. */
   note?: string;
+  /**
+   * The focus pillar at the time of logging — denormalised so history stays
+   * true if focus changes. Month one's sleep history must not re-label
+   * itself as movement data at the month-two consult.
+   */
+  pillarId?: PillarId;
+  /** Answers to the two focus questions, keyed by question id. 0–4 scale index. */
+  focusAnswers?: Record<string, number>;
 }
