@@ -9,7 +9,8 @@ import {
 } from '@/components';
 import { useAi, useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
-import type { AiSummary } from '@/types';
+import type { AiSummary, PillarId } from '@/types';
+import { pillars } from '@/config/pillars';
 import { shortDate } from '@/utils/format';
 
 interface Props {
@@ -247,16 +248,25 @@ interface RecordProps {
 function RecordCheckInSheet({ open, memberId, memberFirstName, onClose, onSaved }: RecordProps) {
   const data = useData();
   const toast = useToast();
+  const currentPillarId = useStoreState(
+    (s) => s.goals.find((g) => g.profileId === memberId && g.active)?.pillarId,
+  );
   const [score, setScore] = useState<number | null>(null);
   const [blocker, setBlocker] = useState('');
   const [commitment, setCommitment] = useState('');
   const [notes, setNotes] = useState('');
+  // PRD-06: the consult reviews the focus. Default is confirm (their current
+  // pillar); changing requires actively picking a different one.
+  const [focusPick, setFocusPick] = useState<PillarId | null>(null);
+  const [focusNote, setFocusNote] = useState('');
 
   function reset() {
     setScore(null);
     setBlocker('');
     setCommitment('');
     setNotes('');
+    setFocusPick(null);
+    setFocusNote('');
   }
 
   function save() {
@@ -270,10 +280,13 @@ function RecordCheckInSheet({ open, memberId, memberFirstName, onClose, onSaved 
       topBlocker: blocker.trim() || undefined,
       commitment: commitment.trim() || undefined,
       notes: notes.trim() || undefined,
+      focusPillarId: focusPick ?? currentPillarId,
+      focusNote: focusNote.trim() || undefined,
     });
     reset();
     onSaved();
   }
+  const selectedFocus = focusPick ?? currentPillarId;
 
   return (
     <BottomSheet
@@ -323,6 +336,43 @@ function RecordCheckInSheet({ open, memberId, memberFirstName, onClose, onSaved 
         onChange={setNotes}
         textarea
       />
+
+      {currentPillarId && (
+        <div className="mb-1">
+          <div className="text-[11px] tracking-[0.13em] uppercase text-green-soft font-semibold mb-1.5">
+            Focus — confirm or change
+          </div>
+          <div className="grid grid-cols-4 gap-1.5 mb-2">
+            {pillars.map((p) => {
+              const on = p.id === selectedFocus;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setFocusPick(p.id)}
+                  title={p.label}
+                  className={[
+                    'h-9 rounded-[10px] text-[11px] font-semibold transition truncate px-1',
+                    on
+                      ? 'bg-green text-cream'
+                      : 'bg-white border border-line text-ink hover:border-sage',
+                  ].join(' ')}
+                >
+                  {p.label.split(' ')[0]}
+                </button>
+              );
+            })}
+          </div>
+          {selectedFocus !== currentPillarId && (
+            <Field
+              label="Why the change — they read this line"
+              placeholder="One line, in your words"
+              value={focusNote}
+              onChange={setFocusNote}
+            />
+          )}
+        </div>
+      )}
     </BottomSheet>
   );
 }

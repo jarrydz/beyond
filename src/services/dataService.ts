@@ -200,6 +200,11 @@ export function createDataService(store: MemoryStore) {
         notes: input.notes,
       };
       store.set((s) => ({ ...s, checkIns: [...s.checkIns, ci] }));
+      // The consult reviews the focus (PRD-06 decision 4): confirm or change,
+      // same provenance either way. Review monthly, change rarely.
+      if (input.focusPillarId) {
+        this.setFocus(input.memberId, input.focusPillarId, 'coach', input.focusNote);
+      }
       return ci;
     },
 

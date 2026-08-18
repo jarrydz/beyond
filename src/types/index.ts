@@ -278,6 +278,13 @@ export interface RecordCheckInInput {
   topBlocker?: string;
   commitment?: string;
   notes?: string;
+  /**
+   * PRD-06: the consult is the focus review trigger. The recording sheet
+   * always sends the pillar — unchanged = confirm (the default), different
+   * = a deliberate change. Both write provenance.
+   */
+  focusPillarId?: PillarId;
+  focusNote?: string;
 }
 
 export interface DailyCheckInEntry {
