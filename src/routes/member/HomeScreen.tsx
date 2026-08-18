@@ -81,26 +81,29 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
         Day {daySinceRetreat} since you left the retreat. Keep going.
       </p>
 
-      {/* PRD-06: the daily loop, additive at the top — everything below is
-          untouched until JZ rules on the restructure (the contested step). */}
+      {/* PRD-06: the daily loop leads. With an active goal the Today card IS
+          the check-in entry (JZ, option b); the plain card below remains the
+          alumni path — a member with no goal behaves exactly as before. */}
       <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} />
       <YourWeekCard />
 
-      <Card>
-        <Eyebrow>Daily check-in</Eyebrow>
-        <p className="text-[14px] leading-relaxed mb-3">
-          {doneToday
-            ? 'Nice one — today\'s check-in has been sent to your coach.'
-            : 'Record a quick 30-second selfie video. A snapshot of where you\'re at today.'}
-        </p>
-        {doneToday ? (
-          <Button className="!bg-green-soft" onClick={() => toast('Already sent today.')}>
-            Done today ✓
-          </Button>
-        ) : (
-          <Button onClick={onOpenDailyCheckIn}>Do mine today</Button>
-        )}
-      </Card>
+      {!activeGoal && (
+        <Card>
+          <Eyebrow>Daily check-in</Eyebrow>
+          <p className="text-[14px] leading-relaxed mb-3">
+            {doneToday
+              ? 'Nice one — today\'s check-in has been sent to your coach.'
+              : 'Record a quick 30-second selfie video. A snapshot of where you\'re at today.'}
+          </p>
+          {doneToday ? (
+            <Button className="!bg-green-soft" onClick={() => toast('Already sent today.')}>
+              Done today ✓
+            </Button>
+          ) : (
+            <Button onClick={onOpenDailyCheckIn}>Do mine today</Button>
+          )}
+        </Card>
+      )}
 
       <Card onClick={() => onGoTab('pillars')} className="cursor-pointer">
         <div className="flex items-center justify-between gap-3">
