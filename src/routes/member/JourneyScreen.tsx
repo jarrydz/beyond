@@ -74,7 +74,7 @@ export function JourneyScreen() {
   }
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <Eyebrow className="mt-1.5">Your retreat</Eyebrow>
       <div className="flex items-start justify-between gap-3 mb-1">
         <h2 className="font-serif font-semibold text-[25px] leading-tight">
@@ -295,7 +295,7 @@ function ReadyState({ booking }: { booking: Booking }) {
   const goal = useStoreState((s) => s.goals.find((g) => g.profileId === me.id && g.active));
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <Eyebrow className="mt-1.5">Your retreat</Eyebrow>
       <h2 className="font-serif font-semibold text-[27px] leading-tight mb-4">
         You're ready.

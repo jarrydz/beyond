@@ -15,7 +15,7 @@ export function Paywall() {
 
   return (
     <ScreenWrap withBottomNav={false}>
-      <section className="px-5 pt-3 pb-8">
+      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-8">
         <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-1">Keep going</h2>
         <p className="text-muted text-[13.5px] mb-5">
           The retreat got you here. This keeps you here.

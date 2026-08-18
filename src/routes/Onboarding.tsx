@@ -33,7 +33,7 @@ export function Onboarding() {
 
   return (
     <ScreenWrap withBottomNav={false}>
-      <section className="px-5 pt-3 pb-8">
+      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-8">
         <div className="flex items-center justify-between mb-5 mt-1.5">
           <div className="flex items-center gap-1.5">
             <Dot active={step === 'cohort'} />

@@ -14,7 +14,7 @@ export function CoachProfileScreen() {
   }
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <div className="flex flex-col items-center pt-4 pb-6">
         <Avatar profile={me} size={72} />
         <h2 className="font-serif font-semibold text-[22px] mt-3">{me.fullName}</h2>

@@ -34,7 +34,7 @@ export function ConnectBookingScreen({ booking, onBack }: Props) {
 
   if (connected) {
     return (
-      <section className="px-5 pt-3 pb-7">
+      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
         <Eyebrow className="mt-1.5">Found you</Eyebrow>
         <h2 className="font-serif font-semibold text-[25px] leading-tight mb-4">
           {booking.guestName.split(' ')[0]}, you're booked.
@@ -65,7 +65,7 @@ export function ConnectBookingScreen({ booking, onBack }: Props) {
   }
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <BackRow onBack={onBack} />
       <h2 className="font-serif font-semibold text-[25px] leading-tight mb-1">
         Connect your booking

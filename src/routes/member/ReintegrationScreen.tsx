@@ -26,7 +26,7 @@ export function ReintegrationScreen({ booking, onOpenDailyCheckIn, onOpenContent
   const day = dayOfReintegration(booking, offset);
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <Eyebrow className="mt-1.5">Home again</Eyebrow>
       <h2 className="font-serif font-semibold text-[25px] leading-tight mb-4">
         Day {day} of your first 14.

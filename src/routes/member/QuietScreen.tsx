@@ -25,7 +25,7 @@ export function QuietScreen({ booking, onOpenStageSheet }: Props) {
   });
 
   return (
-    <section className="px-5 pt-3 pb-10 min-h-full">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-10 min-h-full">
       <p className="text-muted text-[13px] mt-8 mb-1">{date}</p>
       <h2 className="font-serif font-semibold text-[27px] leading-tight mb-6">
         Day {day} of {stayLength(booking)}

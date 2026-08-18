@@ -73,7 +73,7 @@ export function MemberDetail({ memberId, onBack }: Props) {
 
   if (!member) {
     return (
-      <section className="px-5 pt-3 pb-7">
+      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
         <p className="text-muted">Member not found.</p>
         <Button variant="ghost" className="!mt-4" onClick={onBack}>
           Back to roster
@@ -84,7 +84,7 @@ export function MemberDetail({ memberId, onBack }: Props) {
 
   return (
     <>
-      <section className="px-5 pt-3 pb-7">
+      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
         <button
           type="button"
           onClick={onBack}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   BottomNav,
   FloatingHeader,
+  HeaderActionsContext,
   NavIcons,
   ScreenWrap,
   type NavItem,
@@ -43,15 +44,20 @@ export function CoachHome() {
   }
 
   return (
-    <>
-      <FloatingHeader
-        profile={me}
-        showBack={active === 'profile'}
-        onProfileTap={() => {
+    <HeaderActionsContext.Provider
+      value={{
+        onProfileTap: () => {
           if (active === 'profile') setActive(prevTab);
-          else { setPrevTab(active); setActive('profile'); }
-        }}
-      />
+          else {
+            setPrevTab(active);
+            setActive('profile');
+          }
+        },
+      }}
+    >
+      {active === 'profile' && (
+        <FloatingHeader profile={me} showBack onProfileTap={() => setActive(prevTab)} />
+      )}
       <ScreenWrap key={`${active}:${openMemberId ?? 'list'}`}>
         {active === 'today' && <TodayScreen onOpenMember={openMember} />}
         {active === 'members' &&
@@ -65,6 +71,6 @@ export function CoachHome() {
         {active === 'profile' && <CoachProfileScreen />}
       </ScreenWrap>
       <BottomNav items={navItems} active={active} onChange={goTab} />
-    </>
+    </HeaderActionsContext.Provider>
   );
 }

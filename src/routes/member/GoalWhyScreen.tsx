@@ -25,7 +25,7 @@ export function GoalWhyScreen({ onBack }: Props) {
   const [pillarId, setPillarId] = useState<PillarId>(existing?.pillarId ?? 'sleep');
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <button
         type="button"
         onClick={onBack}

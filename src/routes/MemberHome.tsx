@@ -4,6 +4,7 @@ import {
   BottomNav,
   DailyCheckInRecorder,
   FloatingHeader,
+  HeaderActionsContext,
   JourneyStageSheet,
   MemberSwitcherSheet,
   NavIcons,
@@ -112,17 +113,25 @@ export function MemberHome() {
   }
 
   return (
-    <>
-      <FloatingHeader
-        profile={me}
-        showBack={active === 'profile'}
-        points={pointsBalance}
-        onPointsTap={() => setPointsOpen(true)}
-        onProfileTap={() => {
+    <HeaderActionsContext.Provider
+      value={{
+        onPointsTap: () => setPointsOpen(true),
+        onProfileTap: () => {
           if (active === 'profile') setActive(prevTab);
-          else { setPrevTab(active); setActive('profile'); }
-        }}
-      />
+          else {
+            setPrevTab(active);
+            setActive('profile');
+          }
+        },
+      }}
+    >
+      {active === 'profile' && (
+        <FloatingHeader
+          profile={me}
+          showBack
+          onProfileTap={() => setActive(prevTab)}
+        />
+      )}
       <ScreenWrap
         key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${openContentId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
@@ -238,6 +247,6 @@ export function MemberHome() {
           toast(award ? `+${award.points} · ${award.label}` : 'Sent to your coach. Nice work.');
         }}
       />
-    </>
+    </HeaderActionsContext.Provider>
   );
 }

@@ -82,7 +82,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
   const affirmation = affirmations[affirmIdx] ?? '';
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">
         {greeting()}, {me.fullName.split(' ')[0]}
       </h2>

@@ -61,7 +61,7 @@ export function ContentScreen() {
   const groups = useMemo(() => contentByPillar(content), [content]);
 
   return (
-    <section className="px-5 pt-3 pb-7">
+    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">This week</h2>
       <p className="text-muted text-[13.5px] mb-4">
         What your {memberCount} members receive across the Pillars.

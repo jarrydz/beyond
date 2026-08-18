@@ -102,12 +102,12 @@ interface ScreenWrapProps {
 }
 
 export function ScreenWrap({ children, withBottomNav = true }: ScreenWrapProps) {
-  const compact = useIsCompact();
-  const top = compact ? 0 : 46;
+  // Flush to the top (design refresh): water headers extend behind the
+  // status bar; light screens pad themselves with --status-pad.
   return (
     <div
-      className="absolute inset-x-0 bottom-0 overflow-y-auto overflow-x-hidden no-scrollbar"
-      style={{ top, paddingBottom: withBottomNav ? 84 : 0 }}
+      className="absolute inset-x-0 top-0 bottom-0 overflow-y-auto overflow-x-hidden no-scrollbar"
+      style={{ paddingBottom: withBottomNav ? 84 : 0 }}
     >
       {children}
     </div>
