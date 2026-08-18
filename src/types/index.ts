@@ -151,6 +151,15 @@ export interface Post {
   likedBy: string[];
 }
 
+/**
+ * Legacy kind field — muddles pillar with kind now that pillarId + format
+ * both exist. Retirement PARKED by decision (JZ, 2026-08-18) until PRD-08
+ * touches this layer. When retiring: format keeps the medium; scheduling
+ * gets `liveAt?: string` (an item with a liveAt is an event, and it carries
+ * the when an RSVP needs). Do NOT fold 'event' into ContentFormat — a live
+ * cook-along is a video delivered synchronously; collapsing medium into
+ * scheduling recreates the category error this retirement exists to fix.
+ */
 export type ContentType =
   | 'recipe'
   | 'movement'
