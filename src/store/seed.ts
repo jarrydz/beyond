@@ -19,6 +19,15 @@ const now = Date.now();
 const days = (n: number) => new Date(now + n * 86_400_000).toISOString();
 const hours = (n: number) => new Date(now + n * 3_600_000).toISOString();
 
+/**
+ * Date-only ISO from LOCAL calendar parts. toISOString() renders UTC — at a
+ * local midnight in AEST that's yesterday's date, which silently shifts
+ * every booking by a day. Journey maths parses these as local midnight, so
+ * they must be written from local parts too.
+ */
+const localISODate = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 export const cohort: Cohort = {
   id: 'cohort-april',
   name: 'April Cohort',
@@ -74,12 +83,6 @@ export const members: Profile[] = [
 export const profiles: Profile[] = [coach, ...members];
 
 /**
- * The one seeded reservation (PRD-05). Dated relative to the real clock —
- * arrival is always a week out — so the demo lands mid-countdown (T-7, the
- * taper live) regardless of when it's opened. The stage switcher moves the
- * simulated clock around these dates; the dates themselves never change.
- */
-/**
  * Ten days of check-in back-history for the demo member, on the sleep focus
  * (PRD-06). Generated RELATIVE TO THE SIMULATED TODAY, not seeded statically
  * at boot — the stage switcher moves the clock ±90 days and the insight must
@@ -128,7 +131,7 @@ export function seedDailyHistory(base: Date): DailyCheckInEntry[] {
  */
 export function seedCohortBookings(base: Date): GuestBooking[] {
   const iso = (daysFromBase: number) =>
-    new Date(base.getTime() + daysFromBase * 86_400_000).toISOString().slice(0, 10);
+    localISODate(new Date(base.getTime() + daysFromBase * 86_400_000));
   // [name, package, room, arrival offset (days from sim today), requiredDone,
   //  erf, taper, pillar, goal, why] — stays: 5 nights, departure = arrival + 5.
   const rows: Array<
@@ -169,6 +172,12 @@ export function seedCohortBookings(base: Date): GuestBooking[] {
   }));
 }
 
+/**
+ * The one seeded reservation (PRD-05). Dated relative to the real clock —
+ * arrival is always a week out — so the demo lands mid-countdown (T-7, the
+ * taper live) regardless of when it's opened. The stage switcher moves the
+ * simulated clock around these dates; the dates themselves never change.
+ */
 export const booking: Booking = {
   id: 'booking-gwinganna',
   profileId: you.id,
@@ -176,8 +185,8 @@ export const booking: Booking = {
   guestName: you.fullName,
   packageName: 'Optimum Wellbeing',
   roomType: 'Meditation Villas',
-  arrivalDate: days(7).slice(0, 10),
-  departureDate: days(12).slice(0, 10),
+  arrivalDate: localISODate(new Date(now + 7 * 86_400_000)),
+  departureDate: localISODate(new Date(now + 12 * 86_400_000)),
   arrivalWindow: '2pm – 4pm',
   hostName: 'Lucy',
   hostRole: 'Your Program Manager',
