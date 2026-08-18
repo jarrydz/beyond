@@ -6,6 +6,7 @@ import {
   MediaPlaceholder,
   PillarBadge,
   Poster,
+  VideoOverlay,
   useToast,
 } from '@/components';
 import { useData } from '@/services';
@@ -33,6 +34,7 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
   const item = useStoreState((s) => s.library.find((c) => c.id === contentId));
   useStoreState((s) => s.dailyCheckIns.length); // vars can depend on the log
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   if (!item) return null;
 
@@ -56,7 +58,6 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
       ? FOCUS_QUESTIONS.sleep[0].scale[lightsOutIdx].toLowerCase()
       : 'by 10:30';
 
-  const isMedia = item.format === 'video' || item.format === 'audio';
   const Interactive = item.componentKey ? INTERACTIVE[item.componentKey] : undefined;
   const mealId = item.config?.mealId as string | undefined;
 
@@ -74,11 +75,13 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
       </button>
 
       <Poster item={item} className="rounded-card h-[150px] shadow-card mb-4">
-        {isMedia && !item.mediaUrl && (
+        {(item.format === 'video' || (item.format === 'audio' && !item.mediaUrl)) && (
           <button
             type="button"
             aria-label={`Open ${item.format}`}
-            onClick={() => setSheetOpen(true)}
+            onClick={() =>
+              item.format === 'video' ? setVideoOpen(true) : setSheetOpen(true)
+            }
             className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center transition active:scale-90"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145" className="ml-0.5">
@@ -145,17 +148,14 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
         </>
       )}
 
-      {isMedia &&
+      {item.format === 'video' && (
+        <Button onClick={() => setVideoOpen(true)}>Play the video</Button>
+      )}
+      {item.format === 'audio' &&
         (item.mediaUrl ? (
-          item.format === 'video' ? (
-            <video src={item.mediaUrl} controls className="w-full rounded-card" onEnded={markDone} />
-          ) : (
-            <audio src={item.mediaUrl} controls className="w-full" onEnded={markDone} />
-          )
+          <audio src={item.mediaUrl} controls className="w-full" onEnded={markDone} />
         ) : (
-          <Button onClick={() => setSheetOpen(true)}>
-            {item.format === 'video' ? 'Play the video' : 'Play the audio'}
-          </Button>
+          <Button onClick={() => setSheetOpen(true)}>Play the audio</Button>
         ))}
 
       <MediaPlaceholder
@@ -163,6 +163,14 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
         open={sheetOpen}
         onClose={() => {
           setSheetOpen(false);
+          markDone();
+        }}
+      />
+      <VideoOverlay
+        item={item}
+        open={videoOpen}
+        onClose={() => {
+          setVideoOpen(false);
           markDone();
         }}
       />

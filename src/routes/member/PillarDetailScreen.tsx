@@ -14,6 +14,7 @@ import {
   WaterHeader,
   useToast,
 } from '@/components';
+import { VideoOverlay } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
@@ -281,14 +282,6 @@ export function PillarDetailScreen({
           </div>
         )}
 
-        {onOpenContent && (
-          <LibrarySection
-            items={library.filter((c) => c.pillarId === pillarId)}
-            meId={me.id}
-            onOpen={onOpenContent}
-          />
-        )}
-
         <SectionHeader count={items.length}>This week</SectionHeader>
         {featured ? (
           <FeaturedWeekly
@@ -313,6 +306,16 @@ export function PillarDetailScreen({
                 onViewRecipes={pillarId === 'nourishment' ? viewRecipes : undefined}
               />
             ))}
+          </div>
+        )}
+
+        {onOpenContent && (
+          <div className="mt-7">
+            <LibrarySection
+              items={library.filter((c) => c.pillarId === pillarId)}
+              meId={me.id}
+              onOpen={onOpenContent}
+            />
           </div>
         )}
 
@@ -392,8 +395,10 @@ function FeaturedWeekly({
 }) {
   const toast = useToast();
   const [showList, setShowList] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
   const done = item.doneBy.includes(meId);
   const shoppingList: string[] = item.payload?.shoppingList ?? [];
+  const isVideo = item.format === 'video';
 
   return (
     <div
@@ -401,12 +406,39 @@ function FeaturedWeekly({
       style={{ boxShadow: '0 10px 30px rgba(18,38,43,.14)' }}
     >
       <Poster item={item} className="h-[184px]">
-        <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-acid grid place-items-center pointer-events-none">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </span>
+        {isVideo ? (
+          <button
+            type="button"
+            aria-label="Play the video"
+            onClick={() => setVideoOpen(true)}
+            className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-acid grid place-items-center transition active:scale-90"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        ) : (
+          <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-acid grid place-items-center pointer-events-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        )}
       </Poster>
+      {isVideo && (
+        <VideoOverlay
+          item={item}
+          open={videoOpen}
+          onClose={() => {
+            setVideoOpen(false);
+            // The interaction completes — but only for markable items;
+            // events keep RSVP as their action, recipes keep View recipes.
+            if (!done && item.type !== 'event' && item.type !== 'recipe') {
+              onMarkDone(item.id);
+            }
+          }}
+        />
+      )}
       <div className="p-5">
         <div className="font-serif font-medium text-[21px] leading-tight text-ink">
           {item.title}

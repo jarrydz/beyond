@@ -18,6 +18,7 @@ export { GoalWhyForm } from './GoalWhyForm';
 export { TodayCard } from './TodayCard';
 export { Poster } from './Poster';
 export { MediaPlaceholder } from './MediaPlaceholder';
+export { VideoOverlay } from './VideoOverlay';
 export { StepSequence } from './StepSequence';
 export { BreathPacer } from './BreathPacer';
 export { WeekPlanner } from './WeekPlanner';

@@ -415,6 +415,7 @@ export const content: ContentItem[] = [
     id: 'content-recipe',
     format: 'read',
     tint: '#C97B5A',
+    posterUrl: asset('images/library/gwinganna-chef.jpg'),
     type: 'recipe',
     pillarId: 'nourishment',
     title: '5 plant-forward dinners',
@@ -542,6 +543,7 @@ export const meals: Meal[] = [
     intro:
       'A savoury start that holds you to lunch — no sugar spike, no 10am crash.',
     tint: '#C9A44A',
+    photoUrl: asset('images/meals/corn-fritters.jpg'),
     prepMins: 15,
     cookMins: 10,
     servings: 2,
@@ -572,6 +574,7 @@ export const meals: Meal[] = [
     intro:
       'Gluten-free and gently warming — the kitchen serves this on cool hinterland mornings.',
     tint: '#8C5A50',
+    photoUrl: asset('images/meals/buckwheat-porridge.jpg'),
     prepMins: 5,
     cookMins: 20,
     servings: 2,
@@ -600,6 +603,7 @@ export const meals: Meal[] = [
     intro:
       'The everyday retreat lunch — build it from whatever vegetables the week gives you.',
     tint: '#C97B5A',
+    photoUrl: asset('images/meals/rainbow-bowl.jpg'),
     prepMins: 20,
     cookMins: 15,
     servings: 2,
