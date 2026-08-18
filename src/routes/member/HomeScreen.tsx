@@ -290,6 +290,12 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
  */
 function YourWeekCard() {
   const offset = useStoreState((s) => s.demoDayOffset);
+  // D5 (cold-start audit): a landed ✓ claims delivery to THIS member. No
+  // subscription on file, no checkmarks — the card still describes the
+  // channel, it just stops asserting messages that were never sent.
+  const subscribed = useStoreState((s) =>
+    s.subscriptions.some((x) => x.profileId === s.currentUserId),
+  );
   // Monday-based position in the week, so "landed" reads naturally.
   const pos = (d: number) => (d + 6) % 7;
   const nowPos = pos(today(offset).getDay());
@@ -298,7 +304,7 @@ function YourWeekCard() {
       <Eyebrow>Your week</Eyebrow>
       <div className="space-y-2">
         {YOUR_WEEK.map((t) => {
-          const landed = pos(t.weekday) <= nowPos;
+          const landed = subscribed && pos(t.weekday) <= nowPos;
           return (
             <div key={t.dayLabel} className="flex items-baseline gap-3">
               <span
