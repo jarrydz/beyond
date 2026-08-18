@@ -59,7 +59,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
 function StatusBar() {
   const time = useLiveClock();
   return (
-    <div className="absolute top-0 inset-x-0 h-[46px] flex items-center justify-between px-[26px] text-[12px] font-semibold z-[50]">
+    <div id="frame-status-bar" className="absolute top-0 inset-x-0 h-[46px] flex items-center justify-between px-[26px] text-[12px] font-semibold z-[50] transition-colors">
       <span>{time}</span>
       <span className="flex gap-1.5 items-center">
         <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">

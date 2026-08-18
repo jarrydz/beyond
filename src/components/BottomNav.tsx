@@ -13,37 +13,43 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ items, active, onChange }: BottomNavProps) {
+  // Docked tab bar (design refresh): a scrim + blur container so content
+  // dissolves underneath as it scrolls, holding a white radius-20 bar.
   return (
-    <nav className="absolute bottom-0 inset-x-0 z-[55] px-3 pb-3 pointer-events-none">
-      <div
-        className="pointer-events-auto flex h-[54px] rounded-full"
-        style={{
-          background: 'rgba(255, 255, 255, 0.55)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        }}
-      >
-      {items.map((item) => {
-        const on = item.key === active;
-        return (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => onChange(item.key)}
-            className={[
-              'flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold transition-colors focus:outline-none',
-              on ? 'text-green' : 'text-muted',
-            ].join(' ')}
-          >
-            <span
-              className={['[&_svg]:w-[21px] [&_svg]:h-[21px] [&_svg]:fill-none [&_svg]:stroke-[1.7]', on ? '[&_svg]:stroke-green' : '[&_svg]:stroke-muted'].join(' ')}
+    <nav
+      className="absolute bottom-0 inset-x-0 z-[55] px-3.5 pb-4 pt-3.5 pointer-events-none"
+      style={{
+        background:
+          'linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 42%)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+      }}
+    >
+      <div className="pointer-events-auto flex rounded-nav border border-line bg-white shadow-nav px-1 py-[11px]">
+        {items.map((item) => {
+          const on = item.key === active;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onChange(item.key)}
+              className={[
+                'flex-1 flex flex-col items-center justify-center gap-1 text-[9.5px] font-semibold transition-colors focus:outline-none',
+                on ? 'text-ink' : 'text-disabled',
+              ].join(' ')}
             >
-              {item.icon}
-            </span>
-            {item.label}
-          </button>
-        );
-      })}
+              <span
+                className={[
+                  '[&_svg]:w-[19px] [&_svg]:h-[19px] [&_svg]:fill-none [&_svg]:stroke-2',
+                  on ? '[&_svg]:stroke-ink' : '[&_svg]:stroke-disabled',
+                ].join(' ')}
+              >
+                {item.icon}
+              </span>
+              {item.label}
+            </button>
+          );
+        })}
       </div>
     </nav>
   );

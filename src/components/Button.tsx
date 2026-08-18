@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type Variant = 'primary' | 'ghost' | 'terra';
+type Variant = 'primary' | 'ghost' | 'terra' | 'acid' | 'outline-dark';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
@@ -9,10 +9,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   inline?: boolean;
 }
 
+// Refresh: primary is a quiet ink fill; ACID is rationed to the single
+// hero action per screen (never a default); outline-dark sits on water.
 const variants: Record<Variant, string> = {
-  primary: 'bg-green text-cream hover:brightness-110',
-  ghost: 'bg-transparent text-green border border-sage hover:bg-sage/10',
-  terra: 'bg-terra text-white hover:brightness-110',
+  primary: 'bg-ink text-white hover:brightness-110',
+  ghost: 'bg-transparent text-ink border border-line-alt hover:bg-grey-50',
+  terra: 'bg-ink text-white hover:brightness-110',
+  acid: 'bg-acid text-ink hover:brightness-105',
+  'outline-dark': 'bg-transparent text-white border border-white/35',
 };
 
 export function Button({

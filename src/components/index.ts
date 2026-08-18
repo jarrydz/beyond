@@ -27,3 +27,5 @@ export { Ring } from './Ring';
 export { InstallPrompt } from './InstallPrompt';
 export { DailyCheckInRecorder } from './DailyCheckInRecorder';
 export { FloatingHeader } from './FloatingHeader';
+export { WaterHeader, Sheet, HeaderActionsContext } from './WaterHeader';
+export { SectionHeader, StatusChip, ScorePill } from './refresh';

@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Height of the frame's status area — water headers pad by this. */
+    --status-pad: 58px;
+  }
+  @media (max-width: 480px) {
+    :root {
+      --status-pad: calc(max(env(safe-area-inset-top, 0px), 12px) + 10px);
+    }
+  }
+
   html,
   body,
   #root {
