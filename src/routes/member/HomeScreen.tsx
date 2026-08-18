@@ -180,11 +180,16 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
             <div className="min-w-0">
               <Eyebrow>This week's goal</Eyebrow>
               <div className="font-semibold text-[15px] truncate">{activeGoal.title}</div>
+              {/* D4 (cold-start audit): provenance comes from the field PRD-06
+                  shipped, never a hard-coded story. */}
               <div className="text-muted text-[12.5px]">
-                You set this with {coach.fullName.split(' ')[0]} on day 1
+                {activeGoal.focusSetBy === 'coach'
+                  ? `Set with ${coach.fullName.split(' ')[0]} at your check-in`
+                  : 'You set this yourself — change it any time'}
               </div>
             </div>
-            <Ring value={goalScore} max={10} />
+            {/* No consult yet, no ring — a dial at zero is manufactured guilt. */}
+            {lastCompleted && <Ring value={goalScore} max={10} />}
           </div>
         </Card>
       )}

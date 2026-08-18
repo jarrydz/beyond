@@ -221,6 +221,10 @@ export const goals: Goal[] = [
     pillarId: 'sleep',
     title: 'Asleep before 10pm',
     target: '30 days',
+    // His own check-in history records this as the goal-setting call with
+    // Lucy — the provenance field now says so instead of a hard-coded line.
+    focusSetBy: 'coach',
+    focusSetAt: days(-12),
     active: true,
     createdAt: days(-12),
   },
