@@ -26,7 +26,20 @@ export function QuietScreen({ booking, onOpenStageSheet }: Props) {
 
   return (
     <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-10 min-h-full">
-      <p className="text-muted text-[13px] mt-8 mb-1">{date}</p>
+      {onOpenStageSheet && (
+        <button
+          type="button"
+          aria-label="Journey stage (demo)"
+          onClick={onOpenStageSheet}
+          className="inline-flex items-center gap-1 text-muted text-[13px] font-semibold mt-1.5 -ml-1 py-1"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+          Back
+        </button>
+      )}
+      <p className="text-muted text-[13px] mt-6 mb-1">{date}</p>
       <h2 className="font-serif font-semibold text-[27px] leading-tight mb-6">
         Day {day} of {stayLength(booking)}
       </h2>
@@ -61,14 +74,6 @@ export function QuietScreen({ booking, onOpenStageSheet }: Props) {
         Everything else is waiting for you at home.
       </p>
 
-      {onOpenStageSheet && (
-        <button
-          type="button"
-          aria-label="Journey stage (demo)"
-          onClick={onOpenStageSheet}
-          className="absolute bottom-4 right-4 w-3 h-3 rounded-full bg-line/70 active:bg-sage"
-        />
-      )}
     </section>
   );
 }
