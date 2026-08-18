@@ -255,6 +255,12 @@ export type PointsAction =
 
 export interface PointsLedgerEntry {
   id: string;
+  /**
+   * Who earned or spent it (cold-start audit D1/D2). Views, the daily guard
+   * and the streak walk are scoped by this; PRD-08's restructure should make
+   * it required and key the whole wallet by it.
+   */
+  memberId?: string;
   action: PointsAction;
   points: number; // positive = earned, negative = spent
   at: string; // ISO timestamp

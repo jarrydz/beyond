@@ -18,7 +18,10 @@ export function ProfileScreen({ onOpenShop }: Props) {
   );
   const pointsBalance = useStoreState((s) => s.pointsBalance);
   const lastEarn = useStoreState(
-    (s) => [...s.pointsLedger].sort((a, b) => b.at.localeCompare(a.at))[0],
+    (s) =>
+      s.pointsLedger
+        .filter((e) => e.memberId === s.currentUserId)
+        .sort((a, b) => b.at.localeCompare(a.at))[0],
   );
   const latestOrder = useStoreState(
     (s) => [...s.orders].sort((a, b) => b.placedAt.localeCompare(a.placedAt))[0],

@@ -218,7 +218,9 @@ export function MemberHome() {
         open={pointsOpen}
         onClose={() => setPointsOpen(false)}
         balance={pointsBalance}
-        ledger={[...pointsLedger].sort((a, b) => b.at.localeCompare(a.at))}
+        ledger={pointsLedger
+          .filter((e) => e.memberId === me.id)
+          .sort((a, b) => b.at.localeCompare(a.at))}
         onSpend={() => {
           setPointsOpen(false);
           goTab('more');

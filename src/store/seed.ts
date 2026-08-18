@@ -858,6 +858,7 @@ export const meals: Meal[] = [
 export const pointsLedger: PointsLedgerEntry[] = [
   {
     id: 'pt-checkin-2',
+    memberId: you.id,
     action: 'daily_check_in',
     points: AWARDS.daily_check_in,
     at: days(-2),
@@ -865,6 +866,7 @@ export const pointsLedger: PointsLedgerEntry[] = [
   },
   {
     id: 'pt-session-1',
+    memberId: you.id,
     action: 'content_complete',
     points: AWARDS.content_complete,
     at: days(-2),
@@ -872,6 +874,7 @@ export const pointsLedger: PointsLedgerEntry[] = [
   },
   {
     id: 'pt-checkin-1',
+    memberId: you.id,
     action: 'daily_check_in',
     points: AWARDS.daily_check_in,
     at: days(-1),

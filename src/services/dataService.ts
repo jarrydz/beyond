@@ -57,6 +57,9 @@ export function createDataService(store: MemoryStore) {
   };
   const sameSimDay = (iso: string) =>
     new Date(iso).toDateString() === today(store.get().demoDayOffset).toDateString();
+  /** A member's true balance: the sum of their own ledger entries (D1/D2). */
+  const memberBalance = (entries: PointsLedgerEntry[], memberId: string) =>
+    entries.filter((e) => e.memberId === memberId).reduce((sum, e) => sum + e.points, 0);
 
   return {
     // identity & session
@@ -91,6 +94,8 @@ export function createDataService(store: MemoryStore) {
           signedIn: true,
           activeRole: role,
           currentUserId: userId,
+          // Wallet context follows the member (D1/D2).
+          pointsBalance: memberBalance(s.pointsLedger, userId),
           profiles:
             role === 'member'
               ? s.profiles.map((p) =>
@@ -327,7 +332,10 @@ export function createDataService(store: MemoryStore) {
       if (action === 'daily_check_in') {
         // One award per SIMULATED day — the stage switcher moves this too.
         const already = s.pointsLedger.some(
-          (e) => e.action === 'daily_check_in' && sameSimDay(e.at),
+          (e) =>
+            e.memberId === s.currentUserId &&
+            e.action === 'daily_check_in' &&
+            sameSimDay(e.at),
         );
         if (already) return null;
       }
@@ -336,6 +344,7 @@ export function createDataService(store: MemoryStore) {
       }
       const entry = {
         id: uid(),
+        memberId: s.currentUserId,
         action,
         points: AWARDS[action],
         at: simNow(),
@@ -351,10 +360,14 @@ export function createDataService(store: MemoryStore) {
       // The single v1 milestone: pay the streak bonus exactly when the
       // consecutive-day run reaches the threshold — not again on day 4+.
       if (action === STREAK.action) {
+        // The streak walk counts only THIS member's entries (D1/D2) — a
+        // first-ever check-in must never inherit someone else's run.
         const days = new Set(
           store
             .get()
-            .pointsLedger.filter((e) => e.action === STREAK.action)
+            .pointsLedger.filter(
+              (e) => e.memberId === s.currentUserId && e.action === STREAK.action,
+            )
             .map((e) => new Date(e.at).toDateString()),
         );
         let run = 0;
@@ -366,6 +379,7 @@ export function createDataService(store: MemoryStore) {
         if (run === STREAK.days) {
           const bonus = {
             id: uid(),
+            memberId: s.currentUserId,
             action: STREAK.action,
             points: STREAK.bonus,
             at: simNow(),
@@ -412,8 +426,11 @@ export function createDataService(store: MemoryStore) {
       return store.get().pointsBalance;
     },
     getPointsLedger(): PointsLedgerEntry[] {
-      // Newest first — the order the earn history reads in.
-      return [...store.get().pointsLedger].sort((a, b) => b.at.localeCompare(a.at));
+      // Newest first, and only the current member's entries (D1/D2).
+      const s = store.get();
+      return s.pointsLedger
+        .filter((e) => e.memberId === s.currentUserId)
+        .sort((a, b) => b.at.localeCompare(a.at));
     },
 
     // marketplace (mock — nothing charges, nothing ships)
@@ -797,6 +814,10 @@ export function createDataService(store: MemoryStore) {
       store.set((st) => ({
         ...st,
         currentUserId: profileId,
+        // Swap the wallet context with the member: the stored balance always
+        // equals the current member's ledger sum, so spendPoints' guard stays
+        // correct without its logic changing (D1/D2, scoped fix).
+        pointsBalance: memberBalance(st.pointsLedger, profileId),
         profiles: hasBooking
           ? st.profiles
           : st.profiles.map((p) => (p.id === profileId ? { ...p, onboarded: false } : p)),
@@ -820,6 +841,7 @@ export function createDataService(store: MemoryStore) {
       store.set((s) => ({
         ...s,
         currentUserId: 'member-jarryd',
+        pointsBalance: memberBalance(s.pointsLedger, 'member-jarryd'),
         profiles: seedProfiles.map((p) => ({ ...p })),
         prepTasks: prepTaskSeeds.map((t) => ({ ...t, done: false })),
         taperTicks: [],
