@@ -20,6 +20,7 @@ export { MediaPlaceholder } from './MediaPlaceholder';
 export { StepSequence } from './StepSequence';
 export { BreathPacer } from './BreathPacer';
 export { WeekPlanner } from './WeekPlanner';
+export { LibraryRow, FORMAT_LABEL } from './LibraryRow';
 export { Avatar, avatarColor } from './Avatar';
 export { Ring } from './Ring';
 export { InstallPrompt } from './InstallPrompt';

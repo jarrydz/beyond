@@ -27,6 +27,7 @@ import { ProfileScreen } from './member/ProfileScreen';
 import { JourneyScreen } from './member/JourneyScreen';
 import { QuietScreen } from './member/QuietScreen';
 import { ReintegrationScreen } from './member/ReintegrationScreen';
+import { ContentDetailScreen } from './member/ContentDetailScreen';
 import { stageFor } from '@/utils/journey';
 import type { PillarId } from '@/types';
 
@@ -77,6 +78,7 @@ export function MemberHome() {
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const [openContentId, setOpenContentId] = useState<string | null>(null);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [marketOpen, setMarketOpen] = useState(false);
   const [openProductId, setOpenProductId] = useState<string | null>(null);
@@ -87,6 +89,7 @@ export function MemberHome() {
       setActive(next as Tab);
       setOpenPillarId(null);
       setOpenMealId(null);
+      setOpenContentId(null);
       setDeliveryOpen(false);
       setMarketOpen(false);
       setOpenProductId(null);
@@ -119,25 +122,45 @@ export function MemberHome() {
         }}
       />
       <ScreenWrap
-        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
+        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${openContentId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
       >
         {active === 'home' &&
-          (stage === 'pre_retreat' ? (
+          (openContentId ? (
+            <ContentDetailScreen
+              contentId={openContentId}
+              onBack={() => setOpenContentId(null)}
+              onOpenMeal={(id) => {
+                goTab('pillars');
+                setOpenMealId(id);
+              }}
+            />
+          ) : stage === 'pre_retreat' ? (
             <JourneyScreen />
           ) : stage === 'reintegration' && booking ? (
             <ReintegrationScreen
               booking={booking}
               onOpenDailyCheckIn={() => setRecorderOpen(true)}
+              onOpenContent={(id) => setOpenContentId(id)}
             />
           ) : (
-            <HomeScreen onGoTab={goTab} onOpenDailyCheckIn={() => setRecorderOpen(true)} />
+            <HomeScreen
+              onGoTab={goTab}
+              onOpenDailyCheckIn={() => setRecorderOpen(true)}
+              onOpenContent={(id) => setOpenContentId(id)}
+            />
           ))}
         {active === 'pillars' &&
           (openMealId ? (
             <MealDetailScreen mealId={openMealId} onBack={() => setOpenMealId(null)} />
           ) : deliveryOpen ? (
             <MealDeliveryScreen onBack={() => setDeliveryOpen(false)} />
+          ) : openContentId ? (
+            <ContentDetailScreen
+              contentId={openContentId}
+              onBack={() => setOpenContentId(null)}
+              onOpenMeal={(id) => setOpenMealId(id)}
+            />
           ) : openPillarId ? (
             <PillarDetailScreen
               pillarId={openPillarId}
@@ -151,6 +174,7 @@ export function MemberHome() {
                 setMarketOpen(true);
                 setOpenProductId(id);
               }}
+              onOpenContent={(id) => setOpenContentId(id)}
             />
           ) : (
             <PillarsScreen onOpenPillar={(id) => setOpenPillarId(id)} />

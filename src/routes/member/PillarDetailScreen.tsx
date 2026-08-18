@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Card, ContentCard, Eyebrow, MealCard, ProductCard, useToast } from '@/components';
+import { Card, ContentCard, Eyebrow, FORMAT_LABEL, LibraryRow, MealCard, ProductCard, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { getPillar } from '@/config/pillars';
@@ -7,7 +7,7 @@ import { pillarIcons } from '@/config/pillarIcons';
 import { contentForPillar, darken } from '@/utils/pillars';
 import { mealsByTime } from '@/utils/meals';
 import { shortDate } from '@/utils/format';
-import type { PillarId } from '@/types';
+import type { ContentItem, PillarId } from '@/types';
 
 interface Props {
   pillarId: PillarId;
@@ -18,6 +18,8 @@ interface Props {
   onOpenProduct?: (id: string) => void;
   /** PRD-04 painted door — the meal-delivery explainer (Nourishment only). */
   onOpenMealDelivery?: () => void;
+  /** PRD-07 — open a library item's detail screen. */
+  onOpenContent?: (id: string) => void;
 }
 
 export function PillarDetailScreen({
@@ -26,6 +28,7 @@ export function PillarDetailScreen({
   onOpenMeal,
   onOpenProduct,
   onOpenMealDelivery,
+  onOpenContent,
 }: Props) {
   const data = useData();
   const toast = useToast();
@@ -35,6 +38,7 @@ export function PillarDetailScreen({
 
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const content = useStoreState((s) => s.content);
+  const library = useStoreState((s) => s.library);
   const goals = useStoreState((s) => s.goals);
   const checkIns = useStoreState((s) => s.checkIns);
   const meals = useStoreState((s) => s.meals);
@@ -223,6 +227,14 @@ export function PillarDetailScreen({
         </div>
       )}
 
+      {onOpenContent && (
+        <LibrarySection
+          items={library.filter((c) => c.pillarId === pillarId)}
+          meId={me.id}
+          onOpen={onOpenContent}
+        />
+      )}
+
       <Eyebrow className="mt-5 mb-2">This week</Eyebrow>
       {items.length > 0 ? (
         items.map((it) => (
@@ -290,5 +302,42 @@ export function PillarDetailScreen({
         </>
       )}
     </section>
+  );
+}
+
+/**
+ * The stocked shelf (PRD-07): the pillar's library, grouped by format in
+ * member-voice groups — Do, Watch, Listen, Read.
+ */
+function LibrarySection({
+  items,
+  meId,
+  onOpen,
+}: {
+  items: ContentItem[];
+  meId: string;
+  onOpen: (id: string) => void;
+}) {
+  if (items.length === 0) return null;
+  const groups = (['interactive', 'video', 'audio', 'read'] as const)
+    .map((f) => ({ format: f, rows: items.filter((c) => c.format === f) }))
+    .filter((g) => g.rows.length > 0);
+  return (
+    <div className="mt-6">
+      <h3 className="font-serif font-semibold text-[19px]">The library</h3>
+      <p className="text-muted text-[13px] mt-0.5 mb-1">
+        Practices from the retreat, yours to run at home.
+      </p>
+      {groups.map((g) => (
+        <div key={g.format}>
+          <Eyebrow className="mt-4 mb-2">{FORMAT_LABEL[g.format]}</Eyebrow>
+          <div className="space-y-2">
+            {g.rows.map((c) => (
+              <LibraryRow key={c.id} item={c} meId={meId} onOpen={onOpen} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
