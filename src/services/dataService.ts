@@ -226,6 +226,12 @@ export function createDataService(store: MemoryStore) {
       target?: string,
       why?: string,
     ): Goal {
+      // Rewording a goal on the same pillar is not a new focus — the day
+      // counter must survive a "Change", or the UI lies about progress.
+      const prior = store
+        .get()
+        .goals.find((g) => g.profileId === profileId && g.active);
+      const samePillar = prior?.pillarId === pillarId;
       const goal: Goal = {
         id: uid(),
         profileId,
@@ -235,7 +241,7 @@ export function createDataService(store: MemoryStore) {
         why,
         // The member's own pick is a focus decision too — it starts the 60-day clock.
         focusSetBy: 'member',
-        focusSetAt: simNow(),
+        focusSetAt: samePillar ? prior?.focusSetAt ?? simNow() : simNow(),
         active: true,
         createdAt: new Date().toISOString(),
       };

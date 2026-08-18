@@ -24,13 +24,24 @@ const GRADIENTS = {
 
 interface Props {
   depth?: 'deep' | 'shallow';
-  eyebrow: string;
+  eyebrow?: string;
+  /** Detail screens: a white back link replaces the eyebrow at the left. */
+  back?: { label: string; onClick: () => void };
   /** Hide the points pill (e.g. coach side). */
   showPoints?: boolean;
+  /** Hide the avatar chip (e.g. pushed detail screens). */
+  showProfile?: boolean;
   children?: ReactNode;
 }
 
-export function WaterHeader({ depth = 'deep', eyebrow, showPoints = true, children }: Props) {
+export function WaterHeader({
+  depth = 'deep',
+  eyebrow,
+  back,
+  showPoints = true,
+  showProfile = true,
+  children,
+}: Props) {
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const points = useStoreState((s) => s.pointsBalance);
   const { onPointsTap, onProfileTap } = useContext(HeaderActionsContext);
@@ -69,9 +80,22 @@ export function WaterHeader({ depth = 'deep', eyebrow, showPoints = true, childr
 
       <div className="relative px-6 pb-9" style={{ paddingTop: 'var(--status-pad)' }}>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-            {eyebrow}
-          </span>
+          {back ? (
+            <button
+              type="button"
+              onClick={back.onClick}
+              className="flex items-center gap-1 -ml-1 text-[13px] font-semibold text-white/85 transition hover:text-white"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M15 6l-6 6 6 6" />
+              </svg>
+              {back.label}
+            </button>
+          ) : (
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+              {eyebrow}
+            </span>
+          )}
           <span className="flex items-center gap-2">
             {showPoints && (
               <button
@@ -83,14 +107,16 @@ export function WaterHeader({ depth = 'deep', eyebrow, showPoints = true, childr
                 {points} pts
               </button>
             )}
-            <button
-              type="button"
-              onClick={onProfileTap}
-              aria-label="Profile"
-              className="w-[30px] h-[30px] rounded-full bg-acid text-ink grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
-            >
-              {me.avatarInitial}
-            </button>
+            {showProfile && (
+              <button
+                type="button"
+                onClick={onProfileTap}
+                aria-label="Profile"
+                className="w-[30px] h-[30px] rounded-full bg-acid text-ink grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
+              >
+                {me.avatarInitial}
+              </button>
+            )}
           </span>
         </div>
         {children}

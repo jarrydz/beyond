@@ -29,7 +29,7 @@ export function ProductCard({ product, onOpen }: Props) {
         <div className="font-semibold text-[14.5px] leading-snug">{product.name}</div>
         <div className="text-muted text-[12.5px] mt-0.5 truncate">{product.blurb}</div>
       </div>
-      <div className="flex-none font-serif font-semibold text-[15px]">
+      <div className="flex-none font-serif text-[19px] text-ink">
         {formatAud(product.priceAud)}
       </div>
     </button>
