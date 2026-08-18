@@ -9,10 +9,10 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const toneStyles: Record<NonNullable<CardProps['tone']>, string> = {
-  default: 'bg-white border-line text-ink',
-  sage: 'bg-[#F1F4ED] border-[#DCE4D5] text-ink',
-  dark: 'bg-gradient-to-br from-green to-green-deep border-transparent text-cream',
-  terra: 'bg-gradient-to-br from-terra to-terra-deep border-transparent text-white text-center',
+  default: 'bg-white border-line-alt text-ink',
+  sage: 'bg-grey-50 border-line text-ink',
+  dark: 'bg-gradient-to-b from-water-600 to-ink border-transparent text-white',
+  terra: 'bg-gradient-to-b from-water-700 to-ink-deep border-transparent text-white text-center',
 };
 
 export function Card({ children, flush, tone = 'default', className = '', ...rest }: CardProps) {
@@ -41,7 +41,7 @@ export function Eyebrow({
   return (
     <p
       className={[
-        'text-[11px] tracking-[0.13em] uppercase text-green-soft font-semibold mb-2',
+        'text-[10px] tracking-[0.16em] uppercase text-ink font-semibold mb-2',
         className,
       ].join(' ')}
     >

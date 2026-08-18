@@ -1,5 +1,16 @@
 import { useMemo, useState } from 'react';
-import { BottomSheet, Button, ButtonRow, Card, Eyebrow, Ring, useToast } from '@/components';
+import {
+  BottomSheet,
+  Button,
+  ButtonRow,
+  Card,
+  Eyebrow,
+  SectionHeader,
+  Sheet,
+  StatusChip,
+  WaterHeader,
+  useToast,
+} from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { PREP_TASK_BODY, PREP_VIDEO_META } from '@/config/prepTasks';
@@ -74,68 +85,148 @@ export function JourneyScreen() {
   }
 
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <Eyebrow className="mt-1.5">Your retreat</Eyebrow>
-      <div className="flex items-start justify-between gap-3 mb-1">
-        <h2 className="font-serif font-semibold text-[25px] leading-tight">
-          {connected
-            ? daysToGo === 1
-              ? 'Tomorrow.'
-              : `${daysToGo} days to go`
-            : 'Nearly time'}
-        </h2>
-        <Ring value={doneCount} max={Math.max(1, unlocked.length)} size={54} />
-      </div>
-      <p className="text-muted text-[13.5px] mb-4">
-        {connected
-          ? `${formatDate(booking.arrivalDate)} · ${booking.packageName}`
-          : 'Connect your booking to start the countdown.'}
-      </p>
-
-      {!hero && locked.length > 0 && (
-        <CaughtUpCard daysToGo={daysToGo} locked={locked} offset={offset} />
-      )}
-
-      {hero && (
-        <Card tone="dark">
-          <Eyebrow className="!text-sage">Next</Eyebrow>
-          <h3 className="font-serif font-semibold text-[21px] leading-tight mb-1">
-            {hero.title}
-          </h3>
-          <p className="text-[13.5px] leading-relaxed text-cream/80 mb-3.5">{hero.blurb}</p>
-          <div className="flex items-center justify-between gap-3">
-            <Button
-              inline
-              className="!bg-cream !text-green px-6"
-              onClick={() => openTask(hero)}
+    <>
+      <WaterHeader depth="deep" eyebrow={booking.packageName}>
+        {connected ? (
+          <>
+            <div
+              className="text-[56px] font-semibold leading-[0.9] tracking-[-0.05em]"
+              style={{ fontFeatureSettings: '"tnum"' }}
             >
-              {heroCta(hero)}
-            </Button>
-            {hero.required && <RequiredTag onDark />}
-          </div>
-        </Card>
-      )}
+              {daysToGo}
+            </div>
+            <div className="text-[25px] font-semibold leading-[1.1] tracking-[-0.035em] mb-2.5">
+              {daysToGo === 1 ? 'day to go' : 'days to go'}
+            </div>
+            <p className="text-[12.5px] text-white/[.62] mb-6">
+              {formatDate(booking.arrivalDate)} · Gwinganna, QLD
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="font-serif font-normal text-[34px] leading-[1.05] mb-2">
+              Nearly time
+            </h1>
+            <p className="text-[12.5px] text-white/[.62] mb-6">
+              Connect your booking to start the countdown.
+            </p>
+          </>
+        )}
 
-      {rest.length > 0 && (
-        <div className="space-y-2.5 mb-5">
-          {rest.map((t) => (
-            <TaskRow key={t.id} task={t} onClick={() => openTask(t)} />
+        {/* The glass "Next up" card — the day's one thing, on the water. */}
+        {hero && (
+          <div
+            className="rounded-card border border-white/[.22] p-4"
+            style={{
+              background: 'rgba(255,255,255,.07)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+            }}
+          >
+            <div className="flex items-baseline justify-between mb-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-acid">
+                Next up
+              </span>
+              {PREP_VIDEO_META[hero.id] && (
+                <span className="font-mono text-[10px] font-semibold text-white/60 uppercase">
+                  {PREP_VIDEO_META[hero.id].duration}
+                </span>
+              )}
+            </div>
+            <h3 className="font-serif font-normal text-[24px] leading-[1.15] mb-1">
+              {hero.title}
+            </h3>
+            <p className="font-serif text-[14px] leading-relaxed text-white/[.68] mb-3.5">
+              {hero.blurb}
+            </p>
+            <Button inline variant="acid" className="px-5 !py-2.5" onClick={() => openTask(hero)}>
+              {heroCta(hero)}&ensp;→
+            </Button>
+          </div>
+        )}
+
+        {!hero && locked.length > 0 && (
+          <CaughtUpCard daysToGo={daysToGo} locked={locked} offset={offset} />
+        )}
+      </WaterHeader>
+
+      <Sheet>
+        <SectionHeader
+          count={`${String(doneCount).padStart(2, '0')} / ${String(unlocked.length).padStart(2, '0')}`}
+        >
+          Before you arrive
+        </SectionHeader>
+
+        {/* Segment strip — one segment per unlocked task, filled as they complete. */}
+        <div className="flex gap-1.5 mb-4">
+          {unlocked.map((t) => (
+            <span
+              key={t.id}
+              className={['h-[4px] flex-1 rounded-[2px]', t.done ? 'bg-ink' : 'bg-line-alt'].join(' ')}
+            />
           ))}
         </div>
-      )}
 
-      {connected && <BookingCard booking={booking} />}
-
-      {locked.length > 0 && (
-        <>
-          <Eyebrow className="mt-5">Coming up</Eyebrow>
-          <div className="space-y-2.5">
-            {locked.map((t) => (
-              <LockedRow key={t.id} task={t} daysToGo={daysToGo} />
+        <div className="space-y-2.5">
+          {unlocked
+            .filter((t) => t.done)
+            .map((t) => (
+              <div
+                key={t.id}
+                className="flex items-center gap-2.5 rounded-card bg-grey-50 px-3.5 py-3"
+              >
+                <svg className="w-3.5 h-3.5 text-ink flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
+                  <path d="M5 12l5 5L20 7" />
+                </svg>
+                <span className="text-[14px] text-disabled line-through">{t.title}</span>
+              </div>
             ))}
+
+          {rest
+            .filter((t) => !t.done)
+            .map((t, i) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => openTask(t)}
+                className={[
+                  'w-full text-left rounded-card bg-white px-3.5 py-3',
+                  i === 0 && !hero ? 'border-[1.5px] border-ink' : 'border border-line-alt',
+                ].join(' ')}
+              >
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="font-serif font-medium text-[17px] leading-tight text-ink">
+                    {t.title}
+                  </span>
+                  {t.required && <StatusChip tone="acid">Needed by Gwinganna</StatusChip>}
+                </span>
+                <span className="block text-[12px] text-muted leading-snug mt-1">{t.blurb}</span>
+              </button>
+            ))}
+
+          {locked.map((t) => (
+            <div key={t.id} className="rounded-card border border-line-alt bg-white px-3.5 py-3">
+              <span className="flex items-center gap-2 flex-wrap">
+                <span className="font-serif font-medium text-[17px] leading-tight text-disabled">
+                  {t.title}
+                </span>
+                <StatusChip>
+                  {daysToGo - t.unlocksAt === 1
+                    ? 'Opens tomorrow'
+                    : `In ${daysToGo - t.unlocksAt} days`}
+                </StatusChip>
+              </span>
+              <span className="block text-[12px] text-muted leading-snug mt-1">{t.blurb}</span>
+            </div>
+          ))}
+        </div>
+
+        {connected && (
+          <div className="mt-6">
+            <BookingCard booking={booking} />
           </div>
-        </>
-      )}
+        )}
+      </Sheet>
 
       <TaskSheet
         task={openSheetTask}
@@ -145,7 +236,7 @@ export function JourneyScreen() {
           setOpenSheetTask(null);
         }}
       />
-    </section>
+    </>
   );
 }
 

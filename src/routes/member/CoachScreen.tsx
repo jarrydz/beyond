@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import {
-  Avatar,
   BottomSheet,
   Button,
-  ButtonRow,
-  Card,
-  Eyebrow,
-  Ring,
+  ScorePill,
+  SectionHeader,
+  Sheet,
   SheetSlot,
+  StatusChip,
+  WaterHeader,
   useToast,
 } from '@/components';
 import { useAi, useData } from '@/services';
@@ -28,6 +28,13 @@ const SLOTS: SlotOption[] = [
   { label: 'Friday · 6:00pm', meta: 'Wind down the week', offsetHours: 96 + 18 - new Date().getHours() },
 ];
 
+/**
+ * Your Coach (design refresh): identity and actions live in the water
+ * header — portrait circle with serif initials (photograph when one
+ * exists), acid Book pill, outlined Message. The sheet carries the
+ * upcoming session card, the past check-in log rows and the coach's note.
+ * All booking / AI logic unchanged.
+ */
 export function CoachScreen() {
   const data = useData();
   const ai = useAi();
@@ -82,129 +89,151 @@ export function CoachScreen() {
     }
   }
 
+  const coachInitials = coach.fullName
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('');
+
   return (
     <>
-      <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-        <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">Your coach</h2>
-        <p className="text-muted text-[13.5px] mb-4">One-on-one support between retreats</p>
-
-        <Card className="!text-center">
-          <Avatar profile={coach} size={74} className="!mx-auto mt-1 mb-3" />
-          <div className="font-serif font-semibold text-[20px]">{coach.fullName}</div>
-          <div className="text-muted text-[13px] mb-3.5">
-            Wellbeing leader · Gwinganna retreats
+      <WaterHeader depth="deep" eyebrow="Your coach">
+        <div className="flex items-center gap-4 mb-5">
+          {/* Portrait slot — gradient + serif initials until the real photo lands. */}
+          <div
+            className="w-[78px] h-[78px] rounded-full grid place-items-center flex-none font-serif text-[26px] text-white/90"
+            style={{
+              background: 'linear-gradient(160deg, #5C8A8F, #2C5259)',
+              boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.3)',
+            }}
+          >
+            {coachInitials}
           </div>
-          <ButtonRow>
-            <Button onClick={() => setSheetOpen(true)}>Book a check-in</Button>
-            <Button
-              variant="ghost"
-              onClick={() => toast(`Opening your chat with ${coach.fullName.split(' ')[0]}…`)}
-            >
-              Message
-            </Button>
-          </ButtonRow>
-        </Card>
+          <div className="min-w-0">
+            <h1 className="font-serif font-normal text-[30px] leading-[1.05]">
+              {coach.fullName}
+            </h1>
+            <p className="text-[12.5px] text-white/[.68] mt-1">
+              Wellbeing leader · Gwinganna
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2.5">
+          <Button variant="acid" className="flex-1 !py-3" onClick={() => setSheetOpen(true)}>
+            Book a check-in
+          </Button>
+          <Button
+            inline
+            variant="outline-dark"
+            className="px-6 !py-3"
+            onClick={() => toast(`Opening your chat with ${coach.fullName.split(' ')[0]}…`)}
+          >
+            Message
+          </Button>
+        </div>
+      </WaterHeader>
 
+      <Sheet>
         {upcoming && (
-          <Card>
-            <Eyebrow>Upcoming</Eyebrow>
-            <div className="flex items-center gap-3">
-              <Ring value={1} max={1} size={50}>
-                {weekdayShort(upcoming.scheduledAt)}
-              </Ring>
-              <div>
-                <div className="font-semibold text-[14.5px]">15-min check-in</div>
-                <div className="text-muted text-[12.5px]">
+          <>
+            <SectionHeader>Upcoming</SectionHeader>
+            <div className="flex items-center gap-4 rounded-card border-[1.5px] border-ink p-4 mb-6">
+              <div className="pr-4 border-r border-line text-center flex-none">
+                <div className="font-mono text-[9px] font-semibold uppercase text-quiet">
+                  {weekdayShort(upcoming.scheduledAt)}
+                </div>
+                <div className="font-serif text-[26px] leading-none mt-0.5">
+                  {new Date(upcoming.scheduledAt).getDate()}
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-serif font-medium text-[18px] leading-tight">
+                  15-min check-in
+                </div>
+                <div className="text-[12px] text-muted mt-0.5">
                   {formatCheckInTime(upcoming.scheduledAt)}
                 </div>
               </div>
+              <StatusChip tone="acid">Confirmed</StatusChip>
             </div>
-          </Card>
+          </>
         )}
 
         {past.length > 0 && (
           <>
-            <Eyebrow className="mt-4 mb-2">Past check-ins</Eyebrow>
-            <Card>
+            <SectionHeader count={past.length}>Past check-ins</SectionHeader>
+            <div className="mb-6">
               {past.map((c, idx) => (
                 <div
                   key={c.id}
                   className={[
-                    'flex items-center gap-3 py-3.5',
-                    idx === past.length - 1 ? '' : 'border-b border-line',
+                    'flex items-center gap-3.5 py-4 border-t border-line',
+                    idx === past.length - 1 ? 'border-b' : '',
                   ].join(' ')}
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm">
+                  <span className="font-mono text-[9px] font-semibold uppercase text-quiet w-[44px] flex-none">
+                    {shortDate(c.scheduledAt)}
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-serif font-medium text-[17px] leading-tight text-ink">
                       {idx === past.length - 1 ? 'Goal-setting call' : 'Progress call'}
-                    </div>
-                    <div className="text-muted text-[12px]">
-                      {shortDate(c.scheduledAt)}
-                      {c.topBlocker && ` · blocker: ${c.topBlocker}`}
-                    </div>
-                  </div>
-                  {typeof c.goalScore === 'number' && (
-                    <span className="inline-flex items-center bg-sand text-green text-[12px] font-semibold rounded-full px-3 py-1">
-                      Goal {c.goalScore}/10
                     </span>
-                  )}
+                    {c.topBlocker && (
+                      <span className="block text-[12px] text-muted mt-0.5">
+                        Blocker: {c.topBlocker}.
+                      </span>
+                    )}
+                  </span>
+                  {typeof c.goalScore === 'number' && <ScorePill>{c.goalScore}/10</ScorePill>}
                 </div>
               ))}
-            </Card>
+            </div>
           </>
         )}
 
-        <Eyebrow className="mt-4 mb-2">AI summary of my month</Eyebrow>
         {summary ? (
-          <Card>
-            <div className="font-serif font-semibold text-[17px] leading-snug mb-3">
+          <div className="rounded-card bg-grey-50 p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted mb-2.5">
+              From {coach.fullName.split(' ')[0]}
+            </div>
+            <p className="font-serif text-[16px] leading-[1.45] text-ink mb-2">
               {summary.headline}
-            </div>
-            <div className="mb-3">
-              <div className="text-[11px] uppercase tracking-[0.13em] text-green-soft font-semibold mb-1.5">
-                Wins
-              </div>
-              <ul className="space-y-1 text-[13.5px] leading-snug">
-                {summary.wins.map((w, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-sage">·</span>
-                    <span>{w}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="mb-3">
-              <div className="text-[11px] uppercase tracking-[0.13em] text-terra font-semibold mb-1.5">
-                Watch outs
-              </div>
-              <ul className="space-y-1 text-[13.5px] leading-snug">
-                {summary.watchOuts.map((w, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-terra-soft">·</span>
-                    <span>{w}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="pt-3 border-t border-line text-[13.5px]">
-              <span className="font-semibold">Suggested focus:</span> {summary.suggestedFocus}
-            </div>
-            <Button variant="ghost" className="!mt-4" onClick={runSummary} disabled={loadingSummary}>
-              {loadingSummary ? 'Thinking…' : 'Refresh summary'}
-            </Button>
-          </Card>
-        ) : (
-          <Card>
-            <p className="text-[13.5px] text-muted leading-relaxed mb-3">
-              A short read on your last few check-ins — what's working, what's tripping you up,
-              and where to put your attention next.
             </p>
-            <Button variant="ghost" onClick={runSummary} disabled={loadingSummary}>
-              {loadingSummary ? 'Thinking…' : 'Summarise my month'}
-            </Button>
-          </Card>
+            <p className="text-[12.5px] text-muted leading-relaxed mb-1.5">
+              {summary.wins[0]} {summary.watchOuts[0] !== 'Nothing flagged.' && `Watch: ${summary.watchOuts[0]?.toLowerCase()}`}
+            </p>
+            <p className="text-[12.5px] text-muted leading-relaxed mb-3">
+              Suggested focus: {summary.suggestedFocus}
+            </p>
+            <button
+              type="button"
+              onClick={runSummary}
+              disabled={loadingSummary}
+              className="text-[12.5px] font-semibold text-ink underline underline-offset-[3px]"
+            >
+              {loadingSummary ? 'Thinking…' : 'Refresh the note'}
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-card bg-grey-50 p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted mb-2.5">
+              From {coach.fullName.split(' ')[0]}
+            </div>
+            <p className="font-serif text-[16px] leading-[1.45] text-ink mb-3">
+              A short read on your last few check-ins — what's working, what's tripping you
+              up, and where to put your attention next.
+            </p>
+            <button
+              type="button"
+              onClick={runSummary}
+              disabled={loadingSummary}
+              className="text-[12.5px] font-semibold text-ink underline underline-offset-[3px]"
+            >
+              {loadingSummary ? 'Thinking…' : 'Read the note'}
+            </button>
+          </div>
         )}
-      </section>
+      </Sheet>
 
       <BottomSheet
         open={sheetOpen}

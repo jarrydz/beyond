@@ -1,5 +1,17 @@
 import { useMemo, useState } from 'react';
-import { Avatar, BottomSheet, Button, Card, Eyebrow, PillarBadge, useToast } from '@/components';
+import {
+  Avatar,
+  BottomSheet,
+  Button,
+  Card,
+  Eyebrow,
+  PillarBadge,
+  ScorePill,
+  SectionHeader,
+  Sheet,
+  WaterHeader,
+  useToast,
+} from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { formatTime, greeting } from '@/utils/format';
@@ -69,14 +81,55 @@ export function TodayScreen({ onOpenMember }: Props) {
     [members, checkIns, posts],
   );
 
+  const nextCall = todaysCalls.find((c) => c.status === 'upcoming');
+  const nextCallMember = nextCall ? profileById.get(nextCall.memberId) : undefined;
+
   return (
-    <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
-      <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">
-        {greeting()}, {me.fullName.split(' ')[0]}
-      </h2>
-      <p className="text-muted text-[13.5px] mb-4">
-        {members.length} members in the {cohort.name}
-      </p>
+    <>
+      <WaterHeader
+        depth="shallow"
+        eyebrow={`Coach · ${cohort.name}`}
+        showPoints={false}
+      >
+        <h1 className="font-serif font-normal text-[30px] leading-[1.05] mb-1">
+          {greeting()}, {me.fullName.split(' ')[0]}
+        </h1>
+        <p className="text-[12.5px] text-white/[.68] mb-5">
+          {members.length} members in the {cohort.name}
+        </p>
+
+        {/* The single acid field on this screen: the next call. */}
+        {nextCall && nextCallMember && (
+          <button
+            type="button"
+            onClick={() => onOpenMember(nextCallMember.id)}
+            className="w-full flex items-center gap-3 rounded-card bg-acid px-4 py-3.5 text-left text-ink transition active:scale-[0.99]"
+          >
+            <span className="w-9 h-9 rounded-full bg-ink text-acid grid place-items-center font-serif text-[15px] flex-none">
+              {nextCallMember.avatarInitial}
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-ink/60">
+                Next call · {formatTime(new Date(nextCall.scheduledAt))}
+              </span>
+              <span className="block font-serif font-medium text-[18px] leading-tight truncate">
+                {nextCallMember.fullName.split(' ')[0]} · 15-min check-in
+              </span>
+            </span>
+            <svg className="w-4 h-4 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </button>
+        )}
+      </WaterHeader>
+
+      <Sheet>
+      {/* Stat strip — one bordered box, three cells, the live one filled. */}
+      <div className="grid grid-cols-3 rounded-card border border-line divide-x divide-line mb-6 overflow-hidden">
+        <StatCell num={members.length} label="Members" />
+        <StatCell num={callsThisWeek.length} label="Calls this wk" />
+        <StatCell num={attention.length} label="Need you" live={attention.length > 0} />
+      </div>
 
       {/* The roll-up strip — what Gwinganna reads over Lucy's shoulder.
           Computed entirely from booking + prep state; she does nothing extra. */}
@@ -227,33 +280,34 @@ export function TodayScreen({ onOpenMember }: Props) {
         </div>
       </Card>
 
-      <Eyebrow className="mt-4 mb-2">Needs attention</Eyebrow>
+      <SectionHeader className="mt-6" count={attention.length}>
+        Needs attention
+      </SectionHeader>
       {attention.length === 0 ? (
-        <Card>
-          <p className="text-muted text-[13.5px]">
-            Everyone's tracking. Quiet week from your side is a win.
-          </p>
-        </Card>
+        <p className="text-muted text-[13px] py-2">
+          Everyone's tracking. Quiet week from your side is a win.
+        </p>
       ) : (
-        <div className="space-y-2">
-          {attention.map((a) => (
+        <div>
+          {attention.map((a, i) => (
             <button
               key={a.member.id}
               type="button"
               onClick={() => onOpenMember(a.member.id)}
-              className="w-full flex items-center gap-3 text-left rounded-card border border-line bg-white p-3.5 hover:border-sage transition-colors shadow-card"
+              className={[
+                'w-full flex items-center gap-3 text-left py-4 border-t border-line',
+                i === attention.length - 1 ? 'border-b' : '',
+              ].join(' ')}
             >
-              <Avatar profile={a.member} size={44} />
+              <Avatar profile={a.member} size={36} />
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[14.5px]">{a.member.fullName}</div>
-                <div className="text-muted text-[12.5px] mt-0.5">
-                  {a.reasons.join(' · ')}
+                <div className="font-serif font-medium text-[17px] leading-tight text-ink">
+                  {a.member.fullName}
                 </div>
+                <div className="text-muted text-[12px] mt-0.5">{a.reasons.join(' · ')}</div>
               </div>
               {typeof a.lastScore === 'number' && (
-                <span className="inline-flex items-center bg-terra/10 text-terra text-[12px] font-semibold rounded-full px-3 py-1">
-                  {a.lastScore}/10
-                </span>
+                <ScorePill urgent={a.lastScore < 5}>{a.lastScore}/10</ScorePill>
               )}
             </button>
           ))}
@@ -262,7 +316,20 @@ export function TodayScreen({ onOpenMember }: Props) {
 
       <GuestSheet guest={openGuest} onClose={() => setOpenGuest(null)} />
       <SetFocusSheet guest={focusGuest} onClose={() => setFocusGuest(null)} />
-    </section>
+      </Sheet>
+    </>
+  );
+}
+
+/** One cell of the stat strip: serif numeral over a micro caption. */
+function StatCell({ num, label, live = false }: { num: number; label: string; live?: boolean }) {
+  return (
+    <div className={['py-4 text-center', live ? 'bg-grey-50' : ''].join(' ')}>
+      <div className="font-serif text-[28px] leading-none text-ink">{num}</div>
+      <div className="text-[9px] font-semibold uppercase tracking-[0.12em] text-quiet mt-1.5">
+        {label}
+      </div>
+    </div>
   );
 }
 
