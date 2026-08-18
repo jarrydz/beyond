@@ -56,8 +56,26 @@ export const you: Profile = {
   onboarded: false,
 };
 
+/**
+ * The alumni path (2026-08-18): one member with NO booking, NO seeded goal
+ * and onboarded: false — stageFor() derives `member` for her at every
+ * offset, /onboarding renders from step one, and every no-booking branch
+ * finally runs. Same cohort so the community feed has content (an earlier
+ * session of the same retreat). Deliberately empty otherwise: no check-ins,
+ * no history, no decoration. An empty member is the point.
+ */
+export const alumna: Profile = {
+  id: 'member-evelyn',
+  fullName: 'Evelyn Marsh',
+  avatarInitial: 'E',
+  role: 'member',
+  cohortId: cohort.id,
+  onboarded: false,
+};
+
 export const members: Profile[] = [
   you,
+  alumna,
   {
     id: 'member-sarah',
     fullName: 'Rebecca',
