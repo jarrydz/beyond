@@ -5,6 +5,8 @@ interface Props {
   onOpenProfile: () => void;
   /** Present only when a booking exists — the PRD-05 demo stage switcher. */
   onOpenStageSheet?: () => void;
+  /** Demo member switcher — the two personas (guest / alumna). */
+  onOpenMemberSheet?: () => void;
 }
 
 /**
@@ -12,7 +14,7 @@ interface Props {
  * later features land here instead of growing the nav). Marketplace lives
  * here by decision (JZ, 2026-07-03): Community keeps its primary tab.
  */
-export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet }: Props) {
+export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet, onOpenMemberSheet }: Props) {
   return (
     <section className="px-5 pt-3 pb-7">
       <h2 className="font-serif font-semibold text-[25px] mt-1.5 mb-0.5">More</h2>
@@ -50,6 +52,21 @@ export function MoreScreen({ onOpenMarketplace, onOpenProfile, onOpenStageSheet 
               <svg viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="8.5" />
                 <path d="M12 7.5V12l3 2" />
+              </svg>
+            }
+          />
+        )}
+        {onOpenMemberSheet && (
+          <MoreRow
+            title="Member (demo)"
+            subtitle="Demo control — guest or alumna persona"
+            onClick={onOpenMemberSheet}
+            icon={
+              <svg viewBox="0 0 24 24">
+                <circle cx="9" cy="8.5" r="3" />
+                <path d="M3.5 19.5a5.5 5.5 0 0 1 11 0" />
+                <circle cx="17" cy="10" r="2.4" />
+                <path d="M14.5 19.5a4.6 4.6 0 0 1 6 0" />
               </svg>
             }
           />

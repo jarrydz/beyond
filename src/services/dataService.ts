@@ -34,7 +34,7 @@ import {
 } from '@/store/journeyStorage';
 import { daysUntil, stageFor, today } from '@/utils/journey';
 import { prepTasks as prepTaskSeeds, type TaperSubstance } from '@/config/prepTasks';
-import { goals as seedGoals, seedCohortBookings, seedDailyHistory } from '@/store/seed';
+import { goals as seedGoals, profiles as seedProfiles, seedCohortBookings, seedDailyHistory } from '@/store/seed';
 import { FOCUS_INSIGHT } from '@/config/focusQuestions';
 import type { GuestBooking } from '@/types';
 import { ACTION_LABELS, AWARDS, STREAK, type EarnAction } from '@/config/points';
@@ -782,15 +782,45 @@ export function createDataService(store: MemoryStore) {
     },
 
     /**
+     * Demo-only (2026-08-18): flip between the two demo personas — Andrew
+     * (booked, the guest story) and Evelyn (alumna, no booking, the
+     * subscriber story). A no-booking member replays onboarding on every
+     * visit, mirroring the deliberate reset signIn() performs for Andrew.
+     */
+    demoSwitchMember(profileId: string): void {
+      const s = store.get();
+      if (s.currentUserId === profileId) return;
+      const target = s.profiles.find((p) => p.id === profileId);
+      if (!target || target.role !== 'member') return;
+      const hasBooking = s.booking?.profileId === profileId;
+      if (!hasBooking) clearOnboarded(profileId);
+      store.set((st) => ({
+        ...st,
+        currentUserId: profileId,
+        profiles: hasBooking
+          ? st.profiles
+          : st.profiles.map((p) => (p.id === profileId ? { ...p, onboarded: false } : p)),
+      }));
+    },
+
+    /**
      * Demo-only: wipe journey state for a clean run with the next viewer —
      * persistence survives refresh by design, so the switcher alone can
      * move time but never un-live it. Resets tasks, taper, the goal + why
      * and the clock (offset 0 = the T-7 default open).
      */
     resetJourneyDemo(): void {
-      clearJourney(store.get().currentUserId);
+      // A clean run for the next viewer means BOTH personas start clean,
+      // whoever was signed in when reset was pressed (2026-08-18).
+      for (const p of store.get().profiles) {
+        if (p.role !== 'member') continue;
+        clearJourney(p.id);
+        clearOnboarded(p.id);
+      }
       store.set((s) => ({
         ...s,
+        currentUserId: 'member-jarryd',
+        profiles: seedProfiles.map((p) => ({ ...p })),
         prepTasks: prepTaskSeeds.map((t) => ({ ...t, done: false })),
         taperTicks: [],
         demoDayOffset: 0,

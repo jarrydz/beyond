@@ -5,6 +5,7 @@ import {
   DailyCheckInRecorder,
   FloatingHeader,
   JourneyStageSheet,
+  MemberSwitcherSheet,
   NavIcons,
   PointsSheet,
   ScreenWrap,
@@ -75,6 +76,7 @@ export function MemberHome() {
   const [active, setActive] = useState<Tab>(() => initialTab(location.state, !!booking));
   const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state, !!booking));
   const [stageSheetOpen, setStageSheetOpen] = useState(false);
+  const [memberSheetOpen, setMemberSheetOpen] = useState(false);
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
@@ -197,6 +199,7 @@ export function MemberHome() {
               onOpenMarketplace={() => setMarketOpen(true)}
               onOpenProfile={() => goTab('profile')}
               onOpenStageSheet={booking ? () => setStageSheetOpen(true) : undefined}
+              onOpenMemberSheet={() => setMemberSheetOpen(true)}
             />
           ))}
         {active === 'profile' && (
@@ -210,6 +213,7 @@ export function MemberHome() {
       </ScreenWrap>
       {!recorderOpen && <BottomNav items={navItems} active={active} onChange={goTab} />}
       <JourneyStageSheet open={stageSheetOpen} onClose={() => setStageSheetOpen(false)} />
+      <MemberSwitcherSheet open={memberSheetOpen} onClose={() => setMemberSheetOpen(false)} />
       <PointsSheet
         open={pointsOpen}
         onClose={() => setPointsOpen(false)}
