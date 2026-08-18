@@ -98,7 +98,6 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
           the check-in entry (JZ, option b); the plain card below remains the
           alumni path — a member with no goal behaves exactly as before. */}
       <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} onOpenContent={onOpenContent} />
-      <YourWeekCard />
 
       {!activeGoal && (
         <Card>
@@ -117,6 +116,8 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
           )}
         </Card>
       )}
+
+      <YourWeekCard />
 
       <Card onClick={() => onGoTab('pillars')} className="cursor-pointer">
         <div className="flex items-center justify-between gap-3">
