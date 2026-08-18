@@ -4,6 +4,8 @@ import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
 import { pillarIcons } from '@/config/pillarIcons';
+import { YOUR_WEEK, YOUR_WEEK_NOTE } from '@/config/yourWeek';
+import { today } from '@/utils/journey';
 import { daysSince, formatCheckInTime, greeting, relativeTime } from '@/utils/format';
 
 interface Props {
@@ -82,6 +84,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
       {/* PRD-06: the daily loop, additive at the top — everything below is
           untouched until JZ rules on the restructure (the contested step). */}
       <TodayCard onOpenDailyCheckIn={onOpenDailyCheckIn} />
+      <YourWeekCard />
 
       <Card>
         <Eyebrow>Daily check-in</Eyebrow>
@@ -256,5 +259,44 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn }: Props) {
         </>
       )}
     </section>
+  );
+}
+
+/**
+ * The outbound programme as a window, not a feature (PRD-06) — what landed
+ * this week and what's coming, honest that it arrives elsewhere. No inbox,
+ * no thread, no notifications; the operating model made legible.
+ */
+function YourWeekCard() {
+  const offset = useStoreState((s) => s.demoDayOffset);
+  // Monday-based position in the week, so "landed" reads naturally.
+  const pos = (d: number) => (d + 6) % 7;
+  const nowPos = pos(today(offset).getDay());
+  return (
+    <Card>
+      <Eyebrow>Your week</Eyebrow>
+      <div className="space-y-2">
+        {YOUR_WEEK.map((t) => {
+          const landed = pos(t.weekday) <= nowPos;
+          return (
+            <div key={t.dayLabel} className="flex items-baseline gap-3">
+              <span
+                className={[
+                  'w-9 flex-none text-[11.5px] font-semibold tabular-nums',
+                  landed ? 'text-green' : 'text-muted/70',
+                ].join(' ')}
+              >
+                {t.dayLabel}
+              </span>
+              <span className={['text-[13.5px]', landed ? '' : 'text-muted'].join(' ')}>
+                <span className="font-semibold">{t.channel}</span> · {t.text}
+                {landed && <span className="text-green-soft"> ✓</span>}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-muted text-[12px] mt-3">{YOUR_WEEK_NOTE}</p>
+    </Card>
   );
 }
