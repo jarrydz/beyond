@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 interface BottomSheetProps {
@@ -10,15 +10,6 @@ interface BottomSheetProps {
   footer?: ReactNode;
 }
 
-function usePortalTarget() {
-  const ref = useRef<HTMLElement | null>(null);
-  if (!ref.current) {
-    const el = document.getElementById('sheet-portal');
-    ref.current = el ?? document.body;
-  }
-  return ref.current;
-}
-
 export function BottomSheet({
   open,
   onClose,
@@ -27,8 +18,13 @@ export function BottomSheet({
   children,
   footer,
 }: BottomSheetProps) {
-  const target = usePortalTarget();
   if (!open) return null;
+
+  // Resolved on every open render, same as VideoOverlay — the frame recreates
+  // #sheet-portal when the compact/framed layout flips (rotation, the viewport
+  // meta settling on iOS), and a cached node would be detached by then: the
+  // sheet would render into a dead element and taps would look like no-ops.
+  const target = document.getElementById('sheet-portal') ?? document.body;
 
   return createPortal(
     <div className="absolute inset-0 z-[75]">

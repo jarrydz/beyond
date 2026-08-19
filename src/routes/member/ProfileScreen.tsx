@@ -80,7 +80,7 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
         <button
           type="button"
           onClick={onOpenShop}
-          className="w-full flex items-center justify-between py-1"
+          className="w-full flex items-center justify-between text-left py-1"
         >
           <div>
             <div className="font-semibold text-[14.5px]">Marketplace</div>
@@ -129,7 +129,7 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
               <button
                 type="button"
                 onClick={onOpenStageSheet}
-                className="w-full flex items-center justify-between py-1"
+                className="w-full flex items-center justify-between text-left py-1"
               >
                 <div>
                   <div className="font-semibold text-[14.5px]">Journey stage</div>
@@ -147,7 +147,7 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
                 type="button"
                 onClick={onOpenMemberSheet}
                 className={[
-                  'w-full flex items-center justify-between py-1',
+                  'w-full flex items-center justify-between text-left py-1',
                   onOpenStageSheet ? 'border-t border-line mt-2 pt-3' : '',
                 ].join(' ')}
               >
