@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Eyebrow, SparkIcon } from '@/components';
+import { Avatar, Card, Eyebrow, SparkIcon, useToast } from '@/components';
 import { relativeTime } from '@/utils/format';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
@@ -16,6 +16,7 @@ interface Props {
 export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet }: Props) {
   const data = useData();
   const navigate = useNavigate();
+  const toast = useToast();
   const me = useStoreState((s) => s.profiles.find((p) => p.id === s.currentUserId)!);
   const subscription = useStoreState((s) =>
     s.subscriptions.find((sub) => sub.profileId === s.currentUserId),
@@ -162,6 +163,25 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
                 </svg>
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => {
+                data.resetJourneyDemo();
+                toast('Journey refreshed — a clean run from 7 days out');
+              }}
+              className="w-full flex items-center justify-between text-left py-1 border-t border-line mt-2 pt-3"
+            >
+              <div>
+                <div className="font-semibold text-[14.5px]">Refresh journey</div>
+                <div className="text-muted text-[12.5px] mt-0.5">
+                  Clean run — tasks, taper and the clock reset
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12a9 9 0 1 1-2.6-6.4" />
+                <path d="M21 3v5h-5" />
+              </svg>
+            </button>
           </Card>
         </>
       )}
