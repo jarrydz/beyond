@@ -154,9 +154,26 @@ export const PREP_TASK_BODY: Record<string, string[]> = {
   ],
 };
 
-/** Video stand-in durations (no real assets — same pattern as Meal.tint photography). */
-export const PREP_VIDEO_META: Record<string, { duration: string; tint: string }> = {
-  'prep-host-video': { duration: '2:10', tint: '#5C7470' },
+/** Static assets live in public/images/ — prefix the Pages base path. */
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
+/**
+ * Video stand-in durations (no real assets — same pattern as Meal.tint
+ * photography). A poster, where one exists, fronts both the placeholder and
+ * the playing surface; the tint is the fallback for videos without one.
+ */
+export const PREP_VIDEO_META: Record<
+  string,
+  { duration: string; tint: string; poster?: string; posterPosition?: string; presenter?: string }
+> = {
+  'prep-host-video': {
+    duration: '2:10',
+    tint: '#5C7470',
+    poster: asset('images/people/lucy.jpg'),
+    // Same face-safe crop as the coach portrait — the photo is a portrait.
+    posterPosition: '50% 25%',
+    presenter: 'Lucy',
+  },
   'prep-room-video': { duration: '1:45', tint: '#8C7B9C' },
 };
 

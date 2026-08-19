@@ -8,6 +8,7 @@ import {
   SectionHeader,
   Sheet,
   StatusChip,
+  VideoOverlay,
   WaterHeader,
   useToast,
 } from '@/components';
@@ -369,6 +370,7 @@ function TaskSheet({
   onDone: (t: PrepTask) => void;
 }) {
   const toast = useToast();
+  const [playing, setPlaying] = useState(false);
   if (!task) return null;
 
   const body = PREP_TASK_BODY[task.id] ?? [task.blurb];
@@ -382,15 +384,45 @@ function TaskSheet({
           className="rounded-[16px] h-[150px] mb-4 grid place-items-center relative overflow-hidden"
           style={{ background: `linear-gradient(135deg, ${video.tint}, ${video.tint}CC)` }}
         >
-          <span className="w-[54px] h-[54px] rounded-full bg-white/90 grid place-items-center">
+          {video.poster && (
+            <img
+              src={video.poster}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              style={video.posterPosition ? { objectPosition: video.posterPosition } : undefined}
+            />
+          )}
+          <button
+            type="button"
+            aria-label="Play video"
+            onClick={() => setPlaying(true)}
+            className="relative w-[54px] h-[54px] rounded-full bg-white/90 grid place-items-center transition active:scale-90"
+          >
             <svg className="w-5 h-5 text-green ml-1" viewBox="0 0 24 24" fill="currentColor">
               <path d="M7 5v14l12-7Z" />
             </svg>
-          </span>
+          </button>
           <span className="absolute bottom-2.5 right-3 text-[11px] font-semibold text-white/90 bg-black/25 rounded-full px-2 py-0.5">
             {video.duration}
           </span>
         </div>
+      )}
+      {video && (
+        <VideoOverlay
+          item={{
+            title: task.title,
+            posterUrl: video.poster,
+            posterPosition: video.posterPosition,
+            format: 'video',
+            tint: video.tint,
+            presenter: video.presenter,
+          }}
+          open={playing}
+          onClose={() => {
+            setPlaying(false);
+            onDone(task);
+          }}
+        />
       )}
       {!video &&
         body.map((p) => (

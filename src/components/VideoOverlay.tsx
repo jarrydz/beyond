@@ -3,8 +3,14 @@ import { createPortal } from 'react-dom';
 import { Poster } from '.';
 import type { ContentItem } from '@/types';
 
+/** Structural pick (same approach as Poster) so non-library videos — e.g. the prep tasks — can play here too. */
+type OverlayItem = Pick<ContentItem, 'title' | 'posterUrl' | 'mediaUrl'> &
+  Partial<Pick<ContentItem, 'format' | 'tint' | 'durationMin' | 'presenter'>> & {
+    posterPosition?: string;
+  };
+
 interface Props {
-  item: ContentItem;
+  item: OverlayItem;
   open: boolean;
   /** Dismissing completes the item where the caller wants it to (JZ's rule: the interaction completes). */
   onClose: () => void;

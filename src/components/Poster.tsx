@@ -23,7 +23,11 @@ export function Poster({
   style,
   children,
 }: {
-  item: Pick<ContentItem, 'posterUrl' | 'title'> & Partial<Pick<ContentItem, 'format' | 'tint'>>;
+  item: Pick<ContentItem, 'posterUrl' | 'title'> &
+    Partial<Pick<ContentItem, 'format' | 'tint'>> & {
+      /** CSS object-position for the photo — face-safe crops on portraits. */
+      posterPosition?: string;
+    };
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -35,6 +39,7 @@ export function Poster({
           src={item.posterUrl}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
+          style={item.posterPosition ? { objectPosition: item.posterPosition } : undefined}
         />
         {children}
       </div>
