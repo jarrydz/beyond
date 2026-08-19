@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   BottomNav,
   DailyCheckInRecorder,
@@ -73,14 +73,31 @@ export function MemberHome() {
   const focusPillarId = useStoreState(
     (s) => s.goals.find((g) => g.profileId === s.currentUserId && g.active)?.pillarId,
   );
+  // A copied share link (?recipe=<id>) opens straight onto that recipe —
+  // only when the id resolves; a dead id falls back to the normal landing.
+  const navigate = useNavigate();
+  const meals = useStoreState((s) => s.meals);
+  const sharedRecipeId = (() => {
+    const id = new URLSearchParams(location.search).get('recipe');
+    return id && meals.some((m) => m.id === id) ? id : null;
+  })();
+  useEffect(() => {
+    if (new URLSearchParams(location.search).has('recipe')) {
+      navigate('/m', { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [pointsOpen, setPointsOpen] = useState(false);
-  const [active, setActive] = useState<Tab>(() => initialTab(location.state, !!booking));
+  const [active, setActive] = useState<Tab>(() =>
+    sharedRecipeId ? 'pillars' : initialTab(location.state, !!booking),
+  );
   const [prevTab, setPrevTab] = useState<Tab>(() => initialTab(location.state, !!booking));
   const [stageSheetOpen, setStageSheetOpen] = useState(false);
   const [memberSheetOpen, setMemberSheetOpen] = useState(false);
   const [recorderOpen, setRecorderOpen] = useState(false);
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
-  const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const [openMealId, setOpenMealId] = useState<string | null>(sharedRecipeId);
   const [openContentId, setOpenContentId] = useState<string | null>(null);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [marketOpen, setMarketOpen] = useState(false);
@@ -109,6 +126,46 @@ export function MemberHome() {
         </ScreenWrap>
         <JourneyStageSheet open={stageSheetOpen} onClose={() => setStageSheetOpen(false)} />
       </>
+    );
+  }
+
+  // Pre-retreat (JZ, 2026-08-19): the countdown is an onboarding journey, not
+  // an app tour — pillars aren't understood yet, community isn't live for you,
+  // and the coach is someone you're only just meeting. So no tab bar: just the
+  // journey, with Profile (and its demo settings) reachable from the avatar.
+  if (stage === 'pre_retreat' && booking) {
+    return (
+      <HeaderActionsContext.Provider
+        value={{
+          onPointsTap: () => setPointsOpen(true),
+          onProfileTap: () =>
+            setActive((cur) => (cur === 'profile' ? 'home' : 'profile')),
+        }}
+      >
+        {active === 'profile' && (
+          <FloatingHeader profile={me} showBack onProfileTap={() => setActive('home')} />
+        )}
+        <ScreenWrap key={active} withBottomNav={false}>
+          {active === 'profile' ? (
+            <ProfileScreen
+              onOpenStageSheet={() => setStageSheetOpen(true)}
+              onOpenMemberSheet={() => setMemberSheetOpen(true)}
+            />
+          ) : (
+            <JourneyScreen />
+          )}
+        </ScreenWrap>
+        <JourneyStageSheet open={stageSheetOpen} onClose={() => setStageSheetOpen(false)} />
+        <MemberSwitcherSheet open={memberSheetOpen} onClose={() => setMemberSheetOpen(false)} />
+        <PointsSheet
+          open={pointsOpen}
+          onClose={() => setPointsOpen(false)}
+          balance={pointsBalance}
+          ledger={pointsLedger
+            .filter((e) => e.memberId === me.id)
+            .sort((a, b) => b.at.localeCompare(a.at))}
+        />
+      </HeaderActionsContext.Provider>
     );
   }
 

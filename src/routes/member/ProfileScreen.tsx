@@ -76,6 +76,10 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
         </div>
       </Card>
 
+      {/* Pre-retreat hides the tab bar and with it the marketplace — no row
+          to a screen you can't come back from. */}
+      {onOpenShop && (
+        <>
       <Eyebrow className="mt-4">Shop</Eyebrow>
       <Card>
         <button
@@ -108,6 +112,8 @@ export function ProfileScreen({ onOpenShop, onOpenStageSheet, onOpenMemberSheet 
           </div>
         )}
       </Card>
+        </>
+      )}
 
       <Eyebrow className="mt-4">Subscription</Eyebrow>
       <Card>
