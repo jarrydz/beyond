@@ -19,7 +19,10 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
   const data = useData();
   const toast = useToast();
   const meal = useStoreState((s) => s.meals.find((m) => m.id === mealId));
+  const cohort = useStoreState((s) => s.cohort);
   const [cartSheetOpen, setCartSheetOpen] = useState(false);
+  const [shareSheetOpen, setShareSheetOpen] = useState(false);
+  const [shareComment, setShareComment] = useState('');
   if (!meal) return null;
 
   const pillar = getPillar(meal.pillarId);
@@ -33,6 +36,27 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
     }
     const award = data.awardPoints('save_recipe', meal.id);
     toast(award ? `+${award.points} · ${award.label}` : 'Saved to your recipes.');
+  }
+
+  function shareToCommunity() {
+    if (!meal) return;
+    const comment = shareComment.trim();
+    data.addPost(comment || `Sharing a recipe from the retreat kitchen.`, meal.id);
+    setShareSheetOpen(false);
+    setShareComment('');
+    toast('Shared with your group');
+  }
+
+  async function copyLink() {
+    if (!meal) return;
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}m?recipe=${meal.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareSheetOpen(false);
+      toast('Link copied — paste it anywhere');
+    } catch {
+      toast('Couldn’t reach the clipboard — copy from the address bar instead');
+    }
   }
 
   return (
@@ -59,6 +83,18 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
         {meal.photoUrl && (
           <img src={meal.photoUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
         )}
+        <button
+          type="button"
+          aria-label="Share recipe"
+          onClick={() => setShareSheetOpen(true)}
+          className="absolute top-3 right-[60px] w-10 h-10 rounded-full bg-white/85 grid place-items-center shadow-card transition active:scale-90"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 15V4" />
+            <path d="M8 8l4-4 4 4" />
+            <path d="M5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7" />
+          </svg>
+        </button>
         <button
           type="button"
           aria-label={meal.saved ? 'Remove from saved' : 'Save recipe'}
@@ -122,6 +158,31 @@ export function MealDetailScreen({ mealId, onBack }: Props) {
       <Button variant="terra" className="w-full mt-1" onClick={() => setCartSheetOpen(true)}>
         Add to shopping cart
       </Button>
+
+      <BottomSheet
+        open={shareSheetOpen}
+        onClose={() => setShareSheetOpen(false)}
+        title="Share this recipe"
+        subtitle={meal.title}
+      >
+        <p className="text-muted text-[12.5px] mb-2">
+          Post it to {cohort.name} with a note — or grab a link for anywhere else.
+        </p>
+        <textarea
+          value={shareComment}
+          onChange={(e) => setShareComment(e.target.value)}
+          rows={3}
+          maxLength={280}
+          placeholder="Made this today — it's been beautiful."
+          className="w-full bg-white border border-line rounded-[14px] px-4 py-3 text-[14px] leading-relaxed resize-none outline-none focus:border-sage placeholder:text-muted/70 mb-3"
+        />
+        <Button className="w-full" onClick={shareToCommunity}>
+          Share with your group
+        </Button>
+        <Button variant="ghost" className="w-full mt-2" onClick={copyLink}>
+          Copy link
+        </Button>
+      </BottomSheet>
 
       <BottomSheet
         open={cartSheetOpen}

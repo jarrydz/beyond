@@ -31,7 +31,10 @@ export function Guard({
   );
   const location = useLocation();
 
-  if (!signedIn) return <Navigate to="/welcome" replace />;
+  // Keep the query (a shared ?recipe= link) through the sign-in bounce.
+  if (!signedIn) {
+    return <Navigate to={{ pathname: '/welcome', search: location.search }} replace />;
+  }
 
   // Coach routes: skip onboarding/paywall.
   if (need === 'coach') {
@@ -43,7 +46,7 @@ export function Guard({
   // navigation to /onboarding (Welcome still points there) lands on /m.
   if (activeRole === 'member') {
     if (hasBooking && location.pathname === '/onboarding') {
-      return <Navigate to="/m" replace />;
+      return <Navigate to={{ pathname: '/m', search: location.search }} replace />;
     }
     if (!onboarded && !hasBooking && location.pathname !== '/onboarding') {
       return <Navigate to="/onboarding" replace />;

@@ -21,7 +21,11 @@ export function Welcome() {
 
   function enter(role: Role) {
     data.signIn(role);
-    navigate(role === 'coach' ? '/c' : '/onboarding', { replace: true });
+    // Carry the query through — a shared ?recipe= link should survive sign-in.
+    navigate(
+      { pathname: role === 'coach' ? '/c' : '/onboarding', search: window.location.search },
+      { replace: true },
+    );
   }
 
   return (

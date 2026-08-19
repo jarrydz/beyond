@@ -121,6 +121,9 @@ function PostCard({
   const isLeader = author.role === 'coach';
   const isYou = author.id === meId;
   const toast = useToast();
+  const sharedMeal = useStoreState((s) =>
+    post.mealId ? s.meals.find((m) => m.id === post.mealId) : undefined,
+  );
 
   return (
     <Card>
@@ -137,6 +140,30 @@ function PostCard({
             </span>
           </div>
           <div className="text-[13.5px] leading-relaxed mt-1 mb-2 text-[#3a382f]">{post.body}</div>
+          {sharedMeal && (
+            <div className="flex items-center gap-2.5 rounded-[12px] border border-line bg-sand/60 px-3 py-2 mb-2">
+              {sharedMeal.photoUrl ? (
+                <img
+                  src={sharedMeal.photoUrl}
+                  alt=""
+                  className="w-9 h-9 rounded-[8px] object-cover flex-none"
+                />
+              ) : (
+                <span
+                  className="w-9 h-9 rounded-[8px] flex-none"
+                  style={{ background: sharedMeal.tint }}
+                />
+              )}
+              <div className="min-w-0">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                  Recipe
+                </div>
+                <div className="font-serif font-semibold text-[13.5px] leading-tight truncate">
+                  {sharedMeal.title}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex gap-4 items-center text-[12.5px] font-semibold text-muted">
             <button
               type="button"

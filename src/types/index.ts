@@ -151,6 +151,8 @@ export interface Post {
   body: string;
   createdAt: string;
   likedBy: string[];
+  /** A shared recipe rides along as a reference, not body text — the feed renders it as a chip. */
+  mealId?: string;
 }
 
 /**

@@ -138,7 +138,7 @@ export function createDataService(store: MemoryStore) {
         .filter((p) => p.cohortId === s.cohort.id)
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     },
-    addPost(body: string): Post {
+    addPost(body: string, mealId?: string): Post {
       const text = body.trim();
       if (!text) throw new Error('post body required');
       const s = store.get();
@@ -149,6 +149,7 @@ export function createDataService(store: MemoryStore) {
         body: text,
         createdAt: new Date().toISOString(),
         likedBy: [],
+        ...(mealId ? { mealId } : {}),
       };
       store.set((s) => ({ ...s, posts: [post, ...s.posts] }));
       return post;
