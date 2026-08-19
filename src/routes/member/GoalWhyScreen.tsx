@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Eyebrow, GoalWhyForm } from '@/components';
+import { Eyebrow, GoalCraftSheet, GoalWhyForm, useToast } from '@/components';
+import type { CraftedGoal } from '@/components/GoalCraftSheet';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
@@ -22,7 +23,12 @@ export function GoalWhyScreen({ onBack }: Props) {
     s.goals.find((g) => g.profileId === me.id && g.active),
   );
 
+  const toast = useToast();
   const [pillarId, setPillarId] = useState<PillarId>(existing?.pillarId ?? 'sleep');
+  const [craftOpen, setCraftOpen] = useState(false);
+  // A crafted draft remounts the form (key) with new prefills — the fields
+  // stay fully editable; the helper only writes the first version.
+  const [draft, setDraft] = useState<CraftedGoal | null>(null);
 
   return (
     <section style={{ paddingTop: 'var(--status-pad)' }} className="px-5 pb-7">
@@ -40,10 +46,27 @@ export function GoalWhyScreen({ onBack }: Props) {
       <h2 className="font-serif font-semibold text-[25px] leading-tight mb-1">
         What do you want from this?
       </h2>
-      <p className="text-muted text-[13.5px] mb-5">
+      <p className="text-muted text-[13.5px] mb-4">
         Not the brochure answer. The retreat sits in the middle of a story you're starting now
         — write the real one.
       </p>
+
+      {/* Not everyone knows their why — a guided way in, above the form. */}
+      <button
+        type="button"
+        onClick={() => setCraftOpen(true)}
+        className="w-full flex items-center justify-between text-left rounded-card border border-line bg-white px-4 py-3 mb-5 transition hover:border-sage active:scale-[0.99]"
+      >
+        <span>
+          <span className="block font-semibold text-[14px]">Not sure what to write?</span>
+          <span className="block text-muted text-[12.5px] mt-0.5">
+            Four quick questions — we&rsquo;ll draft it, you edit it.
+          </span>
+        </span>
+        <svg className="w-4 h-4 flex-none text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
 
       <Eyebrow>Where it lives</Eyebrow>
       <div className="flex gap-2 mb-5">
@@ -76,13 +99,24 @@ export function GoalWhyScreen({ onBack }: Props) {
       </p>
 
       <GoalWhyForm
+        key={draft ? `${draft.title}:${draft.why}` : 'blank'}
         pillarId={pillarId}
-        initialTitle={existing?.title}
-        initialWhy={existing?.why}
+        initialTitle={draft?.title ?? existing?.title}
+        initialWhy={draft?.why ?? existing?.why}
         cta="Keep it"
         onSaved={() => {
           data.completePrepTask('prep-goal-why');
           onBack();
+        }}
+      />
+
+      <GoalCraftSheet
+        open={craftOpen}
+        onClose={() => setCraftOpen(false)}
+        onCraft={(crafted) => {
+          setPillarId(crafted.pillarId);
+          setDraft(crafted);
+          toast('Drafted — now make it yours');
         }}
       />
     </section>

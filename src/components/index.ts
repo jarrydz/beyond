@@ -14,6 +14,7 @@ export { AppHeader } from './AppHeader';
 export { RoleSwitcherSheet } from './RoleSwitcherSheet';
 export { JourneyStageSheet } from './JourneyStageSheet';
 export { MemberSwitcherSheet } from './MemberSwitcherSheet';
+export { GoalCraftSheet } from './GoalCraftSheet';
 export { GoalWhyForm } from './GoalWhyForm';
 export { TodayCard } from './TodayCard';
 export { Poster } from './Poster';
