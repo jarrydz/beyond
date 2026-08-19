@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Ring, Sheet, TodayCard, WaterHeader, useToast } from '@/components';
+import { Avatar, Button, ButtonRow, Card, Eyebrow, PillarBadge, Poster, Ring, Sheet, TodayCard, VideoOverlay, WaterHeader, useToast } from '@/components';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { pillars } from '@/config/pillars';
@@ -59,6 +59,14 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
   );
   const todayMovement = useMemo(() => content.find((c) => c.type === 'movement'), [content]);
   const movementDone = todayMovement?.doneBy.includes(me.id) ?? false;
+  const [movementOpen, setMovementOpen] = useState(false);
+
+  function completeMovement() {
+    if (!todayMovement || movementDone) return;
+    data.markContentDone(todayMovement.id);
+    const award = data.awardPoints('content_complete', todayMovement.id);
+    toast(award ? `+${award.points} · ${award.label}` : 'Nice. Streak kept.');
+  }
 
   // D3 (cold-start audit): the day count derives from the booking's real
   // departure on the sim clock — never from goal age. No booking, no number:
@@ -200,19 +208,27 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
         <>
           <Eyebrow className="mt-4 mb-2">Today</Eyebrow>
           <Card flush>
-            <div
-              className="h-[150px] flex items-end p-3.5 relative"
-              style={{ background: 'linear-gradient(135deg,#9DB0AE,#5C7470)' }}
+            {/* The still from the session fronts the card; tapping it opens
+                the full-screen video surface, and closing that completes the
+                session (JZ's rule: the interaction completes). */}
+            <button
+              type="button"
+              aria-label={`Play ${todayMovement.title}`}
+              onClick={() => setMovementOpen(true)}
+              className="w-full block text-left"
             >
-              <span className="text-white font-semibold text-sm drop-shadow">
-                {todayMovement.title}
-              </span>
-              <div className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center pointer-events-none">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
+              <Poster item={todayMovement} className="h-[150px] flex items-end p-3.5">
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent" />
+                <span className="relative text-white font-semibold text-sm drop-shadow">
+                  {todayMovement.title}
+                </span>
+                <div className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145" className="ml-0.5">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </Poster>
+            </button>
             <div className="p-3.5 px-4">
               <PillarBadge pillarId={todayMovement.pillarId} className="mb-2" />
               <div className="font-semibold text-[15px] mb-0.5">Move with {coach.fullName.split(' ')[0]}</div>
@@ -227,19 +243,20 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
                   Done today ✓
                 </Button>
               ) : (
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    data.markContentDone(todayMovement.id);
-                    const award = data.awardPoints('content_complete', todayMovement.id);
-                    toast(award ? `+${award.points} · ${award.label}` : 'Nice. Streak kept.');
-                  }}
-                >
+                <Button variant="ghost" onClick={completeMovement}>
                   Mark as done
                 </Button>
               )}
             </div>
           </Card>
+          <VideoOverlay
+            item={todayMovement}
+            open={movementOpen}
+            onClose={() => {
+              setMovementOpen(false);
+              completeMovement();
+            }}
+          />
         </>
       )}
 
