@@ -168,7 +168,7 @@ export const PREP_VIDEO_META: Record<
 > = {
   'prep-host-video': {
     duration: '2:10',
-    tint: '#5C7470',
+    tint: '#56685E',
     poster: asset('images/people/lucy.jpg'),
     // Same face-safe crop as the coach portrait — the photo is a portrait.
     posterPosition: '50% 25%',

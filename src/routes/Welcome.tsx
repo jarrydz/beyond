@@ -103,7 +103,7 @@ export function Welcome() {
         <button
           type="button"
           onClick={() => enter('member')}
-          className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-[#F1ECE2] text-green-deep hover:brightness-105"
+          className="w-full font-semibold text-sm rounded-btn py-[13px] px-[18px] transition active:scale-[0.975] bg-cream text-green-deep hover:brightness-105"
         >
           Continue your journey
         </button>

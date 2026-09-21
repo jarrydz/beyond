@@ -7,14 +7,14 @@ import type { ContentItem } from '@/types';
  * branches on "is this a prototype" — setting posterUrl on a row swaps the
  * art with zero code change.
  *
- * Design refresh: the fallback is a water-toned duotone keyed by format, not
+ * Design refresh: the fallback is a sage-toned duotone keyed by format, not
  * the item's legacy tint — thumbnails stay in the palette until real imagery
  * lands.
  */
 const DUOTONE: Record<string, string> = {
-  audio: 'linear-gradient(160deg, #2C5259, #12262B)',
-  video: 'linear-gradient(160deg, #5C8A8F, #2C5259)',
-  default: 'linear-gradient(160deg, #3D6A72, #1B3940)',
+  audio: 'linear-gradient(160deg, #56685E, #1D2420)',
+  video: 'linear-gradient(160deg, #8A9B92, #56685E)',
+  default: 'linear-gradient(160deg, #697F73, #2F3934)',
 };
 
 export function Poster({

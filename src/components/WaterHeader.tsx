@@ -2,10 +2,10 @@ import { createContext, useContext, useEffect, type ReactNode } from 'react';
 import { useStoreState } from '@/store/StoreProvider';
 
 /**
- * The deep-water header (design refresh): every screen opens with a dark
- * teal band — deeper for member "moment" screens, shallower for the coach's
- * working tool — with faint concentric ripple rings, then a white sheet
- * rises over it (see Sheet). The old floating header's points pill and
+ * The header band (Gwinganna palette): every screen opens with a sage band
+ * that deepens downward — deeper for member "moment" screens, shallower for
+ * the coach's working tool — with faint concentric ripple rings, then a
+ * sheet rises over it (see Sheet). The old floating header's points pill and
  * avatar live INSIDE the band now, so the whole thing scrolls away.
  */
 
@@ -17,9 +17,12 @@ interface HeaderActions {
 /** Provided once per shell (MemberHome / CoachHome) so screens stay dumb. */
 export const HeaderActionsContext = createContext<HeaderActions>({});
 
+// Both ramps open on the brand sage (#697F73) and darken down it. Shallow
+// stops at primary-800 rather than 900: the coach band is short, so the ramp
+// compresses and a 900 floor turns the whole thing near-black.
 const GRADIENTS = {
-  deep: 'linear-gradient(180deg, #3D6A72 0%, #22484F 52%, #12262B 100%)',
-  shallow: 'linear-gradient(180deg, #2C5259 0%, #173238 70%, #12262B 100%)',
+  deep: 'linear-gradient(180deg, #697F73 0%, #44534B 52%, #1D2420 100%)',
+  shallow: 'linear-gradient(180deg, #697F73 0%, #56685E 60%, #3A463F 100%)',
 };
 
 interface Props {
@@ -73,7 +76,9 @@ export function WaterHeader({
             left: '50%',
             top: '46%',
             transform: 'translate(-50%,-50%)',
-            border: `1px solid rgba(255,255,255,${0.13 - i * 0.03})`,
+            // Cream rings, not white — and a touch stronger than the old teal
+            // band needed, since sage is lighter to begin with.
+            border: `1px solid rgba(250,242,234,${0.17 - i * 0.04})`,
           }}
         />
       ))}
@@ -92,7 +97,7 @@ export function WaterHeader({
               {back.label}
             </button>
           ) : (
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80">
               {eyebrow}
             </span>
           )}
@@ -102,7 +107,7 @@ export function WaterHeader({
                 type="button"
                 onClick={onPointsTap}
                 aria-label={`${points} points — view earn history`}
-                className="h-[26px] rounded-btn border border-white/30 px-2.5 text-[10.5px] font-semibold text-white/90 transition active:scale-95"
+                className="h-[26px] rounded-btn border border-white/45 px-2.5 text-[10.5px] font-semibold text-white/90 transition active:scale-95"
               >
                 {points} pts
               </button>
@@ -112,7 +117,7 @@ export function WaterHeader({
                 type="button"
                 onClick={onProfileTap}
                 aria-label="Profile"
-                className="w-[30px] h-[30px] rounded-full bg-acid text-ink grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
+                className="w-[30px] h-[30px] rounded-full bg-accent text-cream grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
               >
                 {me.avatarInitial}
               </button>
@@ -126,7 +131,7 @@ export function WaterHeader({
 }
 
 /**
- * The white sheet that rises over the water — 22px top radius, overlapping
+ * The paper sheet that rises over the band — 22px top radius, overlapping
  * the header by 16px. Reserves ~100px at the bottom so content dissolves
  * under the docked tab bar rather than colliding with it.
  */
@@ -140,7 +145,7 @@ export function Sheet({
   return (
     <div
       className={[
-        'relative -mt-4 rounded-t-sheet bg-white px-6 pt-6 pb-[100px] min-h-[400px]',
+        'relative -mt-4 rounded-t-sheet bg-paper px-6 pt-6 pb-[100px] min-h-[400px]',
         className,
       ].join(' ')}
     >

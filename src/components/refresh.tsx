@@ -31,19 +31,19 @@ export function SectionHeader({
   );
 }
 
-/** 9px uppercase square chip. Acid = needed/confirmed; neutral = timing. */
+/** 9px uppercase square chip. Accent = needed/confirmed; neutral = timing. */
 export function StatusChip({
   tone = 'neutral',
   children,
 }: {
-  tone?: 'acid' | 'neutral';
+  tone?: 'accent' | 'neutral';
   children: ReactNode;
 }) {
   return (
     <span
       className={[
         'inline-block px-1.5 py-[3px] text-[9px] font-semibold uppercase tracking-[0.1em]',
-        tone === 'acid' ? 'bg-acid text-ink' : 'bg-grey-150 text-[#6E6E68]',
+        tone === 'accent' ? 'bg-accent text-cream' : 'bg-grey-150 text-muted',
       ].join(' ')}
     >
       {children}
@@ -51,7 +51,7 @@ export function StatusChip({
   );
 }
 
-/** Mono score pill — grey normally, acid when it needs action now. */
+/** Mono score pill — quiet fill normally, accent when it needs action now. */
 export function ScorePill({
   urgent = false,
   children,
@@ -62,8 +62,8 @@ export function ScorePill({
   return (
     <span
       className={[
-        'inline-block rounded-[4px] px-2 py-[5px] font-mono text-[11px] font-semibold text-ink',
-        urgent ? 'bg-acid' : 'bg-grey-50',
+        'inline-block rounded-[4px] px-2 py-[5px] font-mono text-[11px] font-semibold',
+        urgent ? 'bg-accent text-cream' : 'bg-grey-50 text-ink',
       ].join(' ')}
     >
       {children}

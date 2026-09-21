@@ -83,7 +83,7 @@ export function GoalWhyScreen({ onBack }: Props) {
               style={
                 on
                   ? { borderColor: p.accent, background: `${p.accent}1a`, color: p.accent }
-                  : { borderColor: '#E2D9CB', color: '#7C766B' }
+                  : { borderColor: '#E2D3BF', color: '#867C6F' }
               }
             >
               <span className="w-5 h-5 block [&_svg]:w-5 [&_svg]:h-5 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.7]">

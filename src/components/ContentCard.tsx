@@ -52,7 +52,7 @@ export function ContentCard({ item, meId, onMarkDone, showPillar = false, onView
         )}
         {PLAY_TYPES.has(item.type) && (
           <div className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center pointer-events-none">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>

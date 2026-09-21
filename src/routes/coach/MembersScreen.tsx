@@ -84,7 +84,7 @@ function MemberRow({
         height="16"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#7C766B"
+        stroke="#867C6F"
         strokeWidth="2"
         className="ml-0.5"
       >

@@ -84,7 +84,7 @@ export function ContentDetailScreen({ contentId, onBack, onOpenMeal }: Props) {
             }
             className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center transition active:scale-90"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145" className="ml-0.5">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </button>

@@ -11,8 +11,8 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const toneStyles: Record<NonNullable<CardProps['tone']>, string> = {
   default: 'bg-white border-line-alt text-ink',
   sage: 'bg-grey-50 border-line text-ink',
-  dark: 'bg-gradient-to-b from-water-600 to-ink border-transparent text-white',
-  terra: 'bg-gradient-to-b from-water-700 to-ink-deep border-transparent text-white text-center',
+  dark: 'bg-gradient-to-b from-primary-600 to-ink border-transparent text-white',
+  terra: 'bg-gradient-to-b from-primary-700 to-ink-deep border-transparent text-white text-center',
 };
 
 export function Card({ children, flush, tone = 'default', className = '', ...rest }: CardProps) {

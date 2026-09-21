@@ -39,7 +39,7 @@ export function LibraryRow({ item, meId, onOpen }: Props) {
       <Poster item={item} className="w-14 h-14 rounded-[8px] flex-none grid place-items-center">
         {(item.format === 'video' || item.format === 'audio') && (
           <span className="absolute inset-0 m-auto w-6 h-6 rounded-full bg-white/90 grid place-items-center">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#111111" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>

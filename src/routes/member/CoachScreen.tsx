@@ -31,7 +31,7 @@ const SLOTS: SlotOption[] = [
 /**
  * Your Coach (design refresh): identity and actions live in the water
  * header — portrait circle with serif initials (photograph when one
- * exists), acid Book pill, outlined Message. The sheet carries the
+ * exists), accent Book pill, outlined Message. The sheet carries the
  * upcoming session card, the past check-in log rows and the coach's note.
  * All booking / AI logic unchanged.
  */
@@ -114,7 +114,7 @@ export function CoachScreen() {
             <div
               className="w-[78px] h-[78px] rounded-full grid place-items-center flex-none font-serif text-[26px] text-white/90"
               style={{
-                background: 'linear-gradient(160deg, #5C8A8F, #2C5259)',
+                background: 'linear-gradient(160deg, #8A9B92, #56685E)',
                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.3)',
               }}
             >
@@ -131,7 +131,7 @@ export function CoachScreen() {
           </div>
         </div>
         <div className="flex gap-2.5">
-          <Button variant="acid" className="flex-1 !py-3" onClick={() => setSheetOpen(true)}>
+          <Button variant="accent" className="flex-1 !py-3" onClick={() => setSheetOpen(true)}>
             Book a check-in
           </Button>
           <Button
@@ -166,7 +166,7 @@ export function CoachScreen() {
                   {formatCheckInTime(upcoming.scheduledAt)}
                 </div>
               </div>
-              <StatusChip tone="acid">Confirmed</StatusChip>
+              <StatusChip tone="accent">Confirmed</StatusChip>
             </div>
           </>
         )}

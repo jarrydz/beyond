@@ -168,7 +168,7 @@ export function PillarDetailScreen({
             <div className="font-serif text-[19px] leading-snug">{goal.title}</div>
             <div className="flex items-center gap-3 mt-4">
               <div className="flex-1 h-[4px] rounded-[2px] bg-white/[.22] overflow-hidden">
-                <div className="h-full bg-acid" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-cream" style={{ width: `${pct}%` }} />
               </div>
               <span className="font-mono text-[10px] font-semibold text-white/70">
                 DAY {String(dayIndex).padStart(2, '0')} / {totalDays}
@@ -374,7 +374,7 @@ export function PillarDetailScreen({
 }
 
 /**
- * The one raised block on the page: 184px media area with the acid play
+ * The one raised block on the page: 184px media area with the accent play
  * button, then the serif title and the primary action beside the honest
  * week counter. Shadow 0 10px 30px — nothing else on the screen carries one.
  */
@@ -411,15 +411,15 @@ function FeaturedWeekly({
             type="button"
             aria-label="Play the video"
             onClick={() => setVideoOpen(true)}
-            className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-acid grid place-items-center transition active:scale-90"
+            className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-accent grid place-items-center transition active:scale-90"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAF2EA" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </button>
         ) : (
-          <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-acid grid place-items-center pointer-events-none">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#12262B" className="ml-0.5">
+          <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-accent grid place-items-center pointer-events-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAF2EA" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>
@@ -448,13 +448,13 @@ function FeaturedWeekly({
         )}
         <div className="flex items-center gap-3.5 mt-4">
           {item.type === 'recipe' ? (
-            <Button inline variant="acid" className="px-5 !py-2.5" onClick={() => onViewRecipes?.()}>
+            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => onViewRecipes?.()}>
               View recipes
             </Button>
           ) : item.type === 'event' ? (
             <Button
               inline
-              variant="acid"
+              variant="accent"
               className="px-5 !py-2.5"
               onClick={() => toast("You're registered for Wednesday")}
             >
@@ -470,7 +470,7 @@ function FeaturedWeekly({
               Done ✓
             </Button>
           ) : (
-            <Button inline variant="acid" className="px-5 !py-2.5" onClick={() => onMarkDone(item.id)}>
+            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => onMarkDone(item.id)}>
               Mark as done
             </Button>
           )}

@@ -15,8 +15,8 @@ export function Ring({
   max,
   size = 62,
   children,
-  track = '#EAE2D4',
-  fill = '#3A5145',
+  track = '#E8DBCA',
+  fill = '#44534B',
 }: RingProps) {
   const pct = Math.min(100, Math.max(0, (value / max) * 100));
   const inner = size - 14;

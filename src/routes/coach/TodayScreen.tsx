@@ -98,18 +98,18 @@ export function TodayScreen({ onOpenMember }: Props) {
           {members.length} members in the {cohort.name}
         </p>
 
-        {/* The single acid field on this screen: the next call. */}
+        {/* The single accent field on this screen: the next call. */}
         {nextCall && nextCallMember && (
           <button
             type="button"
             onClick={() => onOpenMember(nextCallMember.id)}
-            className="w-full flex items-center gap-3 rounded-card bg-acid px-4 py-3.5 text-left text-ink transition active:scale-[0.99]"
+            className="w-full flex items-center gap-3 rounded-card bg-accent px-4 py-3.5 text-left text-cream transition active:scale-[0.99]"
           >
-            <span className="w-9 h-9 rounded-full bg-ink text-acid grid place-items-center font-serif text-[15px] flex-none">
+            <span className="w-9 h-9 rounded-full bg-cream text-accent grid place-items-center font-serif text-[15px] flex-none">
               {nextCallMember.avatarInitial}
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-ink/60">
+              <span className="block text-[9px] font-semibold uppercase tracking-[0.12em] text-cream/60">
                 Next call · {formatTime(new Date(nextCall.scheduledAt))}
               </span>
               <span className="block font-serif font-medium text-[18px] leading-tight truncate">
@@ -167,7 +167,7 @@ export function TodayScreen({ onOpenMember }: Props) {
                   className={[
                     'flex-none text-[11px] font-semibold rounded-full px-2.5 py-1',
                     g.requiredDone === g.requiredTotal
-                      ? 'bg-[#F1F4ED] text-green'
+                      ? 'bg-accent-tint text-green'
                       : 'bg-terra/10 text-terra',
                   ].join(' ')}
                 >
@@ -260,7 +260,7 @@ export function TodayScreen({ onOpenMember }: Props) {
                     height="16"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#7C766B"
+                    stroke="#867C6F"
                     strokeWidth="2"
                   >
                     <path d="m9 6 6 6-6 6" />
@@ -399,7 +399,7 @@ function SetFocusSheet({ guest, onClose }: { guest: GuestBooking | null; onClose
               onClick={() => setPillarId(p.id)}
               className={[
                 'w-full flex items-center justify-between text-left border rounded-[14px] px-[15px] py-[11px] bg-white transition-colors',
-                on ? 'border-green bg-[#F1F4ED]' : 'border-line hover:border-sage',
+                on ? 'border-green bg-accent-tint' : 'border-line hover:border-sage',
               ].join(' ')}
             >
               <span className="font-semibold text-[14px]">{p.label}</span>

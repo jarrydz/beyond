@@ -70,10 +70,10 @@ export function InstallPrompt() {
     <div className="absolute left-3 right-3 bottom-[88px] z-[60] bg-ink text-cream rounded-[18px] px-3.5 py-3 flex items-center gap-3 shadow-phone">
       <div
         className="w-9 h-9 rounded-[12px] grid place-items-center flex-none"
-        style={{ background: '#3A5145' }}
+        style={{ background: '#44534B' }}
         aria-hidden="true"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F4EFE7" strokeWidth="1.7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF2EA" strokeWidth="1.7">
           <path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z" />
         </svg>
       </div>

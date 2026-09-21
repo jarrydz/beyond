@@ -169,7 +169,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
             <button
               type="button"
               onClick={() => toast(`Joining your call with ${coach.fullName.split(' ')[0]}…`)}
-              className="font-semibold text-sm rounded-btn py-[13px] px-[18px] bg-[#F1ECE2] text-green-deep transition active:scale-[0.975]"
+              className="font-semibold text-sm rounded-btn py-[13px] px-[18px] bg-cream text-green-deep transition active:scale-[0.975]"
             >
               Join
             </button>
@@ -223,7 +223,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
                   {todayMovement.title}
                 </span>
                 <div className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#3A5145" className="ml-0.5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111" className="ml-0.5">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>

@@ -54,7 +54,7 @@ function Bullet({ children }: { children: React.ReactNode }) {
         height="16"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#A7B59C"
+        stroke="#ADB9B2"
         strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"

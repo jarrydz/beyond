@@ -194,7 +194,7 @@ export const library: ContentItem[] = [
     description: 'The eight movements from the lawn, exactly as Leo teaches them. No equipment.',
     presenter: 'Leo',
     durationMin: 8,
-    tint: '#5C7470',
+    tint: '#56685E',
     config: {
       steps: [
         { title: 'Standing still', detail: 'Feet hip-width, knees soft, arms heavy. Three slow breaths before anything moves.', seconds: 45 },
@@ -218,7 +218,7 @@ export const library: ContentItem[] = [
     description: 'The gym session from the retreat, scaled for a living room. Leo cues every option.',
     presenter: 'Leo',
     durationMin: 30,
-    tint: '#4E6B51',
+    tint: '#44534B',
     doneBy: [],
   },
   {
@@ -229,7 +229,7 @@ export const library: ContentItem[] = [
     componentKey: 'week_planner',
     title: 'Plan your week',
     description: 'Seven days, three kinds of session. Tap what you will actually do — it keeps.',
-    tint: '#6B8271',
+    tint: '#697F73',
     config: {
       sessions: [
         { key: 'move', label: 'Move' },

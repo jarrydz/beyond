@@ -63,7 +63,7 @@ export function MemberSwitcherSheet({ open, onClose }: Props) {
             onClick={() => switchTo(p.id, p.name)}
             className={[
               'w-full flex items-center justify-between text-left border rounded-[14px] px-[15px] py-[13px] mb-[9px] bg-white transition-colors',
-              active ? 'border-green bg-[#F1F4ED]' : 'border-line hover:border-sage',
+              active ? 'border-green bg-accent-tint' : 'border-line hover:border-sage',
             ].join(' ')}
           >
             <div>

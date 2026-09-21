@@ -9,9 +9,9 @@ interface AvatarProps {
 }
 
 // Palette from beyond-prototype.html (a1..a4) for non-self, non-leader members.
-// Water-toned avatars (design refresh) — serif initials on deep teals.
-const PALETTE = ['#22484F', '#3D6A72', '#2C5259', '#173238'];
-const LEADER = '#2C5259';
+// Sage-toned avatars — serif initials on four steps of the brand primary.
+const PALETTE = ['#44534B', '#697F73', '#56685E', '#2F3934'];
+const LEADER = '#56685E';
 
 export function avatarColor(profile: Profile): string {
   if (profile.role === 'coach') return LEADER;

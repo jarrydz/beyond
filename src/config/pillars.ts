@@ -6,7 +6,7 @@ import type { Pillar, PillarId } from '@/types';
  *
  * Pillar colour rule (design refresh, 2026-08-18): pillars do NOT own
  * individual colours — accent is the uniform quiet icon stroke; the focus
- * pillar's acid/ink treatment is applied by the row variant, not from here.
+ * pillar's accent/ink treatment is applied by the row variant, not from here.
  *
  * Canonical wording is taken from the Aug '26 founders-deck update (four
  * pillars over two bands). Labels stay short and member-facing; the deck's
@@ -26,7 +26,7 @@ export const pillars: Pillar[] = [
       'Saveable, shareable recipes from the retreat kitchen',
       'Goal windows to hold the line — 30 and 100 days',
     ],
-    accent: '#5B615E',
+    accent: '#5F6B62',
   },
   {
     id: 'movement',
@@ -39,7 +39,7 @@ export const pillars: Pillar[] = [
       'Recovery through movement — mobility, stretching, active recovery',
       'A virtual PT — solo or with your group',
     ],
-    accent: '#5B615E',
+    accent: '#5F6B62',
   },
   {
     id: 'emotional',
@@ -53,7 +53,7 @@ export const pillars: Pillar[] = [
       'Nervous-system regulation',
       'Immersion in nature',
     ],
-    accent: '#5B615E',
+    accent: '#5F6B62',
   },
   {
     id: 'sleep',
@@ -65,7 +65,7 @@ export const pillars: Pillar[] = [
       'Build the quantity and consistency, night to night',
       'Restorative practices — a wind-down that lets the day go',
     ],
-    accent: '#5B615E',
+    accent: '#5F6B62',
   },
 ];
 

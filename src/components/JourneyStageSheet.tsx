@@ -54,7 +54,7 @@ export function JourneyStageSheet({ open, onClose }: Props) {
             onClick={() => pick(r.offset)}
             className={[
               'w-full flex items-center justify-between text-left border rounded-[14px] px-[15px] py-[11px] mb-[9px] bg-white transition-colors',
-              active ? 'border-green bg-[#F1F4ED]' : 'border-line hover:border-sage',
+              active ? 'border-green bg-accent-tint' : 'border-line hover:border-sage',
             ].join(' ')}
           >
             <div>

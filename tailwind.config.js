@@ -1,17 +1,36 @@
 /** @type {import('tailwindcss').Config} */
 
 /**
- * Visual refresh (design/README.md, 2026-08-18): warm greys + deep water +
- * rationed acid, Newsreader/Inter, deliberately squarer shapes.
+ * Gwinganna palette (2026-09-21): warm paper + sage green + black.
+ *
+ * Three source colours, everything else derived from them:
+ *   primary #697F73 — the brand sage. Every green in the app is this colour
+ *                     mixed toward white (200–400) or black (600–900), so the
+ *                     header gradients, ripple rings and washes stay in one
+ *                     family instead of drifting into teal.
+ *   cream   #FAF2EA — warm paper. The app surface and every light fill/line
+ *                     steps down from it; nothing is a cool grey any more.
+ *   accent  #111111 — black, and RATIONED to one hero action per screen.
+ *
+ * Button hierarchy note: the accent used to be acid green, which stood apart
+ * from the near-black default fill on its own. Black cannot, so the default
+ * filled button moved to primary-700 sage — black now reads as the hero
+ * against it, and the "one loud thing per screen" rule survives the rebrand.
+ *
+ * Contrast note: black is invisible on the sage band, so accents sitting ON
+ * the water (eyebrows, the header progress fill) use cream instead.
  *
  * Migration note: the LEGACY token names (cream, sand, green, sage, terra,
  * line, muted) are kept but REVALUED into the new system so every existing
- * class picks up the refresh without a per-file rewrite:
- *   cream/white → pure white (sheets; text-on-dark)
+ * class picks up the rebrand without a per-file rewrite:
+ *   cream       → warm paper (also reads as off-white text on dark)
  *   sand        → grey-100 warm fill
- *   green       → ink (the default filled button is now ink, acid is rationed)
- *   sage        → chevron/quiet grey
- *   terra       → ink (the no-red rule: attention is ink + acid, never alarm)
+ *   green       → ink (near-black text/fills)
+ *   sage        → chevron/quiet warm grey (NOT the brand sage — that's primary)
+ *   terra       → ink (the no-red rule: attention is ink + accent, never alarm)
+ * The old `water` and `acid` tokens are GONE, not revalued — a teal ramp and
+ * an acid green have no meaning here, so they were renamed at every call site
+ * (water → primary, acid → accent) to keep the names honest.
  * New code should use the new names; legacy names retire as screens are
  * touched.
  */
@@ -20,49 +39,60 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ——— the refresh palette ———
+        // ——— the brand sage: #697F73 mixed toward white, then black ———
+        primary: {
+          DEFAULT: '#697F73',
+          200: '#C3CCC7',
+          300: '#ADB9B2',
+          400: '#8A9B92',
+          500: '#697F73',
+          600: '#56685E',
+          700: '#44534B',
+          800: '#2F3934',
+          900: '#1D2420',
+        },
+        // ——— the rationed hero. Pair with cream, never with ink. ———
+        accent: {
+          DEFAULT: '#111111',
+          tint: '#EFE4D4',
+        },
         ink: {
-          DEFAULT: '#12262B',
-          deep: '#0E1A1E',
+          DEFAULT: '#1A1A17',
+          deep: '#0E0E0C',
         },
-        water: {
-          500: '#3D6A72',
-          600: '#2C5259',
-          700: '#22484F',
-          800: '#173238',
-        },
-        acid: {
-          DEFAULT: '#E8FF47',
-          tint: '#F3F7D8',
+        // ——— warm paper, stepping down from #FAF2EA ———
+        paper: {
+          DEFAULT: '#FAF2EA',
+          lift: '#FDF9F4',
         },
         grey: {
-          50: '#F5F5F1',
-          100: '#F1F0EC',
-          150: '#F0F0EA',
+          50: '#F4EADE',
+          100: '#F0E5D7',
+          150: '#EBDECE',
         },
-        quiet: '#9A9A94',
-        disabled: '#A6A6A0',
-        'icon-quiet': '#5B615E',
-        chevron: '#C4C4BE',
-        'line-alt': '#E4E4DE',
+        quiet: '#8C8377',
+        disabled: '#A79C8D',
+        'icon-quiet': '#5F6B62',
+        chevron: '#CBBCA8',
+        'line-alt': '#E2D3BF',
 
         // ——— legacy names, revalued (see note above) ———
-        cream: '#FFFFFF',
-        sand: '#F1F0EC',
+        cream: '#FAF2EA',
+        sand: '#F0E5D7',
         white: '#FFFFFF',
-        muted: '#8E8E88',
+        muted: '#867C6F',
         green: {
-          DEFAULT: '#12262B',
-          deep: '#0E1A1E',
-          soft: '#5B615E',
+          DEFAULT: '#1A1A17',
+          deep: '#0E0E0C',
+          soft: '#5F6B62',
         },
-        sage: '#C4C4BE',
+        sage: '#CBBCA8',
         terra: {
-          DEFAULT: '#12262B',
-          soft: '#8E8E88',
-          deep: '#12262B',
+          DEFAULT: '#1A1A17',
+          soft: '#867C6F',
+          deep: '#1A1A17',
         },
-        line: '#EAEAE4',
+        line: '#E8DBCA',
       },
       fontFamily: {
         serif: ['Newsreader', 'serif'],
@@ -77,9 +107,9 @@ export default {
         nav: '20px',
       },
       boxShadow: {
-        card: '0 1px 2px rgba(18,38,43,.04)',
-        nav: '0 6px 22px rgba(18,38,43,.1)',
-        phone: '0 18px 50px rgba(14,26,30,.2)',
+        card: '0 1px 2px rgba(26,26,23,.05)',
+        nav: '0 6px 22px rgba(26,26,23,.1)',
+        phone: '0 18px 50px rgba(14,14,12,.2)',
       },
     },
   },

@@ -76,7 +76,7 @@ export function TodayCard({ onOpenDailyCheckIn, onOpenContent }: Props) {
           <p className="text-[14.5px] leading-relaxed text-cream/90 mb-3.5">
             {FOCUS_DAILY_PROMPT[goal.pillarId]}
           </p>
-          <Button variant="acid" onClick={onOpenDailyCheckIn}>
+          <Button variant="accent" onClick={onOpenDailyCheckIn}>
             Check in
           </Button>
           {staleLine && <div className="[&>button]:text-cream/70">{staleLine}</div>}
@@ -148,7 +148,7 @@ function ChangeFocusSheet({
             }}
             className={[
               'w-full flex items-center justify-between text-left border rounded-[14px] px-[15px] py-[12px] mb-[9px] bg-white transition-colors',
-              on ? 'border-green bg-[#F1F4ED]' : 'border-line hover:border-sage',
+              on ? 'border-green bg-accent-tint' : 'border-line hover:border-sage',
             ].join(' ')}
           >
             <span className="font-semibold text-[14.5px]">{p.label}</span>

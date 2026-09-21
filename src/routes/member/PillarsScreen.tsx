@@ -11,7 +11,7 @@ interface Props {
 
 /**
  * The Pillars (design refresh): the focus pillar lives in the water header —
- * acid eyebrow, serif hero, progress + day counter, one acid CTA — then the
+ * accent eyebrow, serif hero, progress + day counter, one accent CTA — then the
  * sheet lists all four pillars. Only the focus row carries a bar (PRD-06
  * decision 8 holds); colour is wayfinding, not identity.
  */
@@ -37,7 +37,7 @@ export function PillarsScreen({ onOpenPillar }: Props) {
       <WaterHeader depth="deep" eyebrow="The Pillars">
         {focus && goal ? (
           <>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-acid mb-2">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cream mb-2">
               Your focus
             </div>
             <h1 className="font-serif font-normal text-[38px] leading-[1.05] mb-2">
@@ -48,13 +48,13 @@ export function PillarsScreen({ onOpenPillar }: Props) {
             </p>
             <div className="flex items-center gap-3 mb-5">
               <div className="flex-1 h-[4px] rounded-[2px] bg-white/[.22] overflow-hidden">
-                <div className="h-full bg-acid" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-cream" style={{ width: `${pct}%` }} />
               </div>
               <span className="font-mono text-[10px] font-semibold text-white/70">
                 DAY {String(dayIndex).padStart(2, '0')} / {totalDays}
               </span>
             </div>
-            <Button inline variant="acid" className="px-5 !py-2.5" onClick={() => onOpenPillar(goal.pillarId)}>
+            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => onOpenPillar(goal.pillarId)}>
               Today's practice&ensp;→
             </Button>
           </>
@@ -72,7 +72,7 @@ export function PillarsScreen({ onOpenPillar }: Props) {
 
       <Sheet>
         <SectionHeader count={pillars.length}>The pillars</SectionHeader>
-        <p className="font-serif text-[15px] leading-relaxed text-[#6E6E68] mb-1">
+        <p className="font-serif text-[15px] leading-relaxed text-muted mb-1">
           The work you took home from Gwinganna — delivered by your coach, your group and
           the app.
         </p>
@@ -92,7 +92,7 @@ export function PillarsScreen({ onOpenPillar }: Props) {
               <span
                 className={[
                   'w-[34px] h-[34px] rounded-tile grid place-items-center flex-none',
-                  isFocus ? 'bg-acid text-ink' : 'bg-grey-100 text-icon-quiet',
+                  isFocus ? 'bg-accent text-cream' : 'bg-grey-100 text-icon-quiet',
                 ].join(' ')}
               >
                 <span className="w-[17px] h-[17px] block [&_svg]:w-[17px] [&_svg]:h-[17px] [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.75]">
@@ -105,7 +105,7 @@ export function PillarsScreen({ onOpenPillar }: Props) {
                     {p.label}
                   </span>
                   {isFocus && (
-                    <span className="rounded-btn bg-acid-tint px-[7px] py-[3px] text-[8.5px] font-semibold uppercase tracking-[0.14em] text-ink">
+                    <span className="rounded-btn bg-accent-tint px-[7px] py-[3px] text-[8.5px] font-semibold uppercase tracking-[0.14em] text-ink">
                       Focus
                     </span>
                   )}

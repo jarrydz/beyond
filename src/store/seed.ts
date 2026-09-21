@@ -462,7 +462,7 @@ export const content: ContentItem[] = [
   {
     id: 'content-movement',
     format: 'video',
-    tint: '#5C7470',
+    tint: '#56685E',
     posterUrl: asset('images/library/chi-gong.jpg'),
     type: 'movement',
     pillarId: 'movement',
@@ -632,7 +632,7 @@ export const meals: Meal[] = [
     title: 'Zucchini & pea fritters with herbed yoghurt',
     mealTime: 'lunch',
     intro: 'Light, green and quick — the trick is squeezing the zucchini properly dry.',
-    tint: '#7E9B6E',
+    tint: '#8A9B92',
     prepMins: 15,
     cookMins: 12,
     servings: 2,
@@ -751,7 +751,7 @@ export const meals: Meal[] = [
     mealTime: 'dinner',
     intro:
       'Comfort food, retreat rules — lentils and mushrooms under a parsnip mash.',
-    tint: '#5C7470',
+    tint: '#56685E',
     prepMins: 20,
     cookMins: 45,
     servings: 4,
@@ -976,7 +976,7 @@ export const products: Product[] = [
     blurb: 'One scoop when the vegetables didn’t happen.',
     description:
       'Spirulina, barley grass and broccoli sprout — a safety net for travel days, not a replacement for the real thing.',
-    tint: '#4E6B51',
+    tint: '#44534B',
     priceAud: 55,
     pointCost: 550,
     pillarId: 'nourishment',
@@ -1003,7 +1003,7 @@ export const products: Product[] = [
     blurb: 'Swap the worst offenders in one go.',
     description:
       'Castile cleaner, laundry sheets, a low-tox dish bar and a room mist — the four swaps a low-tox home starts with.',
-    tint: '#7E9B6E',
+    tint: '#8A9B92',
     priceAud: 59,
     pointCost: 590,
     pillarId: 'nourishment',
@@ -1031,7 +1031,7 @@ export const products: Product[] = [
     blurb: 'The book behind the breathwork sessions.',
     description:
       'Why nose-breathing, slow exhales and CO₂ tolerance matter — the science underneath the practices your coach teaches.',
-    tint: '#5C7470',
+    tint: '#56685E',
     priceAud: 24,
     pointCost: 240,
     pillarId: 'emotional',

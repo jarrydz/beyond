@@ -125,7 +125,7 @@ export function JourneyScreen() {
             }}
           >
             <div className="flex items-baseline justify-between mb-2">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-acid">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cream">
                 Next up
               </span>
               {PREP_VIDEO_META[hero.id] && (
@@ -140,7 +140,7 @@ export function JourneyScreen() {
             <p className="font-serif text-[14px] leading-relaxed text-white/[.68] mb-3.5">
               {hero.blurb}
             </p>
-            <Button inline variant="acid" className="px-5 !py-2.5" onClick={() => openTask(hero)}>
+            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => openTask(hero)}>
               {heroCta(hero)}&ensp;→
             </Button>
           </div>
@@ -199,7 +199,7 @@ export function JourneyScreen() {
                   <span className="font-serif font-medium text-[17px] leading-tight text-ink">
                     {t.title}
                   </span>
-                  {t.required && <StatusChip tone="acid">Needed by Gwinganna</StatusChip>}
+                  {t.required && <StatusChip tone="accent">Needed by Gwinganna</StatusChip>}
                 </span>
                 <span className="block text-[12px] text-muted leading-snug mt-1">{t.blurb}</span>
               </button>

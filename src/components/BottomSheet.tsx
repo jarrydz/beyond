@@ -67,7 +67,7 @@ export function SheetSlot({ title, meta, selected = false, onClick }: SlotProps)
       onClick={onClick}
       className={[
         'w-full flex items-center justify-between text-left border rounded-[14px] px-[15px] py-[13px] mb-[9px] bg-white transition-colors',
-        selected ? 'border-green bg-[#F1F4ED]' : 'border-line hover:border-sage',
+        selected ? 'border-green bg-accent-tint' : 'border-line hover:border-sage',
       ].join(' ')}
     >
       <div>
