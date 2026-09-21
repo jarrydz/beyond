@@ -15,9 +15,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 //   accent — the hero on paper, where a dark fill has room to be emphatic.
 // primary is the quiet default; outline-dark is the secondary on sage.
 const variants: Record<Variant, string> = {
-  primary: 'bg-primary text-cream hover:brightness-110',
+  primary: 'bg-primary-550 text-cream hover:brightness-110',
   ghost: 'bg-transparent text-ink border border-line-alt hover:bg-grey-50',
-  terra: 'bg-primary text-cream hover:brightness-110',
+  terra: 'bg-primary-550 text-cream hover:brightness-110',
   accent: 'bg-accent text-cream hover:brightness-150',
   light: 'bg-cream text-ink hover:brightness-105',
   'outline-dark': 'bg-transparent text-white border border-white/35',

@@ -46,6 +46,11 @@ export default {
           300: '#ADB9B2',
           400: '#8A9B92',
           500: '#697F73',
+          // 550 exists for one reason: button labels. #697F73 is a true mid-tone,
+          // so it clears 4.5:1 with NEITHER a light nor a dark label (cream 3.88,
+          // white 4.30, ink 4.06). Twelve percent deeper reaches 4.78:1 with cream
+          // and is near-indistinguishable. Large/decorative fills still use 500.
+          550: '#5C7065',
           600: '#56685E',
           700: '#44534B',
           800: '#2F3934',

@@ -31,7 +31,14 @@ export function SectionHeader({
   );
 }
 
-/** 9px uppercase square chip. Accent = needed/confirmed; neutral = timing. */
+/**
+ * 9px uppercase square chip. Accent = needed/confirmed; neutral = timing.
+ *
+ * The accent tone is a sage-tinted outline, not a black fill. A prep list runs
+ * five or six of these at once, and as solid black they shouted louder than the
+ * headings they sat under — they're metadata, not the action. Black stays where
+ * it earns attention: the urgent ScorePill below.
+ */
 export function StatusChip({
   tone = 'neutral',
   children,
@@ -43,7 +50,9 @@ export function StatusChip({
     <span
       className={[
         'inline-block px-1.5 py-[3px] text-[9px] font-semibold uppercase tracking-[0.1em]',
-        tone === 'accent' ? 'bg-accent text-cream' : 'bg-grey-150 text-muted',
+        tone === 'accent'
+          ? 'bg-primary/10 text-primary-800 border border-primary/40'
+          : 'bg-grey-150 text-muted',
       ].join(' ')}
     >
       {children}
