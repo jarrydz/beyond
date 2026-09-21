@@ -53,7 +53,7 @@ export const coach: Profile = {
 
 export const you: Profile = {
   id: 'member-jarryd',
-  fullName: 'Andrew Simons',
+  fullName: 'Alex Robinson',
   avatarInitial: 'A',
   role: 'member',
   cohortId: cohort.id,

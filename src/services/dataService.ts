@@ -806,10 +806,10 @@ export function createDataService(store: MemoryStore) {
     },
 
     /**
-     * Demo-only (2026-08-18): flip between the two demo personas — Andrew
+     * Demo-only (2026-08-18): flip between the two demo personas — Alex
      * (booked, the guest story) and Evelyn (alumna, no booking, the
      * subscriber story). A no-booking member replays onboarding on every
-     * visit, mirroring the deliberate reset signIn() performs for Andrew.
+     * visit, mirroring the deliberate reset signIn() performs for Alex.
      */
     demoSwitchMember(profileId: string): void {
       const s = store.get();

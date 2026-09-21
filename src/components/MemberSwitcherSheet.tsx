@@ -10,7 +10,7 @@ interface Props {
 
 /**
  * Demo-only member switcher (2026-08-18) — the RoleSwitcherSheet pattern
- * applied to the two demo personas. Andrew tells the guest story (booked,
+ * applied to the two demo personas. Alex tells the guest story (booked,
  * arriving soon); Evelyn tells the subscriber story (alumna, no booking,
  * cold start). Switching to a no-booking member replays onboarding, so
  * /onboarding is finally demoable. Reset lives here too — it must be
@@ -83,7 +83,7 @@ export function MemberSwitcherSheet({ open, onClose }: Props) {
         onClick={() => {
           data.resetJourneyDemo();
           onClose();
-          toast('Demo reset — Andrew, 7 days out, clean');
+          toast('Demo reset — Alex, 7 days out, clean');
           navigate('/m', { replace: true });
         }}
         className="mt-2 w-full text-center text-[13.5px] text-muted py-3 font-semibold"
