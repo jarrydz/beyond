@@ -3,16 +3,17 @@ import { useIsCompact } from '@/components/PhoneFrame';
 import { useData } from '@/services';
 import type { Role } from '@/types';
 
-// Calm still-water ripple from the refreshed founders deck. Lives in public/, so
-// resolve against BASE_URL to stay correct under the GitHub Pages base path.
-const bgUrl = `${import.meta.env.BASE_URL}beyond-bg.jpg`;
+// Gwinganna hero: sunset over the infinity pool. Lives in public/, so resolve
+// against BASE_URL to stay correct under the GitHub Pages base path.
+const bgUrl = `${import.meta.env.BASE_URL}gwinganna-hero.jpg`;
+const wordmarkUrl = `${import.meta.env.BASE_URL}gwinganna-wordmark.png`;
 
 // Colours sampled from the composited backdrop (photo + scrim) at the very top
 // and bottom of the phone viewport. iOS Safari tints its status bar / toolbar
 // from the background-color of a fixed element pinned to that edge, so these let
-// the bars match the image instead of falling back to the cream body colour.
-const EDGE_TOP = '#95a0a1';
-const EDGE_BOTTOM = '#0b1113';
+// the bars match the image instead of falling back to the paper body colour.
+const EDGE_TOP = '#544c49';
+const EDGE_BOTTOM = '#1d262a';
 
 export function Welcome() {
   const navigate = useNavigate();
@@ -39,13 +40,14 @@ export function Welcome() {
       <div
         className={compact ? 'fixed inset-0 -z-10' : 'absolute inset-0 -z-10'}
         style={{
-          // Image full-bleed, with a soft scrim — light up top to keep the calm
-          // misty feel, darker toward the base so the lead copy and button stay legible.
-          backgroundColor: '#27302f',
-          backgroundImage: `linear-gradient(180deg, rgba(16,26,28,0.22) 0%, rgba(16,26,28,0.05) 30%, rgba(11,19,21,0.12) 58%, rgba(9,15,17,0.62) 100%), url(${bgUrl})`,
-          // Gradient fills the frame; the photo is sized to 150% so it reads ~50%
-          // more zoomed-in than a plain cover crop, centred on the ripple.
-          backgroundSize: '100% 100%, auto 150%',
+          // Image full-bleed under a warm scrim. The sunset sky is the brightest
+          // part of the frame (a white wordmark on bare sky measures ~1.5:1), so
+          // the top carries real weight; the middle stays open so the sun and
+          // the figure read; the base darkens hard so the buttons hold up over
+          // pale pool water.
+          backgroundColor: '#2a211c',
+          backgroundImage: `linear-gradient(180deg, rgba(24,17,13,0.62) 0%, rgba(24,17,13,0.52) 20%, rgba(24,17,13,0.16) 40%, rgba(20,15,12,0.06) 58%, rgba(14,11,9,0.74) 100%), url(${bgUrl})`,
+          backgroundSize: '100% 100%, cover',
           backgroundPosition: 'center, center',
         }}
       />
@@ -80,22 +82,22 @@ export function Welcome() {
         </>
       )}
 
-      {/* Wordmark sits ~65% up from the base (centre on the 35%-from-top line). */}
+      {/* The Gwinganna wordmark, centred on the 22%-from-top line. It sits high
+          rather than at the old 35% mark: 35% is where the sun glow peaks, and
+          white-on-glow is unreadable no matter how the scrim is tuned. The PNG
+          supplied was white-on-black with no alpha — public/gwinganna-wordmark.png
+          is the same art with alpha pulled from its luminance, so it composites
+          over the photo instead of painting a black block. */}
       <div
-        className="absolute inset-x-0 px-[30px]"
-        style={{ top: '35%', transform: 'translateY(-50%)' }}
+        className="absolute inset-x-0 px-[34px]"
+        style={{ top: '22%', transform: 'translateY(-50%)' }}
       >
-        <h1
-          className="text-[54px] leading-none"
-          style={{
-            fontFamily: "'Work Sans', system-ui, -apple-system, sans-serif",
-            fontWeight: 500,
-            letterSpacing: '0.015em',
-            textShadow: '0 1px 24px rgba(8,14,16,0.35)',
-          }}
-        >
-          b-yond
-        </h1>
+        <img
+          src={wordmarkUrl}
+          alt="Gwinganna Lifestyle Retreat"
+          className="w-full max-w-[286px] mx-auto"
+          style={{ filter: 'drop-shadow(0 2px 18px rgba(10,7,5,0.55))' }}
+        />
       </div>
 
       {/* Actions sit ~14% up from the base. */}
