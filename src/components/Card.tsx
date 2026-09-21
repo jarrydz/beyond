@@ -11,8 +11,11 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const toneStyles: Record<NonNullable<CardProps['tone']>, string> = {
   default: 'bg-white border-line-alt text-ink',
   sage: 'bg-grey-50 border-line text-ink',
-  dark: 'bg-gradient-to-b from-primary-600 to-ink border-transparent text-white',
-  terra: 'bg-gradient-to-b from-primary-700 to-ink-deep border-transparent text-white text-center',
+  // Both dark tones stay inside the sage ramp. Running them to ink turned the
+  // card into a black block with a green cap, which is the same harshness the
+  // header band had.
+  dark: 'bg-gradient-to-b from-primary-500 to-primary-700 border-transparent text-white',
+  terra: 'bg-gradient-to-b from-primary-600 to-primary-800 border-transparent text-white text-center',
 };
 
 export function Card({ children, flush, tone = 'default', className = '', ...rest }: CardProps) {

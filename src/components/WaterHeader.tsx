@@ -17,12 +17,13 @@ interface HeaderActions {
 /** Provided once per shell (MemberHome / CoachHome) so screens stay dumb. */
 export const HeaderActionsContext = createContext<HeaderActions>({});
 
-// Both ramps open on the brand sage (#697F73) and darken down it. Shallow
-// stops at primary-800 rather than 900: the coach band is short, so the ramp
-// compresses and a 900 floor turns the whole thing near-black.
+// Both ramps open on the brand sage (#697F73) and settle only a few steps down
+// it. The floors are deliberately shallow: an earlier pass ran to near-black at
+// the base, which read as a heavy scrim over the green rather than as the green
+// itself. Nothing here leaves the sage family.
 const GRADIENTS = {
-  deep: 'linear-gradient(180deg, #697F73 0%, #44534B 52%, #1D2420 100%)',
-  shallow: 'linear-gradient(180deg, #697F73 0%, #56685E 60%, #3A463F 100%)',
+  deep: 'linear-gradient(180deg, #697F73 0%, #5C7065 52%, #4A594F 100%)',
+  shallow: 'linear-gradient(180deg, #697F73 0%, #5F7369 65%, #53635A 100%)',
 };
 
 interface Props {
@@ -76,9 +77,9 @@ export function WaterHeader({
             left: '50%',
             top: '46%',
             transform: 'translate(-50%,-50%)',
-            // Cream rings, not white — and a touch stronger than the old teal
-            // band needed, since sage is lighter to begin with.
-            border: `1px solid rgba(250,242,234,${0.17 - i * 0.04})`,
+            // Cream rings, not white — and stronger than the old teal band
+            // needed, since the sage ramp is lighter to begin with.
+            border: `1px solid rgba(250,242,234,${0.2 - i * 0.045})`,
           }}
         />
       ))}
@@ -117,7 +118,7 @@ export function WaterHeader({
                 type="button"
                 onClick={onProfileTap}
                 aria-label="Profile"
-                className="w-[30px] h-[30px] rounded-full bg-accent text-cream grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
+                className="w-[30px] h-[30px] rounded-full bg-cream text-ink grid place-items-center font-serif font-medium text-[14px] transition active:scale-90"
               >
                 {me.avatarInitial}
               </button>

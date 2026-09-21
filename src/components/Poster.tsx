@@ -12,9 +12,9 @@ import type { ContentItem } from '@/types';
  * lands.
  */
 const DUOTONE: Record<string, string> = {
-  audio: 'linear-gradient(160deg, #56685E, #1D2420)',
-  video: 'linear-gradient(160deg, #8A9B92, #56685E)',
-  default: 'linear-gradient(160deg, #697F73, #2F3934)',
+  audio: 'linear-gradient(160deg, #5C7065, #3A463F)',
+  video: 'linear-gradient(160deg, #8A9B92, #5C7065)',
+  default: 'linear-gradient(160deg, #697F73, #47564E)',
 };
 
 export function Poster({

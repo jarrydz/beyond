@@ -76,7 +76,7 @@ export function TodayCard({ onOpenDailyCheckIn, onOpenContent }: Props) {
           <p className="text-[14.5px] leading-relaxed text-cream/90 mb-3.5">
             {FOCUS_DAILY_PROMPT[goal.pillarId]}
           </p>
-          <Button variant="accent" onClick={onOpenDailyCheckIn}>
+          <Button variant="light" onClick={onOpenDailyCheckIn}>
             Check in
           </Button>
           {staleLine && <div className="[&>button]:text-cream/70">{staleLine}</div>}

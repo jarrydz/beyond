@@ -411,15 +411,15 @@ function FeaturedWeekly({
             type="button"
             aria-label="Play the video"
             onClick={() => setVideoOpen(true)}
-            className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-accent grid place-items-center transition active:scale-90"
+            className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-cream grid place-items-center transition active:scale-90"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAF2EA" className="ml-0.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A17" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </button>
         ) : (
-          <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-accent grid place-items-center pointer-events-none">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAF2EA" className="ml-0.5">
+          <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-cream grid place-items-center pointer-events-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A17" className="ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>

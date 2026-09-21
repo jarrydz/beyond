@@ -54,7 +54,7 @@ export function PillarsScreen({ onOpenPillar }: Props) {
                 DAY {String(dayIndex).padStart(2, '0')} / {totalDays}
               </span>
             </div>
-            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => onOpenPillar(goal.pillarId)}>
+            <Button inline variant="light" className="px-5 !py-2.5" onClick={() => onOpenPillar(goal.pillarId)}>
               Today's practice&ensp;→
             </Button>
           </>

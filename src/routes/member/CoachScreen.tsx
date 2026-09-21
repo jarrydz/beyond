@@ -131,7 +131,7 @@ export function CoachScreen() {
           </div>
         </div>
         <div className="flex gap-2.5">
-          <Button variant="accent" className="flex-1 !py-3" onClick={() => setSheetOpen(true)}>
+          <Button variant="light" className="flex-1 !py-3" onClick={() => setSheetOpen(true)}>
             Book a check-in
           </Button>
           <Button

@@ -140,7 +140,7 @@ export function JourneyScreen() {
             <p className="font-serif text-[14px] leading-relaxed text-white/[.68] mb-3.5">
               {hero.blurb}
             </p>
-            <Button inline variant="accent" className="px-5 !py-2.5" onClick={() => openTask(hero)}>
+            <Button inline variant="light" className="px-5 !py-2.5" onClick={() => openTask(hero)}>
               {heroCta(hero)}&ensp;→
             </Button>
           </div>

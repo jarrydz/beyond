@@ -170,7 +170,7 @@ function Pacer({
             <div
               className="w-[130px] h-[130px] rounded-full grid place-items-center"
               style={{
-                background: 'radial-gradient(circle at 35% 30%, #8A9B92, #2F3934)',
+                background: 'radial-gradient(circle at 35% 30%, #8A9B92, #47564E)',
                 transform: running ? `scale(${expanded ? 1.5 : 1})` : 'scale(1.15)',
                 transition: running
                   ? `transform ${phaseSeconds}s ease-in-out`

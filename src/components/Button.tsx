@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type Variant = 'primary' | 'ghost' | 'terra' | 'accent' | 'outline-dark';
+type Variant = 'primary' | 'ghost' | 'terra' | 'accent' | 'light' | 'outline-dark';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
@@ -9,15 +9,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   inline?: boolean;
 }
 
-// Gwinganna: primary is a quiet sage fill; ACCENT (black) is rationed to the
-// single hero action per screen (never a default); outline-dark sits on the
-// sage band. The default had to leave near-black for sage — black is the hero
-// now, and two near-black fills would read as the same button.
+// Gwinganna. Two heroes, picked by what's BEHIND the button:
+//   light  — cream fill, on the sage band and on dark cards. A black fill on
+//            sage reads as a hole punched in the green, so it never goes there.
+//   accent — the hero on paper, where a dark fill has room to be emphatic.
+// primary is the quiet default; outline-dark is the secondary on sage.
 const variants: Record<Variant, string> = {
-  primary: 'bg-primary-700 text-cream hover:brightness-110',
+  primary: 'bg-primary text-cream hover:brightness-110',
   ghost: 'bg-transparent text-ink border border-line-alt hover:bg-grey-50',
-  terra: 'bg-primary-700 text-cream hover:brightness-110',
+  terra: 'bg-primary text-cream hover:brightness-110',
   accent: 'bg-accent text-cream hover:brightness-150',
+  light: 'bg-cream text-ink hover:brightness-105',
   'outline-dark': 'bg-transparent text-white border border-white/35',
 };
 
