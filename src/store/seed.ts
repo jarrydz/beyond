@@ -957,6 +957,7 @@ export const products: Product[] = [
     description:
       'Magnesium glycinate with a touch of passionflower — stirred into warm water twenty minutes before lights out.',
     tint: '#5B6B8C',
+    photoUrl: asset('images/products/magnesium.jpg'),
     priceAud: 38,
     pointCost: 380,
     pillarId: 'sleep',
@@ -997,6 +998,7 @@ export const products: Product[] = [
     description:
       'Tahini, buckwheat, chickpeas, olive oil, seeds and spices — the pantry that makes the retreat-kitchen recipes weeknight-possible.',
     tint: '#C97B5A',
+    photoUrl: asset('images/products/kitchen-garden.jpg'),
     priceAud: 89,
     pointCost: 890,
     pillarId: 'nourishment',
@@ -1010,24 +1012,12 @@ export const products: Product[] = [
     description:
       'Castile cleaner, laundry sheets, a low-tox dish bar and a room mist — the four swaps a low-tox home starts with.',
     tint: '#8A9B92',
+    photoUrl: asset('images/products/lowtox-cleaning.jpg'),
     priceAud: 59,
     pointCost: 590,
     pillarId: 'nourishment',
     themes: ['low_tox'],
     why: 'One box covers the first month of low-tox swaps.',
-  },
-  {
-    id: 'prod-sleep-box',
-    name: 'Sleep wind-down box',
-    category: 'box',
-    blurb: 'Everything for the last hour of the day.',
-    description:
-      'Magnesium powder, a linen eye mask, chamomile blend and a small amber lamp bulb — a ready-made wind-down kit.',
-    tint: '#44536F',
-    priceAud: 49,
-    pointCost: 490,
-    pillarId: 'sleep',
-    why: 'Builds the pre-sleep routine from your Sleep pillar into objects you can’t ignore.',
   },
   // Books
   {

@@ -40,12 +40,20 @@ export function ProductDetailScreen({ productId, onBack }: Props) {
         Marketplace
       </button>
 
-      <div
-        className="h-[150px] rounded-card shadow-card mb-4"
-        style={{
-          background: `linear-gradient(135deg, ${product.tint}, ${darken(product.tint, 0.45)})`,
-        }}
-      />
+      {product.photoUrl ? (
+        <img
+          src={product.photoUrl}
+          alt=""
+          className="w-full aspect-[4/3] rounded-card shadow-card mb-4 object-cover"
+        />
+      ) : (
+        <div
+          className="h-[150px] rounded-card shadow-card mb-4"
+          style={{
+            background: `linear-gradient(135deg, ${product.tint}, ${darken(product.tint, 0.45)})`,
+          }}
+        />
+      )}
 
       <h2 className="font-serif font-semibold text-[23px] leading-tight">{product.name}</h2>
       <div className="flex items-center gap-2 mt-2">

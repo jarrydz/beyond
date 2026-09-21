@@ -290,6 +290,8 @@ export interface Product {
   description: string;
   /** Hero tint (hex) — stands in for product photography (local-first, no remote assets). */
   tint: string;
+  /** Product photography — same contract as Meal.photoUrl: set it and the tint falls away. */
+  photoUrl?: string;
   priceAud: number;
   /** Redeemable with PRD-02 points when set. */
   pointCost?: number;

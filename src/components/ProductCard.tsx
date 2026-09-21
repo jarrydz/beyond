@@ -8,9 +8,9 @@ interface Props {
 }
 
 /**
- * One product as a compact row — café-order simplicity: tint thumb (stands in
- * for photography), name, one blurb line, price. Same visual language as
- * MealCard so the shop reads as part of the app, not a bolt-on.
+ * One product as a compact row — café-order simplicity: photo (or the tint
+ * thumb standing in for one), name, one blurb line, price. Same visual language
+ * as MealCard so the shop reads as part of the app, not a bolt-on.
  */
 export function ProductCard({ product, onOpen }: Props) {
   return (
@@ -19,12 +19,20 @@ export function ProductCard({ product, onOpen }: Props) {
       onClick={() => onOpen(product.id)}
       className="w-full text-left rounded-card border border-line bg-white shadow-card p-3 mb-2.5 flex items-center gap-3.5 transition active:scale-[0.985] hover:border-sage"
     >
-      <div
-        className="w-[58px] h-[58px] rounded-[14px] flex-none"
-        style={{
-          background: `linear-gradient(135deg, ${product.tint}, ${darken(product.tint, 0.45)})`,
-        }}
-      />
+      {product.photoUrl ? (
+        <img
+          src={product.photoUrl}
+          alt=""
+          className="w-[58px] h-[58px] rounded-[14px] flex-none object-cover"
+        />
+      ) : (
+        <div
+          className="w-[58px] h-[58px] rounded-[14px] flex-none"
+          style={{
+            background: `linear-gradient(135deg, ${product.tint}, ${darken(product.tint, 0.45)})`,
+          }}
+        />
+      )}
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-[14.5px] leading-snug">{product.name}</div>
         <div className="text-muted text-[12.5px] mt-0.5 truncate">{product.blurb}</div>
