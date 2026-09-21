@@ -33,12 +33,10 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: #1a1a17;
     -webkit-tap-highlight-color: transparent;
-    /* Desktop: quiet warm wash behind the floating phone frame — paper
-       lifted at the top-left, a faint sage bloom at the right. */
-    background:
-      radial-gradient(1200px 600px at 20% -10%, #fdf9f4 0%, transparent 60%),
-      radial-gradient(900px 500px at 110% 10%, #e7e3d9 0%, transparent 55%),
-      #f2e9dd;
+    /* Desktop: flat white behind the floating phone frame. Deliberately NOT the
+       paper surface — the frame is a device mock, so a neutral page keeps the
+       warm palette inside the screen where it belongs. */
+    background: #ffffff;
     min-height: 100%;
   }
 
