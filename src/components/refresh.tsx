@@ -32,12 +32,12 @@ export function SectionHeader({
 }
 
 /**
- * 9px uppercase square chip. Accent = needed/confirmed; neutral = timing.
+ * 9px uppercase pill. Accent = needed/confirmed; neutral = timing.
  *
- * The accent tone is a sage-tinted outline, not a black fill. A prep list runs
- * five or six of these at once, and as solid black they shouted louder than the
- * headings they sat under — they're metadata, not the action. Black stays where
- * it earns attention: the urgent ScorePill below.
+ * Soft warm fill, no outline. A prep list runs five or six of these at once, so
+ * a black fill shouted louder than the headings above it and a bordered box read
+ * like an input field — they're metadata, not the action. Black stays where it
+ * earns attention: the urgent ScorePill below.
  */
 export function StatusChip({
   tone = 'neutral',
@@ -49,10 +49,8 @@ export function StatusChip({
   return (
     <span
       className={[
-        'inline-block px-1.5 py-[3px] text-[9px] font-semibold uppercase tracking-[0.1em]',
-        tone === 'accent'
-          ? 'bg-primary/10 text-primary-800 border border-primary/40'
-          : 'bg-grey-150 text-muted',
+        'inline-block rounded-full px-2.5 py-[4px] text-[9px] font-semibold uppercase tracking-[0.1em]',
+        tone === 'accent' ? 'bg-primary-wash text-primary-800' : 'bg-grey-100 text-ink/75',
       ].join(' ')}
     >
       {children}
@@ -71,7 +69,7 @@ export function ScorePill({
   return (
     <span
       className={[
-        'inline-block rounded-[4px] px-2 py-[5px] font-mono text-[11px] font-semibold',
+        'inline-block rounded-full px-2.5 py-[5px] font-mono text-[11px] font-semibold',
         urgent ? 'bg-accent text-cream' : 'bg-grey-50 text-ink',
       ].join(' ')}
     >

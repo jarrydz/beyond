@@ -42,6 +42,9 @@ export default {
         // ——— the brand sage: #697F73 mixed toward white, then black ———
         primary: {
           DEFAULT: '#697F73',
+          // The bottom of the ramp, mixed toward paper instead of white so it stays
+          // warm on white cards. Chip fills live here.
+          wash: '#DCDDD3',
           200: '#C3CCC7',
           300: '#ADB9B2',
           400: '#8A9B92',

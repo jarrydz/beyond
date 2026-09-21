@@ -63,19 +63,13 @@ export function VideoOverlay({ item, open, onClose }: Props) {
             className="w-full max-h-full"
           />
         ) : (
-          <div className="w-full">
-            <Poster item={item} className="w-full aspect-video">
-              <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111" className="ml-0.5">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
-            </Poster>
-            <p className="text-center text-white/55 text-[12.5px] leading-relaxed px-10 mt-6">
-              The recording lands here when it&rsquo;s filmed — the shelf is real, the
-              video is coming.
-            </p>
-          </div>
+          <Poster item={item} className="w-full aspect-video">
+            <span className="absolute inset-0 m-auto w-[54px] h-[54px] rounded-full bg-white/85 grid place-items-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111" className="ml-0.5">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </Poster>
         )}
       </div>
 
