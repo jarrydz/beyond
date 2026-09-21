@@ -82,7 +82,7 @@ export function GoalWhyScreen({ onBack }: Props) {
               className="flex-1 rounded-[14px] border p-2.5 grid place-items-center transition"
               style={
                 on
-                  ? { borderColor: p.accent, background: `${p.accent}1a`, color: p.accent }
+                  ? { borderColor: p.accent, background: '#EFE4D4', color: p.accent }
                   : { borderColor: '#E2D3BF', color: '#867C6F' }
               }
             >

@@ -8,8 +8,11 @@
  *                     mixed toward white (200–400) or black (600–900), so the
  *                     header gradients, ripple rings and washes stay in one
  *                     family instead of drifting into teal.
- *   cream   #FAF2EA — warm paper. The app surface and every light fill/line
- *                     steps down from it; nothing is a cool grey any more.
+ *   beige   #FAF2EA — warm paper, used as the HIGHLIGHT, not the base. White is
+ *                     the default surface; beige (and the deeper steps below it)
+ *                     is what fills a row, inset or panel to lift it off that
+ *                     white. Every light fill/line steps down from it; nothing
+ *                     is a cool grey any more.
  *   accent  #111111 — black, and RATIONED to one hero action per screen.
  *
  * Button hierarchy note: the accent used to be acid green, which stood apart
@@ -23,7 +26,7 @@
  * Migration note: the LEGACY token names (cream, sand, green, sage, terra,
  * line, muted) are kept but REVALUED into the new system so every existing
  * class picks up the rebrand without a per-file rewrite:
- *   cream       → warm paper (also reads as off-white text on dark)
+ *   cream       → white (the default surface, and off-white text on dark)
  *   sand        → grey-100 warm fill
  *   green       → ink (near-black text/fills)
  *   sage        → chevron/quiet warm grey (NOT the brand sage — that's primary)
@@ -68,13 +71,13 @@ export default {
           DEFAULT: '#1A1A17',
           deep: '#0E0E0C',
         },
-        // ——— warm paper, stepping down from #FAF2EA ———
-        paper: {
-          DEFAULT: '#FAF2EA',
-          lift: '#FDF9F4',
-        },
+        // ——— surfaces: white is the default, warm beige is the highlight ———
+        paper: '#FFFFFF',
         grey: {
-          50: '#F4EADE',
+          // The warm beige itself. Filled rows, insets and quiet panels sit here
+          // to lift off the white page — the same job white cards used to do on
+          // a beige page, run the other way round.
+          50: '#FAF2EA',
           100: '#F0E5D7',
           150: '#EBDECE',
         },
@@ -85,7 +88,7 @@ export default {
         'line-alt': '#E2D3BF',
 
         // ——— legacy names, revalued (see note above) ———
-        cream: '#FAF2EA',
+        cream: '#FFFFFF',
         sand: '#F0E5D7',
         white: '#FFFFFF',
         muted: '#867C6F',

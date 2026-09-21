@@ -90,7 +90,7 @@ export function CommunityScreen() {
           disabled={!draft.trim()}
           className="flex-none w-11 h-11 rounded-[13px] bg-green grid place-items-center disabled:opacity-50"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAF2EA">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF">
             <path d="M3 11l18-8-8 18-2-7-8-3z" />
           </svg>
         </button>

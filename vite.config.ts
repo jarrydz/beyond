@@ -19,7 +19,7 @@ export default defineConfig({
         short_name: 'Beyond',
         description: 'Your retreat, continued.',
         theme_color: '#697F73',
-        background_color: '#FAF2EA',
+        background_color: '#FFFFFF',
         display: 'standalone',
         orientation: 'portrait',
         start_url: base,

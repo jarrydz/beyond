@@ -73,7 +73,7 @@ export function InstallPrompt() {
         style={{ background: '#44534B' }}
         aria-hidden="true"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF2EA" strokeWidth="1.7">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.7">
           <path d="M12 21c5-4 8-7 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 4 3 7 8 11Z" />
         </svg>
       </div>

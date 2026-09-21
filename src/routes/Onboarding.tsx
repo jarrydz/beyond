@@ -92,8 +92,7 @@ export function Onboarding() {
                     style={on ? { borderColor: p.accent, boxShadow: `0 0 0 1px ${p.accent}` } : undefined}
                   >
                     <div
-                      className="w-10 h-10 rounded-[13px] grid place-items-center flex-none"
-                      style={{ background: `${p.accent}1f`, color: p.accent }}
+                      className="w-10 h-10 rounded-[13px] grid place-items-center flex-none bg-grey-100 text-icon-quiet"
                     >
                       <span className="w-5 h-5 block [&_svg]:w-5 [&_svg]:h-5 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.7]">
                         {pillarIcons[p.id]}

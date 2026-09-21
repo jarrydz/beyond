@@ -79,7 +79,7 @@ export function WaterHeader({
             transform: 'translate(-50%,-50%)',
             // Cream rings, not white — and stronger than the old teal band
             // needed, since the sage ramp is lighter to begin with.
-            border: `1px solid rgba(250,242,234,${0.2 - i * 0.045})`,
+            border: `1px solid rgba(255,255,255,${0.2 - i * 0.045})`,
           }}
         />
       ))}

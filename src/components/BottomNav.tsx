@@ -14,14 +14,14 @@ interface BottomNavProps {
 
 export function BottomNav({ items, active, onChange }: BottomNavProps) {
   // Docked tab bar (design refresh): a scrim + blur container so content
-  // dissolves underneath as it scrolls, holding a white radius-20 bar. The
-  // scrim fades to paper, not white, so it melts into the sheet beneath it.
+  // dissolves underneath as it scrolls, holding a radius-20 bar. The scrim fades
+  // to the page surface so it melts into the sheet beneath it.
   return (
     <nav
       className="absolute bottom-0 inset-x-0 z-[55] px-3.5 pb-4 pt-3.5 pointer-events-none"
       style={{
         background:
-          'linear-gradient(180deg, rgba(250,242,234,0), rgba(250,242,234,.92) 42%)',
+          'linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 42%)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
       }}

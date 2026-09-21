@@ -76,8 +76,7 @@ export function ContentScreen() {
           <div key={g.pillarId}>
             <div className="flex items-center gap-2 mb-2 mt-1">
               <span
-                className="w-5 h-5 rounded-full grid place-items-center flex-none [&_svg]:w-3 [&_svg]:h-3 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.9]"
-                style={{ background: `${pillar.accent}1f`, color: pillar.accent }}
+                className="w-5 h-5 rounded-full grid place-items-center flex-none bg-grey-100 text-icon-quiet [&_svg]:w-3 [&_svg]:h-3 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.9]"
               >
                 {pillarIcons[pillar.id]}
               </span>

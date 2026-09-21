@@ -143,8 +143,7 @@ export function HomeScreen({ onGoTab, onOpenDailyCheckIn, onOpenContent }: Props
           {pillars.map((p) => (
             <div
               key={p.id}
-              className="flex-1 aspect-square rounded-[13px] grid place-items-center"
-              style={{ background: `${p.accent}1f`, color: p.accent }}
+              className="flex-1 aspect-square rounded-[13px] grid place-items-center bg-grey-100 text-icon-quiet"
               title={p.label}
             >
               <span className="w-[22px] h-[22px] block [&_svg]:w-[22px] [&_svg]:h-[22px] [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:stroke-[1.7]">
