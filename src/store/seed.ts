@@ -12,6 +12,7 @@ import type {
   Product,
   Profile,
   Subscription,
+  WellbeingCheck,
 } from '@/types';
 import { ACTION_LABELS, AWARDS } from '@/config/points';
 
@@ -225,6 +226,11 @@ export const goals: Goal[] = [
     pillarId: 'sleep',
     title: 'Asleep before 10pm',
     target: '30 days',
+    // Written at the T-21 prep task, in their own words. This is the payload of
+    // the day-5 check — a survey can ask how the beds were, it cannot hand
+    // someone back the reason they came. Seeded because the demo enters at
+    // day 5 without having typed it.
+    why: "I'm asleep past midnight and awake at three, most nights. I've started turning down things I actually want to do because I know I'll be useless the next day. I don't want to be the tired one any more.",
     // His own check-in history records this as the goal-setting call with
     // Lucy — the provenance field now says so instead of a hard-coded line.
     focusSetBy: 'coach',
@@ -1071,6 +1077,22 @@ export const affirmations: string[] = [
   'The retreat opened the door. I walk through it daily.',
   'I don\'t have to feel motivated to show up.',
   'Rest is part of the work, not a reward for it.',
+];
+
+/**
+ * The pre-arrival baseline, taken the same day the goal and why were written —
+ * the day-5 check has nothing to show movement against without it. Reads as the
+ * picture of someone who booked a retreat because sleep had gone: rough
+ * everywhere, worst on stress, only food half-holding.
+ */
+export const wellbeingChecks: WellbeingCheck[] = [
+  {
+    id: 'wellbeing-baseline-you',
+    memberId: you.id,
+    moment: 'baseline',
+    takenAt: days(-12),
+    scores: { sleep: 1, energy: 1, stress: 0, movement: 1, nutrition: 2 },
+  },
 ];
 
 export const subscriptions: Subscription[] = [];

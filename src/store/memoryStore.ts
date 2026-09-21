@@ -15,6 +15,7 @@ import type {
   Product,
   Profile,
   Subscription,
+  WellbeingCheck,
 } from '@/types';
 import { readOnboarded } from './onboardingStorage';
 import {
@@ -25,6 +26,7 @@ import {
   readGoalWhy,
   readPlannerTicks,
   readTaperTicks,
+  readWellbeingChecks,
 } from './journeyStorage';
 import { prepTasks as seedPrepTasks } from '@/config/prepTasks';
 import { pillars } from '@/config/pillars';
@@ -43,6 +45,7 @@ import {
   products as seedProducts,
   profiles as seedProfiles,
   subscriptions as seedSubscriptions,
+  wellbeingChecks as seedWellbeingChecks,
   you as seedYou,
 } from './seed';
 
@@ -66,6 +69,8 @@ export interface StoreState {
   mealDeliveryInterest: boolean;
   subscriptions: Subscription[];
   dailyCheckIns: DailyCheckInEntry[];
+  /** The pre-arrival baseline and the day-5 check that's measured against it. */
+  wellbeingChecks: WellbeingCheck[];
   affirmations: string[];
   currentUserId: string;
   // session-only — not modelled in the schema but needed by Phase 2's role switcher
@@ -139,6 +144,12 @@ export const initialState = (): StoreState => ({
   mealDeliveryInterest: false,
   subscriptions: seedSubscriptions.map((s) => ({ ...s })),
   dailyCheckIns: readDailyCheckIns(seedYou.id) as DailyCheckInEntry[],
+  // The baseline is seeded (it was taken before arrival); anything the guest
+  // logs at home is restored on top of it.
+  wellbeingChecks: [
+    ...seedWellbeingChecks.map((w) => ({ ...w, scores: { ...w.scores } })),
+    ...(readWellbeingChecks(seedYou.id) as WellbeingCheck[]),
+  ],
   affirmations: [...seedAffirmations],
   currentUserId: seedYou.id,
   activeRole: 'member',

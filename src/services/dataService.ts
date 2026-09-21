@@ -19,6 +19,8 @@ import type {
   RecordCheckInInput,
   Role,
   Subscription,
+  WellbeingCheck,
+  WellbeingDimension,
 } from '@/types';
 import { MemoryStore } from '@/store/memoryStore';
 import { clearOnboarded, writeOnboarded } from '@/store/onboardingStorage';
@@ -31,6 +33,7 @@ import {
   writeGoalWhy,
   writePlannerTicks,
   writeTaperTicks,
+  writeWellbeingChecks,
 } from '@/store/journeyStorage';
 import { daysUntil, stageFor, today } from '@/utils/journey';
 import { prepTasks as prepTaskSeeds, type TaperSubstance } from '@/config/prepTasks';
@@ -560,6 +563,42 @@ export function createDataService(store: MemoryStore) {
           >,
         );
         return { ...st, dailyCheckIns };
+      });
+      return entry;
+    },
+
+    // the day-5 self check, measured against the pre-arrival baseline
+    getWellbeingChecks(): WellbeingCheck[] {
+      const s = store.get();
+      return s.wellbeingChecks.filter((w) => w.memberId === s.currentUserId);
+    },
+    /**
+     * Log the check taken at home. Deliberately awards no points: the daily
+     * loop pays because it's a habit worth building, and putting a price on
+     * "tell us how you actually are" turns an honest answer into a transaction.
+     */
+    addWellbeingCheck(input: {
+      scores: Record<WellbeingDimension, number>;
+      note?: string;
+    }): WellbeingCheck {
+      const s = store.get();
+      const entry: WellbeingCheck = {
+        id: uid(),
+        memberId: s.currentUserId,
+        moment: 'home',
+        takenAt: simNow(),
+        scores: { ...input.scores },
+        note: input.note?.trim() || undefined,
+      };
+      store.set((st) => {
+        const wellbeingChecks = [...st.wellbeingChecks, entry];
+        writeWellbeingChecks(
+          st.currentUserId,
+          wellbeingChecks.filter(
+            (w) => w.memberId === st.currentUserId && w.moment === 'home',
+          ) as unknown as Array<Record<string, unknown>>,
+        );
+        return { ...st, wellbeingChecks };
       });
       return entry;
     },

@@ -359,3 +359,27 @@ export interface DailyCheckInEntry {
   /** Answers to the two focus questions, keyed by question id. 0–4 scale index. */
   focusAnswers?: Record<string, number>;
 }
+
+export type WellbeingDimension = 'sleep' | 'energy' | 'stress' | 'movement' | 'nutrition';
+
+/**
+ * A self-rating across the five dimensions at one moment. Two moments exist and
+ * they are the SAME shape on purpose: the baseline is captured before arrival,
+ * the day-5 check is captured at home, and "show them their own movement" is
+ * then a subtraction rather than a second data model.
+ *
+ * Deliberately not a survey response: it has no question about the retreat, no
+ * recommend score, and it belongs to the guest — the coach reads it, nobody
+ * aggregates it into a facilities rating.
+ */
+export interface WellbeingCheck {
+  id: string;
+  memberId: string;
+  /** 'baseline' = before arrival; 'home' = the day-5 check. */
+  moment: 'baseline' | 'home';
+  takenAt: string;
+  /** 0–4 scale index per dimension — see WELLBEING_SCALES. */
+  scores: Record<WellbeingDimension, number>;
+  /** The one sentence in their own words. Optional by design. */
+  note?: string;
+}

@@ -29,8 +29,10 @@ import { ProfileScreen } from './member/ProfileScreen';
 import { JourneyScreen } from './member/JourneyScreen';
 import { QuietScreen } from './member/QuietScreen';
 import { ReintegrationScreen } from './member/ReintegrationScreen';
+import { ReflectionScreen } from './member/ReflectionScreen';
 import { ContentDetailScreen } from './member/ContentDetailScreen';
-import { stageFor } from '@/utils/journey';
+import { dayOfReintegration, stageFor } from '@/utils/journey';
+import { WELLBEING_CHECK_DAY } from '@/config/wellbeing';
 import type { PillarId } from '@/types';
 
 // Five tabs by decision (JZ, 2026-07-03): Marketplace lives inside More;
@@ -69,6 +71,13 @@ export function MemberHome() {
     s.booking && s.booking.profileId === s.currentUserId ? s.booking : null,
   );
   const stage = useStoreState((s) => stageFor(booking, s.demoDayOffset));
+  const demoOffset = useStoreState((s) => s.demoDayOffset);
+  // The day-5 check doesn't exist before day 5 — asking someone how it's
+  // landing on the drive home is asking about the drive home.
+  const reflectionReady =
+    stage === 'reintegration' &&
+    !!booking &&
+    dayOfReintegration(booking, demoOffset) >= WELLBEING_CHECK_DAY;
   // PRD-06: the active goal's pillar IS the focus — the check-in asks about it.
   const focusPillarId = useStoreState(
     (s) => s.goals.find((g) => g.profileId === s.currentUserId && g.active)?.pillarId,
@@ -99,6 +108,7 @@ export function MemberHome() {
   const [openPillarId, setOpenPillarId] = useState<PillarId | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(sharedRecipeId);
   const [openContentId, setOpenContentId] = useState<string | null>(null);
+  const [reflectionOpen, setReflectionOpen] = useState(false);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [marketOpen, setMarketOpen] = useState(false);
   const [openProductId, setOpenProductId] = useState<string | null>(null);
@@ -110,6 +120,7 @@ export function MemberHome() {
       setOpenPillarId(null);
       setOpenMealId(null);
       setOpenContentId(null);
+      setReflectionOpen(false);
       setDeliveryOpen(false);
       setMarketOpen(false);
       setOpenProductId(null);
@@ -190,7 +201,7 @@ export function MemberHome() {
         />
       )}
       <ScreenWrap
-        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${openContentId ?? ''}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
+        key={`${active}:${openPillarId ?? ''}:${openMealId ?? ''}:${openContentId ?? ''}:${reflectionOpen}:${deliveryOpen}:${marketOpen}:${openProductId ?? ''}`}
         withBottomNav={!recorderOpen}
       >
         {active === 'home' &&
@@ -206,11 +217,16 @@ export function MemberHome() {
           ) : stage === 'pre_retreat' ? (
             <JourneyScreen />
           ) : stage === 'reintegration' && booking ? (
-            <ReintegrationScreen
-              booking={booking}
-              onOpenDailyCheckIn={() => setRecorderOpen(true)}
-              onOpenContent={(id) => setOpenContentId(id)}
-            />
+            reflectionOpen ? (
+              <ReflectionScreen booking={booking} onBack={() => setReflectionOpen(false)} />
+            ) : (
+              <ReintegrationScreen
+                booking={booking}
+                onOpenDailyCheckIn={() => setRecorderOpen(true)}
+                onOpenContent={(id) => setOpenContentId(id)}
+                onOpenReflection={reflectionReady ? () => setReflectionOpen(true) : undefined}
+              />
+            )
           ) : (
             <HomeScreen
               onGoTab={goTab}

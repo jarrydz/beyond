@@ -134,6 +134,33 @@ export function writeDailyCheckIns(
   }
 }
 
+const wellbeingKey = (profileId: string) => `journey:wellbeing:${profileId}`;
+
+/**
+ * The day-5 self check (PRD-05). Typing five scales and a sentence and then
+ * losing them to a refresh is the one failure this screen cannot have — it
+ * asked for something personal.
+ */
+export function readWellbeingChecks(profileId: string): unknown[] {
+  try {
+    const raw = localStorage.getItem(wellbeingKey(profileId));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+export function writeWellbeingChecks(
+  profileId: string,
+  entries: Array<Record<string, unknown>>,
+): void {
+  try {
+    localStorage.setItem(wellbeingKey(profileId), JSON.stringify(entries));
+  } catch {
+    // localStorage can be unavailable in private modes
+  }
+}
+
 /** Demo reset — wipe everything the journey persisted for this profile. */
 export function clearJourney(profileId: string): void {
   try {
@@ -143,6 +170,7 @@ export function clearJourney(profileId: string): void {
     localStorage.removeItem(checkInsKey(profileId));
     localStorage.removeItem(contentDoneKey(profileId));
     localStorage.removeItem(plannerKey(profileId));
+    localStorage.removeItem(wellbeingKey(profileId));
     localStorage.removeItem(offsetKey);
   } catch {
     // localStorage can be unavailable in private modes

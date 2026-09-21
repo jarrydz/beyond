@@ -2,6 +2,7 @@ import { BottomSheet, useToast } from '.';
 import { useData } from '@/services';
 import { useStoreState } from '@/store/StoreProvider';
 import { offsetForDate } from '@/utils/journey';
+import { WELLBEING_CHECK_DAY } from '@/config/wellbeing';
 
 interface Props {
   open: boolean;
@@ -30,6 +31,11 @@ export function JourneyStageSheet({ open, onClose }: Props) {
     { label: 'Day before', meta: 'Journey — "You\'re ready"', offset: offsetForDate(booking.arrivalDate, -1) },
     { label: 'On retreat', meta: 'Quiet mode', offset: offsetForDate(booking.arrivalDate, 1) },
     { label: 'Just home', meta: 'Reintegration', offset: offsetForDate(booking.departureDate, 3) },
+    {
+      label: 'Five days home',
+      meta: 'Reintegration — the day 5 check',
+      offset: offsetForDate(booking.departureDate, WELLBEING_CHECK_DAY),
+    },
     { label: 'Member', meta: "Today's home screen", offset: offsetForDate(booking.departureDate, 30) },
   ];
 
